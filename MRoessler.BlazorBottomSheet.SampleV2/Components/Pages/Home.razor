@@ -1,0 +1,25 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<MudButton OnClick="ToggleButtonSheetVisible">Show/Hide BottomSheet</MudButton>
+<MudButton OnClick="ToggleButtonSheetOpen">Open/Close BottomSheet</MudButton>
+
+<BottomSheet @bind-IsOpen=_isBottomSheetOpen IsVisible=_isBottomSheetVisible>
+    <Header>
+        <MudText>Hello Header</MudText>
+    </Header>
+    
+    <Body>
+        <MudStack Justify="Justify.SpaceBetween" style="height: 100%;">
+            <MudText>Hello Body</MudText>
+
+            <div style="overflow-y: scroll; min-height: 1em;">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at ipsum vel nisi viverra tristique. Fusce non imperdiet ipsum, vitae mollis tortor. Proin vulputate odio eget sapien scelerisque, sit amet dapibus mauris pulvinar. Phasellus quis leo vitae purus pellentesque commodo nec quis justo. Nullam sagittis pulvinar ligula, eu viverra diam iaculis eu. Praesent congue nisi a aliquam volutpat. Morbi suscipit pulvinar nulla, id consequat quam porta vitae. Sed sed ipsum in sapien luctus euismod. Donec eu risus ut libero lobortis interdum.
+                Praesent ac leo congue, consectetur est ut, bibendum metus. Curabitur sed leo tincidunt, sollicitudin felis quis, mollis risus. Ut iaculis lectus ac neque ornare condimentum. Praesent posuere sem sit amet luctus tempor. Nulla a magna id augue bibendum tempus et nec dolor. Etiam et libero dolor. Cras lacinia nisi ut lacus venenatis ullamcorper. Sed varius posuere cursus. Donec convallis nulla vitae magna lobortis laoreet. Praesent pulvinar gravida maximus. 
+            </div>
+            
+            <MudText>Footer</MudText>
+        </MudStack>
+    </Body>
+</BottomSheet>

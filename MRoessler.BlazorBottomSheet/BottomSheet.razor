@@ -1,0 +1,29 @@
+﻿
+<SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
+    <div @ref="_layoutElm" class="bottom-sheet-layout @GetBottomSheetLayoutStyleClass()" 
+        data-allow-minimized-expansion=@AllowMaximizedState data-allow-normal-expansion=@AllowNormalState data-allow-maximized-expansion=@AllowMaximizedState
+        data-expansion=@_expansion
+        data-is-open=@IsOpen
+    >
+        <div class="bottom-sheet-background" @onclick="SetClosedAsync" />
+    
+        <div @ref="_sheetElm" class="bottom-sheet"> <!-- note: style attribute is handles by js code! -->
+            <div @ref="_handleElm" class="bottom-sheet-handle">
+                @Handle
+            </div>
+            <div class="bottom-sheet-header">
+                @Header
+            </div>
+            <div class="bottom-sheet-body">
+                @Body
+            </div>
+        </div>
+    </div>
+</SectionContent>
+
+@code {
+    private RenderFragment CreateDefaultHandle() =>
+        @<svg width="100%" height="4" viewBox="0 0 80 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" width="40" height="4" rx="2" fill="#C4C4C4"/>
+        </svg>; 
+}

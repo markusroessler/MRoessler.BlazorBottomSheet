@@ -1,0 +1,5 @@
+@if (State != null) {
+    @foreach(var contentId in State.SectionContentIds) {
+        <SectionOutlet SectionId="@((ContentSectionName, contentId))" />
+    }
+}

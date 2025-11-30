@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MRoessler.BlazorBottomSheet.SampleV2/MRoessler.BlazorBottomSheet.SampleV2.csproj" />
+  <Project Path="MRoessler.BlazorBottomSheet/MRoessler.BlazorBottomSheet.csproj" />
+</Solution>
