@@ -7,7 +7,7 @@
 			"command": "dotnet",
 			"args": [
 				"watch",
-				"--project", "${workspaceFolder}/MRoessler.BlazorBottomSheet.SampleV2",
+				"--project", "${workspaceFolder}/MRoessler.BlazorBottomSheet.Sample",
 			],
 			"problemMatcher": "$msCompile",
 			"runOptions": {"instanceLimit": 1},
@@ -20,12 +20,12 @@
 			}
 		},
 		{
-			"label": "build MRoessler.BlazorBottomSheet.SampleV2",
+			"label": "build MRoessler.BlazorBottomSheet.Sample",
 			"type": "process",
 			"command": "dotnet",
 			"args": [
 				"build",
-				"${workspaceFolder}/MRoessler.BlazorBottomSheet.SampleV2/MRoessler.BlazorBottomSheet.SampleV2.csproj",
+				"${workspaceFolder}/MRoessler.BlazorBottomSheet.Sample/MRoessler.BlazorBottomSheet.Sample.csproj",
 			],
 			"problemMatcher": "$msCompile",
 			"runOptions": {"instanceLimit": 1},

@@ -8,13 +8,13 @@
             "name": "Sample",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/MRoessler.BlazorBottomSheet.SampleV2/MRoessler.BlazorBottomSheet.SampleV2.csproj",
+            "projectPath": "${workspaceFolder}/MRoessler.BlazorBottomSheet.Sample/MRoessler.BlazorBottomSheet.Sample.csproj",
         },
         {
             "name": "Sample (Attach)",
             "type": "coreclr",
             "request": "attach",
-            "processName": "MRoessler.BlazorBottomSheet.SampleV2.exe",
+            "processName": "MRoessler.BlazorBottomSheet.Sample.exe",
         },
     ]
 }

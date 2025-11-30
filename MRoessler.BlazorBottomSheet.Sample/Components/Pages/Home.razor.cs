@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-namespace MRoessler.BlazorBottomSheet.SampleV2.Components.Pages;
+namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
 
 public partial class Home : ComponentBase
 {

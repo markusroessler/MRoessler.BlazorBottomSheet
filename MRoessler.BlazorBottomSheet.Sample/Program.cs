@@ -1,5 +1,5 @@
 using MRoessler.BlazorBottomSheet;
-using MRoessler.BlazorBottomSheet.SampleV2.Components;
+using MRoessler.BlazorBottomSheet.Sample.Components;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
