@@ -14,10 +14,7 @@ let _razorComp
 let _isDragging
 
 /** @type {number} */
-let _preferedHeight = 0
-
-/** @type {number} */
-let _currentTranslateY = 0
+let _preferedHeight = 200
 
 /** @type {boolean} */
 let _isMaximized = false
@@ -46,9 +43,6 @@ export function init(layoutElm, handleElm, sheetElm, razorComp) {
 
 function handleMouseDown() {
     _isDragging = true
-
-    if (_preferedHeight == 0)
-        _preferedHeight = _sheetElm.getBoundingClientRect().height
 }
 
 async function handleMouseUp() {
@@ -67,11 +61,10 @@ async function handleMouseUp() {
         _isMaximized = true
         await _razorComp.invokeMethodAsync("SetExpansionAsync", ExpansionMaximized)
 
-    } else if (_currentTranslateY > 10) {
-        _sheetElm.style.removeProperty("height")
-        _sheetElm.style.removeProperty("transform")
-        _isMaximized = false
+    } else {
         await _razorComp.invokeMethodAsync("SetClosedAsync")
+        _sheetElm.style.removeProperty("height")
+        _isMaximized = false
     }
 }
 
@@ -82,22 +75,12 @@ function handleMouseMove(evt) {
 
     const currentBounds = _sheetElm.getBoundingClientRect()
     const targetY = evt.clientY
-    let distanceToTargetY = currentBounds.y - targetY
-
-    const newHeight = _currentTranslateY == 0
-        ? Math.max(_preferedHeight, currentBounds.height + distanceToTargetY)
-        : currentBounds.height
-
-    const heightDiff = newHeight - currentBounds.height
-    distanceToTargetY -= heightDiff
-
-    const newTranslateY = Math.min(_preferedHeight, Math.max(0, _currentTranslateY - distanceToTargetY))
+    const distanceToTargetY = currentBounds.y - targetY
+    const newHeight = currentBounds.height + distanceToTargetY
 
     _sheetElm.style.height = `${newHeight}px`
-    _sheetElm.style.transform = `translateY(${newTranslateY}px)`
-    _currentTranslateY = newTranslateY
 
-    console.log(`targetY: ${targetY}, newHeight: ${newHeight}, newTranslateY: ${newTranslateY}`);
+    console.log(`targetY: ${targetY}, newHeight: ${newHeight}`);
 }
 
 export function dispose() {
