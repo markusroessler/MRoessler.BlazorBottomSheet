@@ -2,7 +2,7 @@
 <SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
     <div @ref="_layoutElm" class="bottom-sheet-layout @GetBottomSheetLayoutStyleClass()" 
         data-allow-minimized-expansion=@AllowMaximizedState data-allow-normal-expansion=@AllowNormalState data-allow-maximized-expansion=@AllowMaximizedState
-        data-expansion=@_expansion
+        data-expansion=@Expansion
         data-is-open=@IsOpen
     >
         <div class="bottom-sheet-background" @onclick="SetClosedAsync" />

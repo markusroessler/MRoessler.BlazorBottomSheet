@@ -32,7 +32,6 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public bool AllowMaximizedState { get; set; } = false;
 
-    private BottomSheetExpansion _expansion;
     [Parameter]
     public BottomSheetExpansion Expansion { get; set; }
 
@@ -87,7 +86,6 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
     {
         base.OnParametersSet();
         Handle ??= CreateDefaultHandle();
-        _expansion = Expansion;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -102,15 +100,20 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
 
     [JSInvokable]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public Task SetClosedAsync() => IsOpenChanged.InvokeAsync(false);
+    public async Task SetClosedAsync()
+    {
+        IsOpen = false;
+        StateHasChanged();
+        await IsOpenChanged.InvokeAsync(false);
+    }
 
     [JSInvokable]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public async Task SetExpansionAsync(BottomSheetExpansion expansion)
     {
-        _expansion = expansion;
-        await ExpansionChanged.InvokeAsync(expansion);
+        Expansion = expansion;
         StateHasChanged();
+        await ExpansionChanged.InvokeAsync(expansion);
     }
 
     public async ValueTask DisposeAsync()

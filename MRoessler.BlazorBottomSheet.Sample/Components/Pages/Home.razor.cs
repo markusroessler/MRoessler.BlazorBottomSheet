@@ -15,4 +15,6 @@ public partial class Home : ComponentBase
     private void ToggleButtonSheetVisible() => _isBottomSheetVisible = !_isBottomSheetVisible;
 
     private void ToggleButtonSheetOpen() => _isBottomSheetOpen = !_isBottomSheetOpen;
+
+    private BottomSheetExpansion _expansion;
 }
