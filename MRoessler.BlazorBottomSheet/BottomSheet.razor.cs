@@ -90,11 +90,11 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
 
     [JSInvokable]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public async Task SetExpansionAsync(BottomSheetExpansion expansion)
+    public async Task SetExpansionAsync(int expansion)
     {
-        Expansion = expansion;
+        Expansion = (BottomSheetExpansion)expansion;
         StateHasChanged();
-        await ExpansionChanged.InvokeAsync(expansion);
+        await ExpansionChanged.InvokeAsync(Expansion);
     }
 
     public async ValueTask DisposeAsync()

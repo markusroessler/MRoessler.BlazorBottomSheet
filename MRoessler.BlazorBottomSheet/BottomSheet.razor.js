@@ -64,7 +64,7 @@ export function init(layoutElm, sheetElm, razorComp) {
     })
 
     updateVisible(_layoutElm.hasAttribute("data-visible"))
-    updateExpansion(_layoutElm.getAttribute("data-expansion"))
+    updateExpansion(Number(_layoutElm.getAttribute("data-expansion")))
 }
 
 /** @param evt {PointerEvent} */
@@ -207,7 +207,7 @@ function handleLayoutAttributes(mutations) {
             const newValue = _layoutElm.getAttribute(attributeName)
 
             if (attributeName == "data-expansion")
-                updateExpansion(newValue)
+                updateExpansion(Number(newValue))
             else if (attributeName == "data-visible")
                 updateVisible(_layoutElm.hasAttribute(attributeName))
         }
