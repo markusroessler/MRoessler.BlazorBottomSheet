@@ -2,9 +2,6 @@
 let _layoutElm
 
 /** @type {HTMLElement} */
-let _handleElm
-
-/** @type {HTMLElement} */
 let _sheetElm
 
 /** @type {DotNetObject} */
@@ -15,6 +12,9 @@ let _isDragging
 
 /** @type {number} */
 let _dragStartHeight
+
+/** @type {number} */
+let _dragPointY
 
 /** @type {number} */
 let _dragVelocity
@@ -44,16 +44,15 @@ const FastDragVelocity = 50
 let _layoutAttributesObserver = null
 
 /** @param razorComp { DotNetObject } */
-export function init(layoutElm, handleElm, sheetElm, razorComp) {
+export function init(layoutElm, sheetElm, razorComp) {
     _layoutElm = layoutElm
-    _handleElm = handleElm
     _sheetElm = sheetElm
     _razorComp = razorComp
 
-    _handleElm.addEventListener("mousedown", handleMouseDown)
-    _layoutElm.addEventListener("mouseup", handleMouseUp)
-    _layoutElm.addEventListener("mouseleave", handleMouseUp)
-    _layoutElm.addEventListener("mousemove", handleMouseMove)
+    _sheetElm.addEventListener("pointerdown", handlePointerDown)
+    _layoutElm.addEventListener("pointerup", handlePointerUp)
+    _layoutElm.addEventListener("pointermove", handlePointerMove)
+    _layoutElm.addEventListener("pointerleave", handlePointerUp)
 
     // watch attribute changes (eg. style/class) and dispatch a custom event
     _layoutAttributesObserver = new MutationObserver(handleLayoutAttributes)
@@ -68,29 +67,33 @@ export function init(layoutElm, handleElm, sheetElm, razorComp) {
     updateExpansion(_layoutElm.getAttribute("data-expansion"))
 }
 
-function handleMouseDown() {
+/** @param evt {PointerEvent} */
+function handlePointerDown(evt) {
+    // evt.preventDefault()
     _isDragging = true
     _dragStartHeight = _sheetElm.clientHeight
+    _dragPointY = evt.clientY - _sheetElm.getBoundingClientRect().y
 }
 
-/** @param evt {MouseEvent} */
-function handleMouseMove(evt) {
+/** @param evt {PointerEvent} */
+function handlePointerMove(evt) {
+    // evt.preventDefault()
     if (!_isDragging)
         return
-
     _dragVelocity = evt.movementY
 
     const currentBounds = _sheetElm.getBoundingClientRect()
     const targetY = evt.clientY
     const distanceToTargetY = currentBounds.y - targetY
-    const newHeight = currentBounds.height + distanceToTargetY
+    const newHeight = currentBounds.height + distanceToTargetY + _dragPointY
 
     _sheetElm.style.height = `${newHeight}px`
 
     console.debug(`targetY: ${targetY}, newHeight: ${newHeight}`);
 }
 
-async function handleMouseUp() {
+/** @param evt {PointerEvent} */
+async function handlePointerUp(evt) {
     if (!_isDragging)
         return
     _isDragging = false
@@ -213,10 +216,10 @@ function handleLayoutAttributes(mutations) {
 
 export function dispose() {
     try {
-        _handleElm?.removeEventListener("mousedown", handleMouseDown)
-        _layoutElm?.removeEventListener("mouseup", handleMouseUp)
-        _layoutElm?.removeEventListener("mouseleave", handleMouseUp)
-        _layoutElm?.removeEventListener("mousemove", handleMouseMove)
+        _handleElm?.removeEventListener("pointerdown", handlePointerDown)
+        _layoutElm?.removeEventListener("pointerup", handlePointerUp)
+        _layoutElm?.removeEventListener("pointerleave", handlePointerUp)
+        _layoutElm?.removeEventListener("pointermove", handlePointerMove)
 
         if (_layoutAttributesObserver) {
             _layoutAttributesObserver.disconnect()

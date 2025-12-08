@@ -50,7 +50,6 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
     private IJSRuntime JSRuntime { get; set; } = default!;
 
     private ElementReference _layoutElm;
-    private ElementReference _handleElm;
     private ElementReference _sheetElm;
 
     private bool _disposed;
@@ -78,7 +77,7 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
         if (firstRender)
         {
             _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor.js");
-            await _jsModule.InvokeVoidAsync("init", _layoutElm, _handleElm, _sheetElm, _thisRef);
+            await _jsModule.InvokeVoidAsync("init", _layoutElm, _sheetElm, _thisRef);
         }
     }
 
