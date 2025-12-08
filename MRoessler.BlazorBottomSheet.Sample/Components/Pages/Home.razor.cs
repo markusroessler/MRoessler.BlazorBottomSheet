@@ -9,12 +9,10 @@ namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
 public partial class Home : ComponentBase
 {
     private bool _isBottomSheetVisible = true;
-
-    private bool _isBottomSheetOpen;
+    private BottomSheetExpansion _expansion;
 
     private void ToggleButtonSheetVisible() => _isBottomSheetVisible = !_isBottomSheetVisible;
 
-    private void ToggleButtonSheetOpen() => _isBottomSheetOpen = !_isBottomSheetOpen;
+    private void ToggleButtonSheetOpen() => _expansion = _expansion == BottomSheetExpansion.Closed ? BottomSheetExpansion.Normal : BottomSheetExpansion.Closed;
 
-    private BottomSheetExpansion _expansion;
 }

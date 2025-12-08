@@ -38,12 +38,6 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback<BottomSheetExpansion> ExpansionChanged { get; set; }
 
-    [Parameter]
-    public bool IsOpen { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> IsOpenChanged { get; set; }
-
     private readonly Guid _sectionContentId = Guid.NewGuid();
 
     private readonly DotNetObjectReference<BottomSheet> _thisRef;
@@ -64,16 +58,6 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
     public BottomSheet()
     {
         _thisRef = DotNetObjectReference.Create(this);
-    }
-
-    private string GetBottomSheetLayoutStyleClass()
-    {
-        if (!IsVisible)
-            return "hidden";
-        else if (!IsOpen)
-            return "closed";
-        else
-            return "";
     }
 
     protected override void OnInitialized()
@@ -98,13 +82,11 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
         }
     }
 
-    [JSInvokable]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public async Task SetClosedAsync()
+    private async Task SetClosedAsync()
     {
-        IsOpen = false;
+        Expansion = BottomSheetExpansion.Closed;
         StateHasChanged();
-        await IsOpenChanged.InvokeAsync(false);
+        await ExpansionChanged.InvokeAsync(Expansion);
     }
 
     [JSInvokable]
@@ -136,5 +118,5 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
 
 public enum BottomSheetExpansion
 {
-    Minimized, Normal, Maximized
+    Closed, Minimized, Normal, Maximized
 }

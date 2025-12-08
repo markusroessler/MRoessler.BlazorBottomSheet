@@ -1,13 +1,13 @@
 ﻿
 <SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
-    <div @ref="_layoutElm" class="bottom-sheet-layout @GetBottomSheetLayoutStyleClass()" 
+    <!-- note: class attribute is handled by js code! -->
+    <div @ref="_layoutElm" class="bottom-sheet-layout" 
         data-allow-minimized-expansion=@AllowMaximizedState data-allow-normal-expansion=@AllowNormalState data-allow-maximized-expansion=@AllowMaximizedState
-        data-expansion=@Expansion
-        data-is-open=@IsOpen
+        data-visible=@IsVisible data-expansion=@((int)Expansion)
     >
         <div class="bottom-sheet-background" @onclick="SetClosedAsync" />
     
-        <div @ref="_sheetElm" class="bottom-sheet"> <!-- note: style attribute is handles by js code! -->
+        <div @ref="_sheetElm" class="bottom-sheet"> <!-- note: style attribute is handled by js code! -->
             <div @ref="_handleElm" class="bottom-sheet-handle">
                 @Handle
             </div>

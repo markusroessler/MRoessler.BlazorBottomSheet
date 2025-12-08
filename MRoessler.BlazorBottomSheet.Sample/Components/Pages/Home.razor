@@ -5,7 +5,7 @@
 <MudButton OnClick="ToggleButtonSheetVisible">Show/Hide BottomSheet</MudButton>
 <MudButton OnClick="ToggleButtonSheetOpen">Open/Close BottomSheet</MudButton>
 
-<BottomSheet @bind-IsOpen=_isBottomSheetOpen @bind-Expansion=_expansion IsVisible=_isBottomSheetVisible>
+<BottomSheet @bind-Expansion=_expansion IsVisible=_isBottomSheetVisible>
     <Header>
         <MudText>Hello Header</MudText>
     </Header>
@@ -15,7 +15,7 @@
             <MudStack Justify="Justify.SpaceBetween" style="height: 100%;">
                 <MudText>Hello Body</MudText>
 
-                <MudButton OnClick="()=>_isBottomSheetOpen=false">Close</MudButton>
+                <MudButton OnClick="()=>_expansion=BottomSheetExpansion.Closed">Close</MudButton>
                 <MudSelect @bind-Value="_expansion" Label="Expansion" OuterClass="custom-select">
                     @foreach (var expansion in Enum.GetValues<BottomSheetExpansion>())
                     {

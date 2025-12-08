@@ -14,19 +14,30 @@ let _razorComp
 let _isDragging
 
 /** @type {number} */
-let _preferedHeight = 200
-
-/** @type {boolean} */
-let _isMaximized = false
+let _dragStartHeight
 
 /** @type {number} */
-const ExpansionMinimized = 0
+let _dragVelocity
 
 /** @type {number} */
-const ExpansionNormal = 1
+const ExpansionClosed = 0
 
 /** @type {number} */
-const ExpansionMaximized = 2
+const ExpansionMinimized = 1
+
+/** @type {number} */
+const ExpansionNormal = 2
+
+/** @type {number} */
+const ExpansionMaximized = 3
+
+const HiddenStyleClass = "hidden"
+const ClosedStyleClass = "closed"
+const MinimizedStyleClass = "minimized"
+const NormalStyleClass = "normal"
+const MaximizedStyleClass = "maximized"
+const MinDragDistance = 10
+const FastDragVelocity = 50
 
 // new: observers for layout property/size changes
 /** @type {MutastionObserver} */
@@ -49,36 +60,25 @@ export function init(layoutElm, handleElm, sheetElm, razorComp) {
     _layoutAttributesObserver.observe(_layoutElm, {
         attributes: true, attributeFilter: [
             "data-allow-minimized-expansion", "data-allow-normal-expansion", "data-allow-maximized-expansion",
-            "data-expansion", "data-is-open"
+            "data-expansion", "data-visible"
         ]
     })
+
+    updateVisible(_layoutElm.hasAttribute("data-visible"))
+    updateExpansion(_layoutElm.getAttribute("data-expansion"))
 }
 
 function handleMouseDown() {
     _isDragging = true
-}
-
-async function handleMouseUp() {
-    if (!_isDragging)
-        return
-    _isDragging = false
-
-    const currentBounds = _sheetElm.getBoundingClientRect()
-    if (_isMaximized && currentBounds.height < _layoutElm.getBoundingClientRect().height - 10) {
-        await _razorComp.invokeMethodAsync("SetExpansionAsync", ExpansionNormal)
-
-    } else if (currentBounds.height > _preferedHeight + 10) {
-        await _razorComp.invokeMethodAsync("SetExpansionAsync", ExpansionMaximized)
-
-    } else {
-        await _razorComp.invokeMethodAsync("SetClosedAsync")
-    }
+    _dragStartHeight = _sheetElm.clientHeight
 }
 
 /** @param evt {MouseEvent} */
 function handleMouseMove(evt) {
     if (!_isDragging)
         return
+
+    _dragVelocity = evt.movementY
 
     const currentBounds = _sheetElm.getBoundingClientRect()
     const targetY = evt.clientY
@@ -87,7 +87,113 @@ function handleMouseMove(evt) {
 
     _sheetElm.style.height = `${newHeight}px`
 
-    console.log(`targetY: ${targetY}, newHeight: ${newHeight}`);
+    console.debug(`targetY: ${targetY}, newHeight: ${newHeight}`);
+}
+
+async function handleMouseUp() {
+    if (!_isDragging)
+        return
+    _isDragging = false
+
+    const currentExpansion = getCurrentExpansion()
+    const direction = computeDragMoveDirection()
+    const nearestSnapPointInDirection = computeNearestSnapPointInDirection(direction)
+    const nearestSnapPointAtDragPos = computeNearestSnapPointAtPos()
+    const newExpansion = computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos)
+    updateExpansion(newExpansion)
+    _sheetElm.style.removeProperty("height")
+
+    console.info(
+        `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, dragVelocity: ${_dragVelocity})`)
+}
+
+function computeDragMoveDirection() {
+    if (_sheetElm.clientHeight > _dragStartHeight + MinDragDistance)
+        return 1
+    else if (_sheetElm.clientHeight < _dragStartHeight - MinDragDistance)
+        return -1
+    else
+        return 0
+}
+
+function computeNearestSnapPointInDirection(direction) {
+    const currentExpansion = getCurrentExpansion()
+    return Math.max(ExpansionClosed, Math.min(ExpansionMaximized, currentExpansion + direction))
+}
+
+function computeNearestSnapPointAtPos() {
+    const currentPos = _sheetElm.clientHeight / _layoutElm.clientHeight
+    if (currentPos > 0.7)
+        return ExpansionMaximized
+    else if (currentPos > 0.3)
+        return ExpansionNormal
+    else if (currentPos > 0.1)
+        return ExpansionMinimized
+    else
+        return ExpansionClosed
+}
+
+function computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos) {
+    if (_dragVelocity > FastDragVelocity)
+        return ExpansionClosed
+    else if (_dragVelocity < -FastDragVelocity)
+        return ExpansionMaximized
+
+    const currentExpansion = getCurrentExpansion()
+    if (nearestSnapPointInDirection != currentExpansion)
+        return nearestSnapPointInDirection
+    else
+        return nearestSnapPointAtDragPos
+}
+
+async function updateExpansion(expansion) {
+    if (getCurrentExpansion() == expansion)
+        return;
+
+    if (expansion == ExpansionClosed)
+        _layoutElm.classList.add(ClosedStyleClass)
+    else
+        _layoutElm.classList.remove(ClosedStyleClass)
+
+    if (expansion == ExpansionMinimized)
+        _layoutElm.classList.add(MinimizedStyleClass)
+    else
+        _layoutElm.classList.remove(MinimizedStyleClass)
+
+    if (expansion == ExpansionNormal)
+        _layoutElm.classList.add(NormalStyleClass)
+    else
+        _layoutElm.classList.remove(NormalStyleClass)
+
+    if (expansion == ExpansionMaximized)
+        _layoutElm.classList.add(MaximizedStyleClass)
+    else
+        _layoutElm.classList.remove(MaximizedStyleClass)
+
+    await _razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
+}
+
+async function updateVisible(visible) {
+    if (visible)
+        _layoutElm.classList.remove(HiddenStyleClass)
+    else
+        _layoutElm.classList.add(HiddenStyleClass)
+}
+
+function getCurrentExpansion() {
+    if (_layoutElm.classList.contains(MaximizedStyleClass))
+        return ExpansionMaximized
+
+    if (_layoutElm.classList.contains(NormalStyleClass))
+        return ExpansionNormal
+
+    if (_layoutElm.classList.contains(MinimizedStyleClass))
+        return ExpansionMinimized
+
+    if (_layoutElm.classList.contains(ClosedStyleClass))
+        return ExpansionClosed
+
+    return -1
 }
 
 // new: mutation observer callback
@@ -97,35 +203,11 @@ function handleLayoutAttributes(mutations) {
             const attributeName = m.attributeName
             const newValue = _layoutElm.getAttribute(attributeName)
 
-            if (attributeName === "data-expansion")
+            if (attributeName == "data-expansion")
                 updateExpansion(newValue)
-            else if (attributeName === "data-is-open")
-                updateOpen(newValue)
+            else if (attributeName == "data-visible")
+                updateVisible(_layoutElm.hasAttribute(attributeName))
         }
-    }
-}
-
-/** @param expansion {string} */
-function updateExpansion(expansion) {
-    if (expansion === "Minimized") {
-
-    } else if (expansion === "Normal") {
-        _sheetElm.style.height = `${_preferedHeight}px`
-        _isMaximized = false
-
-    } else if (expansion === "Maximized") {
-        _sheetElm.style.height = "100%"
-        _isMaximized = true
-    }
-}
-
-/** @param open {Boolean} */
-function updateOpen(open) {
-    if (open) {
-        // TODO
-    } else {
-        _sheetElm.style.removeProperty("height")
-        _isMaximized = false
     }
 }
 
