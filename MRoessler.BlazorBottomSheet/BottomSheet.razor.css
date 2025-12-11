@@ -47,6 +47,11 @@
     pointer-events: none;
 }
 
+.bottom-sheet-layout.dragging * {
+    user-select: none;
+    pointer-events: none;
+}
+
 .bottom-sheet-layout.closed .bottom-sheet-background {
     display: none;
 }

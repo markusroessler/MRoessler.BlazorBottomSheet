@@ -36,10 +36,10 @@ const ClosedStyleClass = "closed"
 const MinimizedStyleClass = "minimized"
 const NormalStyleClass = "normal"
 const MaximizedStyleClass = "maximized"
+const DraggingStyleClass = "dragging"
 const MinDragDistance = 10
 const FastDragVelocity = 50
 
-// new: observers for layout property/size changes
 /** @type {MutastionObserver} */
 let _layoutAttributesObserver = null
 
@@ -55,7 +55,7 @@ export function init(layoutElm, sheetElm, razorComp) {
     _layoutElm.addEventListener("pointerleave", handlePointerUp)
 
     // watch attribute changes (eg. style/class) and dispatch a custom event
-    _layoutAttributesObserver = new MutationObserver(handleLayoutAttributes)
+    _layoutAttributesObserver = new MutationObserver(handleLayoutAttributeChanges)
     _layoutAttributesObserver.observe(_layoutElm, {
         attributes: true, attributeFilter: [
             "data-allow-minimized-expansion", "data-allow-normal-expansion", "data-allow-maximized-expansion",
@@ -69,7 +69,8 @@ export function init(layoutElm, sheetElm, razorComp) {
 
 /** @param evt {PointerEvent} */
 function handlePointerDown(evt) {
-    // evt.preventDefault()
+    if (!shouldHandlePointerEvent(evt))
+        return
     _isDragging = true
     _dragStartHeight = _sheetElm.clientHeight
     _dragPointY = evt.clientY - _sheetElm.getBoundingClientRect().y
@@ -77,9 +78,10 @@ function handlePointerDown(evt) {
 
 /** @param evt {PointerEvent} */
 function handlePointerMove(evt) {
-    // evt.preventDefault()
     if (!_isDragging)
         return
+    _layoutElm.classList.add(DraggingStyleClass)
+
     _dragVelocity = evt.movementY
 
     const currentBounds = _sheetElm.getBoundingClientRect()
@@ -97,6 +99,7 @@ async function handlePointerUp(evt) {
     if (!_isDragging)
         return
     _isDragging = false
+    _layoutElm.classList.remove(DraggingStyleClass)
 
     const currentExpansion = getCurrentExpansion()
     const direction = computeDragMoveDirection()
@@ -108,6 +111,18 @@ async function handlePointerUp(evt) {
 
     console.info(
         `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, dragVelocity: ${_dragVelocity})`)
+}
+
+/** @param evt {PointerEvent} */
+function shouldHandlePointerEvent(evt) {
+    let currentElement = evt.target
+    while (currentElement != null) {
+        if (currentElement.hasAttribute('data-disallow-bottomsheet-drag'))
+            return false;
+        currentElement = currentElement.parent
+    }
+
+    return true
 }
 
 function computeDragMoveDirection() {
@@ -200,7 +215,7 @@ function getCurrentExpansion() {
 }
 
 // new: mutation observer callback
-function handleLayoutAttributes(mutations) {
+function handleLayoutAttributeChanges(mutations) {
     for (const m of mutations) {
         if (m.type === "attributes") {
             const attributeName = m.attributeName
