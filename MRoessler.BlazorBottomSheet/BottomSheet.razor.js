@@ -14,7 +14,7 @@ let _isDragging
 let _dragStartHeight
 
 /** @type {number} */
-let _dragPointY
+let _dragStartY
 
 /** @type {number} */
 let _dragVelocity
@@ -49,10 +49,11 @@ export function init(layoutElm, sheetElm, razorComp) {
     _sheetElm = sheetElm
     _razorComp = razorComp
 
-    _sheetElm.addEventListener("pointerdown", handlePointerDown)
-    _layoutElm.addEventListener("pointerup", handlePointerUp)
-    _layoutElm.addEventListener("pointermove", handlePointerMove)
-    _layoutElm.addEventListener("pointerleave", handlePointerUp)
+    _sheetElm.addEventListener("touchstart", handlePointerDown)
+    _layoutElm.addEventListener("touchend", handlePointerUp)
+    _layoutElm.addEventListener("touchmove", handlePointerMove)
+    // TODO
+    // _layoutElm.addEventListener("pointerleave", handlePointerUp)
 
     // watch attribute changes (eg. style/class) and dispatch a custom event
     _layoutAttributesObserver = new MutationObserver(handleLayoutAttributeChanges)
@@ -67,35 +68,49 @@ export function init(layoutElm, sheetElm, razorComp) {
     updateExpansion(Number(_layoutElm.getAttribute("data-expansion")))
 }
 
-/** @param evt {PointerEvent} */
+/** @param evt {TouchEvent} */
 function handlePointerDown(evt) {
-    if (!shouldHandlePointerEvent(evt))
+    console.debug(`handlePointerDown - _isDragging: ${_isDragging}`)
+    if (_isDragging)
         return
     _isDragging = true
+    let firstTouch = evt.touches[0]
     _dragStartHeight = _sheetElm.clientHeight
-    _dragPointY = evt.clientY - _sheetElm.getBoundingClientRect().y
+    _dragStartY = computeSheetRelativeTouchPosY(firstTouch)
 }
 
-/** @param evt {PointerEvent} */
+/** @param evt {TouchEvent} */
 function handlePointerMove(evt) {
+    console.debug(`handlePointerMove - _isDragging: ${_isDragging}`)
     if (!_isDragging)
         return
-    _layoutElm.classList.add(DraggingStyleClass)
 
-    _dragVelocity = evt.movementY
+    let firstTouch = evt.touches[0]
+    let touchY = computeSheetRelativeTouchPosY(firstTouch)
+    let dragDeltaY = touchY - _dragStartY
+
+    if (!shouldHandlePointerEvent(evt, dragDeltaY)) {
+        console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
+        _dragStartY = touchY
+        _layoutElm.classList.remove(DraggingStyleClass)
+        return
+    }
+    _layoutElm.classList.add(DraggingStyleClass)
+    // TODO
+    // _dragVelocity = evt.movementY
 
     const currentBounds = _sheetElm.getBoundingClientRect()
-    const targetY = evt.clientY
+    const targetY = firstTouch.clientY
     const distanceToTargetY = currentBounds.y - targetY
-    const newHeight = currentBounds.height + distanceToTargetY + _dragPointY
+    const newHeight = currentBounds.height + distanceToTargetY + _dragStartY
 
     _sheetElm.style.height = `${newHeight}px`
-
     console.debug(`targetY: ${targetY}, newHeight: ${newHeight}`);
 }
 
-/** @param evt {PointerEvent} */
+/** @param evt {TouchEvent} */
 async function handlePointerUp(evt) {
+    console.debug(`handlePointerUp - _isDragging: ${_isDragging}`)
     if (!_isDragging)
         return
     _isDragging = false
@@ -113,15 +128,28 @@ async function handlePointerUp(evt) {
         `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, dragVelocity: ${_dragVelocity})`)
 }
 
-/** @param evt {PointerEvent} */
-function shouldHandlePointerEvent(evt) {
+/** @param firstTouch {Touch} */
+function computeSheetRelativeTouchPosY(firstTouch) {
+    return firstTouch.clientY - _sheetElm.getBoundingClientRect().y
+}
+
+/** 
+ * @param evt {UIEvent} 
+ * @param dragDeltaY {Number}
+*/
+function shouldHandlePointerEvent(evt, dragDeltaY) {
+    /** @type {HTMLElement} */
     let currentElement = evt.target
     while (currentElement != null) {
-        if (currentElement.hasAttribute('data-disallow-bottomsheet-drag'))
+        const elementStyle = window.getComputedStyle(currentElement)
+        const overflowValue = elementStyle.getPropertyValue('overflow-y')
+        const scrollTop = Math.round(currentElement.scrollTop)
+        // check if the event can be handled by a scrollable element
+        if ((overflowValue == 'scroll' || overflowValue == 'auto')
+            && (dragDeltaY > 0 && scrollTop > 0 || dragDeltaY < 0 && scrollTop < currentElement.scrollHeight - currentElement.clientHeight))
             return false;
-        currentElement = currentElement.parent
+        currentElement = currentElement.parentElement
     }
-
     return true
 }
 
