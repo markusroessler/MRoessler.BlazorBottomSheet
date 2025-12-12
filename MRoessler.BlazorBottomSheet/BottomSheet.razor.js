@@ -224,8 +224,7 @@ function computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos
 }
 
 async function updateExpansion(expansion) {
-    if (getCurrentExpansion() == expansion)
-        return;
+    const expansionChanged = getCurrentExpansion() == expansion
 
     if (expansion == ExpansionClosed) {
         _layoutElm.classList.add(ClosedStyleClass)
@@ -255,7 +254,8 @@ async function updateExpansion(expansion) {
     else
         _layoutElm.classList.remove(MaximizedStyleClass)
 
-    await _razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
+    if (expansionChanged)
+        await _razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
 }
 
 /** @param sectionElm {HTMLElement} */
