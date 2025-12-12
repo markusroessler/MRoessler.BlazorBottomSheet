@@ -26,6 +26,15 @@ let _layoutElm
 /** @type {HTMLElement} */
 let _sheetElm
 
+/** @type {HTMLElement} */
+let _hiddenSheetElm
+
+/** @type {HTMLElement} */
+let _minimizedSectionEndElm
+
+/** @type {HTMLElement} */
+let _normalSectionEndElm
+
 /** @type {DotNetObject} */
 let _razorComp
 
@@ -45,10 +54,14 @@ let _dragStartTime
 let _layoutAttributesObserver = null
 
 /** @param razorComp { DotNetObject } */
-export function init(layoutElm, sheetElm, razorComp) {
+export function init(rootElm, layoutElm, sheetElm, razorComp) {
     _layoutElm = layoutElm
     _sheetElm = sheetElm
     _razorComp = razorComp
+
+    _hiddenSheetElm = rootElm.querySelector("div.hidden-bottom-sheet-layout div.bottom-sheet")
+    _minimizedSectionEndElm = _hiddenSheetElm.querySelector("div[data-section-end='1']")
+    _normalSectionEndElm = _hiddenSheetElm.querySelector("div[data-section-end='2']")
 
     // note: not using pointer events because they get canceled when scrolling an element
     _sheetElm.addEventListener("touchstart", handlePointerDown)
@@ -122,8 +135,7 @@ async function handlePointerUp(evt) {
     const nearestSnapPointAtDragPos = computeNearestSnapPointAtPos()
     const fastDragDirection = computeFastDragDirection()
     const newExpansion = computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos, fastDragDirection)
-    updateExpansion(newExpansion)
-    _sheetElm.style.removeProperty("height")
+    await updateExpansion(newExpansion)
 
     console.info(
         `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, fastDragDirection: ${fastDragDirection})`)
@@ -214,23 +226,31 @@ async function updateExpansion(expansion) {
     if (getCurrentExpansion() == expansion)
         return;
 
-    if (expansion == ExpansionClosed)
+    if (expansion == ExpansionClosed) {
         _layoutElm.classList.add(ClosedStyleClass)
+        _sheetElm.style.height = '0'
+    }
     else
         _layoutElm.classList.remove(ClosedStyleClass)
 
-    if (expansion == ExpansionMinimized)
+    if (expansion == ExpansionMinimized) {
         _layoutElm.classList.add(MinimizedStyleClass)
+        _sheetElm.style.height = `${_minimizedSectionEndElm.getBoundingClientRect().bottom - _hiddenSheetElm.getBoundingClientRect().top}px`
+    }
     else
         _layoutElm.classList.remove(MinimizedStyleClass)
 
-    if (expansion == ExpansionNormal)
+    if (expansion == ExpansionNormal) {
         _layoutElm.classList.add(NormalStyleClass)
+        _sheetElm.style.height = `${_normalSectionEndElm.getBoundingClientRect().bottom - _hiddenSheetElm.getBoundingClientRect().top}px`
+    }
     else
         _layoutElm.classList.remove(NormalStyleClass)
 
-    if (expansion == ExpansionMaximized)
+    if (expansion == ExpansionMaximized) {
         _layoutElm.classList.add(MaximizedStyleClass)
+        _sheetElm.style.height = '100%'
+    }
     else
         _layoutElm.classList.remove(MaximizedStyleClass)
 
@@ -277,10 +297,10 @@ function handleLayoutAttributeChanges(mutations) {
 
 export function dispose() {
     try {
-        _handleElm?.removeEventListener("pointerdown", handlePointerDown)
-        _layoutElm?.removeEventListener("pointerup", handlePointerUp)
-        _layoutElm?.removeEventListener("pointerleave", handlePointerUp)
-        _layoutElm?.removeEventListener("pointermove", handlePointerMove)
+        _handleElm?.removeEventListener("touchstart", handlePointerDown)
+        _layoutElm?.removeEventListener("touchend", handlePointerUp)
+        _layoutElm?.removeEventListener("touchcancel", handlePointerUp)
+        _layoutElm?.removeEventListener("touchmove", handlePointerMove)
 
         if (_layoutAttributesObserver) {
             _layoutAttributesObserver.disconnect()

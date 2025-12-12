@@ -1,13 +1,26 @@
-﻿.bottom-sheet-layout {
-    height: 100%;
+﻿.bottom-sheet-root {
+    position: absolute;
     left: 0;
     right: 0;
-    position: absolute;
+    height: 100%;
+    display: grid;
+}
+
+.bottom-sheet-layout,
+.hidden-bottom-sheet-layout {
+    grid-column: 1;
+    grid-row: 1;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: end;
     z-index: 10000;
     overflow-y: hidden;
+}
+
+.hidden-bottom-sheet-layout {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .bottom-sheet-background {
@@ -26,7 +39,15 @@
     flex-direction: column;
     justify-content: stretch;
     justify-items: stretch;
-    /* transition: transform 0.25s ease-in-out; */
+    transition: height 0.25s;
+}
+
+.bottom-sheet-layout.dragging .bottom-sheet {
+    transition: none;
+}
+
+.hidden-bottom-sheet-layout .bottom-sheet {
+    height: 0;
 }
 
 .bottom-sheet-body {
@@ -54,20 +75,4 @@
 
 .bottom-sheet-layout.closed .bottom-sheet-background {
     display: none;
-}
-
-.bottom-sheet-layout.closed .bottom-sheet {
-    height: 0;
-}
-
-.bottom-sheet-layout.minimized .bottom-sheet {
-    height: 10em;
-}
-
-.bottom-sheet-layout.normal .bottom-sheet {
-    height: auto;
-}
-
-.bottom-sheet-layout.maximized .bottom-sheet {
-    height: 100%;
 }

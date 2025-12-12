@@ -12,10 +12,7 @@ namespace MRoessler.BlazorBottomSheet;
 public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
 {
     [Parameter]
-    public RenderFragment? Header { get; set; }
-
-    [Parameter]
-    public RenderFragment? Body { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [Parameter]
     public RenderFragment? Handle { get; set; }
@@ -49,6 +46,7 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
 
+    private ElementReference _rootElm;
     private ElementReference _layoutElm;
     private ElementReference _sheetElm;
 
@@ -77,7 +75,7 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
         if (firstRender)
         {
             _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor.js");
-            await _jsModule.InvokeVoidAsync("init", _layoutElm, _sheetElm, _thisRef);
+            await _jsModule.InvokeVoidAsync("init", _rootElm, _layoutElm, _sheetElm, _thisRef);
         }
     }
 
@@ -117,5 +115,5 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
 
 public enum BottomSheetExpansion
 {
-    Closed, Minimized, Normal, Maximized
+    Closed = 0, Minimized = 1, Normal = 2, Maximized = 3
 }

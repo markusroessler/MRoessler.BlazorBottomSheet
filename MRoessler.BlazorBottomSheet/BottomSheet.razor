@@ -1,24 +1,37 @@
 ﻿
 <SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
-    <!-- note: class attribute is handled by js code! -->
-    <div @ref="_layoutElm" class="bottom-sheet-layout" 
-        data-allow-minimized-expansion=@AllowMaximizedState data-allow-normal-expansion=@AllowNormalState data-allow-maximized-expansion=@AllowMaximizedState
-        data-visible=@IsVisible data-expansion=@((int)Expansion)
-    >
-        <div class="bottom-sheet-background" @onclick="SetClosedAsync" />
-    
-        <div @ref="_sheetElm" class="bottom-sheet"> <!-- note: style attribute is handled by js code! -->
-            <div class="bottom-sheet-handle">
-                @Handle
+    <div @ref="_rootElm" class="bottom-sheet-root">
+        <!-- note: class attribute is handled by js code! -->
+        <div @ref="_layoutElm" class="bottom-sheet-layout" 
+            data-allow-minimized-expansion=@AllowMaximizedState data-allow-normal-expansion=@AllowNormalState data-allow-maximized-expansion=@AllowMaximizedState
+            data-visible=@IsVisible data-expansion=@((int)Expansion)
+        >
+            <div class="bottom-sheet-background" @onclick="SetClosedAsync" />
+            
+            <div @ref="_sheetElm" class="bottom-sheet"> <!-- note: style attribute is handled by js code! -->
+                <div class="bottom-sheet-handle">
+                    @Handle
+                </div>
+                <div class="bottom-sheet-body">
+                    @ChildContent
+                </div>
             </div>
-            <div class="bottom-sheet-header">
-                @Header
-            </div>
-            <div class="bottom-sheet-body">
-                @Body
+        </div>
+
+        <div class="hidden-bottom-sheet-layout">
+            <div class="bottom-sheet-background" />
+            
+            <div class="bottom-sheet">
+                <div class="bottom-sheet-handle">
+                    @Handle
+                </div>
+                <div class="bottom-sheet-body">
+                    @ChildContent
+                </div>
             </div>
         </div>
     </div>
+
 </SectionContent>
 
 @code {
@@ -26,4 +39,14 @@
         @<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="4" viewBox="0 0 80 4" fill="none">
             <rect x="20" width="40" height="4" rx="2" fill="#C4C4C4"/>
         </svg>; 
+
+    @* private RenderFragment CreateSheetElement(string styleClass, ref ElementReference elementReference) =>
+        @<div @ref="elementReference" class="@styleClass"> <!-- note: style attribute is handled by js code! -->
+            <div class="bottom-sheet-handle">
+                @Handle
+            </div>
+            <div class="bottom-sheet-body">
+                @ChildContent
+            </div>
+        </div>; *@
 }
