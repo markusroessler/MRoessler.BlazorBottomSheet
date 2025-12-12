@@ -54,10 +54,11 @@ let _dragStartTime
 let _layoutAttributesObserver = null
 
 /** @param razorComp { DotNetObject } */
-export function init(rootElm, layoutElm, sheetElm, razorComp) {
-    _layoutElm = layoutElm
-    _sheetElm = sheetElm
+export function init(rootElm, razorComp) {
     _razorComp = razorComp
+
+    _layoutElm = rootElm.querySelector("div.bottom-sheet-layout")
+    _sheetElm = rootElm.querySelector("div.bottom-sheet")
 
     _hiddenSheetElm = rootElm.querySelector("div.hidden-bottom-sheet-layout div.bottom-sheet")
     _minimizedSectionEndElm = _hiddenSheetElm.querySelector("div[data-section-end='1']")
@@ -235,14 +236,14 @@ async function updateExpansion(expansion) {
 
     if (expansion == ExpansionMinimized) {
         _layoutElm.classList.add(MinimizedStyleClass)
-        _sheetElm.style.height = `${_minimizedSectionEndElm.getBoundingClientRect().bottom - _hiddenSheetElm.getBoundingClientRect().top}px`
+        _sheetElm.style.height = `${computeSectionEndHeight(_minimizedSectionEndElm)}px`
     }
     else
         _layoutElm.classList.remove(MinimizedStyleClass)
 
     if (expansion == ExpansionNormal) {
         _layoutElm.classList.add(NormalStyleClass)
-        _sheetElm.style.height = `${_normalSectionEndElm.getBoundingClientRect().bottom - _hiddenSheetElm.getBoundingClientRect().top}px`
+        _sheetElm.style.height = `${computeSectionEndHeight(_normalSectionEndElm)}px`
     }
     else
         _layoutElm.classList.remove(NormalStyleClass)
@@ -255,6 +256,11 @@ async function updateExpansion(expansion) {
         _layoutElm.classList.remove(MaximizedStyleClass)
 
     await _razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
+}
+
+/** @param sectionElm {HTMLElement} */
+function computeSectionEndHeight(sectionElm) {
+    return sectionElm.getBoundingClientRect().bottom - _hiddenSheetElm.getBoundingClientRect().top
 }
 
 async function updateVisible(visible) {
