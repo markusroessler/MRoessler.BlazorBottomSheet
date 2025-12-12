@@ -1,17 +1,16 @@
-﻿
-<SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
+﻿<SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
+    <!-- note: class attribute is handled by js code! -->
     <div @ref="_rootElm" class="bottom-sheet-root">
-        <!-- note: class attribute is handled by js code! -->
+        <div class="bottom-sheet-background" @onclick="SetClosedAsync" />
+
         <div class="bottom-sheet-layout" 
             data-allow-minimized-expansion=@AllowMaximizedState data-allow-normal-expansion=@AllowNormalState data-allow-maximized-expansion=@AllowMaximizedState
             data-visible=@IsVisible data-expansion=@((int)Expansion)
         >
-            <div class="bottom-sheet-background" @onclick="SetClosedAsync" />
             @CreateSheetElement()
         </div>
 
         <div class="hidden-bottom-sheet-layout">
-            <div class="bottom-sheet-background" />
             @CreateSheetElement()
         </div>
     </div>

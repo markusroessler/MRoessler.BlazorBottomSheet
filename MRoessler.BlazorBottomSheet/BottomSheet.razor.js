@@ -21,6 +21,9 @@ const FastDragMinDistance = 150
 const FastDragTimespan = 250
 
 /** @type {HTMLElement} */
+let _rootElm
+
+/** @type {HTMLElement} */
 let _layoutElm
 
 /** @type {HTMLElement} */
@@ -55,6 +58,7 @@ let _layoutAttributesObserver = null
 
 /** @param razorComp { DotNetObject } */
 export function init(rootElm, razorComp) {
+    _rootElm = rootElm
     _razorComp = razorComp
 
     _layoutElm = rootElm.querySelector("div.bottom-sheet-layout")
@@ -108,10 +112,10 @@ function handlePointerMove(evt) {
     if (!shouldHandlePointerEvent(evt, dragDeltaY)) {
         console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
         _dragStartY = touchY
-        _layoutElm.classList.remove(DraggingStyleClass)
+        _rootElm.classList.remove(DraggingStyleClass)
         return
     }
-    _layoutElm.classList.add(DraggingStyleClass)
+    _rootElm.classList.add(DraggingStyleClass)
 
     const currentBounds = _sheetElm.getBoundingClientRect()
     const targetY = firstTouch.clientY
@@ -128,7 +132,7 @@ async function handlePointerUp(evt) {
     if (!_isDragging)
         return
     _isDragging = false
-    _layoutElm.classList.remove(DraggingStyleClass)
+    _rootElm.classList.remove(DraggingStyleClass)
 
     const currentExpansion = getCurrentExpansion()
     const direction = computeDragMoveDirection()
@@ -227,32 +231,32 @@ async function updateExpansion(expansion) {
     const expansionChanged = getCurrentExpansion() == expansion
 
     if (expansion == ExpansionClosed) {
-        _layoutElm.classList.add(ClosedStyleClass)
+        _rootElm.classList.add(ClosedStyleClass)
         _sheetElm.style.height = '0'
     }
     else
-        _layoutElm.classList.remove(ClosedStyleClass)
+        _rootElm.classList.remove(ClosedStyleClass)
 
     if (expansion == ExpansionMinimized) {
-        _layoutElm.classList.add(MinimizedStyleClass)
+        _rootElm.classList.add(MinimizedStyleClass)
         _sheetElm.style.height = `${computeSectionEndHeight(_minimizedSectionEndElm)}px`
     }
     else
-        _layoutElm.classList.remove(MinimizedStyleClass)
+        _rootElm.classList.remove(MinimizedStyleClass)
 
     if (expansion == ExpansionNormal) {
-        _layoutElm.classList.add(NormalStyleClass)
+        _rootElm.classList.add(NormalStyleClass)
         _sheetElm.style.height = `${computeSectionEndHeight(_normalSectionEndElm)}px`
     }
     else
-        _layoutElm.classList.remove(NormalStyleClass)
+        _rootElm.classList.remove(NormalStyleClass)
 
     if (expansion == ExpansionMaximized) {
-        _layoutElm.classList.add(MaximizedStyleClass)
+        _rootElm.classList.add(MaximizedStyleClass)
         _sheetElm.style.height = '100%'
     }
     else
-        _layoutElm.classList.remove(MaximizedStyleClass)
+        _rootElm.classList.remove(MaximizedStyleClass)
 
     if (expansionChanged)
         await _razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
@@ -265,22 +269,22 @@ function computeSectionEndHeight(sectionElm) {
 
 async function updateVisible(visible) {
     if (visible)
-        _layoutElm.classList.remove(HiddenStyleClass)
+        _rootElm.classList.remove(HiddenStyleClass)
     else
-        _layoutElm.classList.add(HiddenStyleClass)
+        _rootElm.classList.add(HiddenStyleClass)
 }
 
 function getCurrentExpansion() {
-    if (_layoutElm.classList.contains(MaximizedStyleClass))
+    if (_rootElm.classList.contains(MaximizedStyleClass))
         return ExpansionMaximized
 
-    if (_layoutElm.classList.contains(NormalStyleClass))
+    if (_rootElm.classList.contains(NormalStyleClass))
         return ExpansionNormal
 
-    if (_layoutElm.classList.contains(MinimizedStyleClass))
+    if (_rootElm.classList.contains(MinimizedStyleClass))
         return ExpansionMinimized
 
-    if (_layoutElm.classList.contains(ClosedStyleClass))
+    if (_rootElm.classList.contains(ClosedStyleClass))
         return ExpansionClosed
 
     return -1

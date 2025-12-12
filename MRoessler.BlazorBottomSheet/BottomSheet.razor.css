@@ -14,7 +14,6 @@
     display: flex;
     flex-direction: column;
     justify-content: end;
-    z-index: 10000;
     overflow-y: hidden;
 }
 
@@ -24,8 +23,16 @@
 }
 
 .bottom-sheet-background {
+    grid-column: 1;
+    grid-row: 1;
     width: 100%;
-    flex-grow: 1;
+    background-color: black;
+    opacity: 0.5;
+    z-index: 10000;
+}
+
+.bottom-sheet-root.closed .bottom-sheet-background {
+    display: none;
 }
 
 .bottom-sheet {
@@ -40,9 +47,10 @@
     justify-content: stretch;
     justify-items: stretch;
     transition: height 0.25s;
+    z-index: 10000;
 }
 
-.bottom-sheet-layout.dragging .bottom-sheet {
+.bottom-sheet-root.dragging .bottom-sheet {
     transition: none;
 }
 
@@ -60,19 +68,15 @@
 }
 
 
-.bottom-sheet-layout.hidden {
+.bottom-sheet-root.hidden .bottom-sheet-layout {
     display: none;
 }
 
-.bottom-sheet-layout.closed {
+.bottom-sheet-root.closed .bottom-sheet-layout {
     pointer-events: none;
 }
 
-.bottom-sheet-layout.dragging * {
+.bottom-sheet-root.dragging .bottom-sheet-layout * {
     user-select: none;
     pointer-events: none;
-}
-
-.bottom-sheet-layout.closed .bottom-sheet-background {
-    display: none;
 }
