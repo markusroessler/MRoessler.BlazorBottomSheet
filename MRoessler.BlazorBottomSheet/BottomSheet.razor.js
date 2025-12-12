@@ -1,3 +1,25 @@
+/** @type {number} */
+const ExpansionClosed = 0
+
+/** @type {number} */
+const ExpansionMinimized = 1
+
+/** @type {number} */
+const ExpansionNormal = 2
+
+/** @type {number} */
+const ExpansionMaximized = 3
+
+const HiddenStyleClass = "hidden"
+const ClosedStyleClass = "closed"
+const MinimizedStyleClass = "minimized"
+const NormalStyleClass = "normal"
+const MaximizedStyleClass = "maximized"
+const DraggingStyleClass = "dragging"
+const MinDragDistance = 50
+const FastDragMinDistance = 150
+const FastDragTimespan = 250
+
 /** @type {HTMLElement} */
 let _layoutElm
 
@@ -17,28 +39,7 @@ let _dragStartHeight
 let _dragStartY
 
 /** @type {number} */
-let _dragVelocity
-
-/** @type {number} */
-const ExpansionClosed = 0
-
-/** @type {number} */
-const ExpansionMinimized = 1
-
-/** @type {number} */
-const ExpansionNormal = 2
-
-/** @type {number} */
-const ExpansionMaximized = 3
-
-const HiddenStyleClass = "hidden"
-const ClosedStyleClass = "closed"
-const MinimizedStyleClass = "minimized"
-const NormalStyleClass = "normal"
-const MaximizedStyleClass = "maximized"
-const DraggingStyleClass = "dragging"
-const MinDragDistance = 10
-const FastDragVelocity = 50
+let _dragStartTime
 
 /** @type {MutastionObserver} */
 let _layoutAttributesObserver = null
@@ -49,11 +50,11 @@ export function init(layoutElm, sheetElm, razorComp) {
     _sheetElm = sheetElm
     _razorComp = razorComp
 
+    // note: not using pointer events because they get canceled when scrolling an element
     _sheetElm.addEventListener("touchstart", handlePointerDown)
     _layoutElm.addEventListener("touchend", handlePointerUp)
     _layoutElm.addEventListener("touchmove", handlePointerMove)
-    // TODO
-    // _layoutElm.addEventListener("pointerleave", handlePointerUp)
+    _layoutElm.addEventListener("touchcancel", handlePointerUp)
 
     // watch attribute changes (eg. style/class) and dispatch a custom event
     _layoutAttributesObserver = new MutationObserver(handleLayoutAttributeChanges)
@@ -74,6 +75,7 @@ function handlePointerDown(evt) {
     if (_isDragging)
         return
     _isDragging = true
+    _dragStartTime = Date.now()
     let firstTouch = evt.touches[0]
     _dragStartHeight = _sheetElm.clientHeight
     _dragStartY = computeSheetRelativeTouchPosY(firstTouch)
@@ -96,8 +98,6 @@ function handlePointerMove(evt) {
         return
     }
     _layoutElm.classList.add(DraggingStyleClass)
-    // TODO
-    // _dragVelocity = evt.movementY
 
     const currentBounds = _sheetElm.getBoundingClientRect()
     const targetY = firstTouch.clientY
@@ -120,12 +120,29 @@ async function handlePointerUp(evt) {
     const direction = computeDragMoveDirection()
     const nearestSnapPointInDirection = computeNearestSnapPointInDirection(direction)
     const nearestSnapPointAtDragPos = computeNearestSnapPointAtPos()
-    const newExpansion = computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos)
+    const fastDragDirection = computeFastDragDirection()
+    const newExpansion = computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos, fastDragDirection)
     updateExpansion(newExpansion)
     _sheetElm.style.removeProperty("height")
 
     console.info(
-        `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, dragVelocity: ${_dragVelocity})`)
+        `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, fastDragDirection: ${fastDragDirection})`)
+}
+
+function computeFastDragDirection() {
+    const dragTimespan = Date.now() - _dragStartTime
+    const dragDistance = _sheetElm.clientHeight - _dragStartHeight
+    if (dragTimespan > FastDragTimespan)
+        return 0
+
+    console.debug(`dragDistance: ${dragDistance}`)
+
+    if (dragDistance > FastDragMinDistance)
+        return 1
+    else if (dragDistance < -FastDragMinDistance)
+        return -1
+
+    return 0
 }
 
 /** @param firstTouch {Touch} */
@@ -179,13 +196,14 @@ function computeNearestSnapPointAtPos() {
         return ExpansionClosed
 }
 
-function computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos) {
-    if (_dragVelocity > FastDragVelocity)
-        return ExpansionClosed
-    else if (_dragVelocity < -FastDragVelocity)
-        return ExpansionMaximized
-
+function computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos, fastDragDirection) {
     const currentExpansion = getCurrentExpansion()
+
+    if (fastDragDirection == -1)
+        return Math.max(ExpansionClosed, currentExpansion - 2)
+    else if (fastDragDirection == 1)
+        return Math.min(ExpansionMaximized, currentExpansion + 2)
+
     if (nearestSnapPointInDirection != currentExpansion)
         return nearestSnapPointInDirection
     else
