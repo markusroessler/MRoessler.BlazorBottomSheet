@@ -1,0 +1,5 @@
+.bottom-sheet-background ,
+.bottom-sheet {
+    /* note: see MainLayout theme */
+    z-index: 1400;
+}

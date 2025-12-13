@@ -28,7 +28,6 @@
     width: 100%;
     background-color: black;
     opacity: 0.5;
-    z-index: 10000;
 }
 
 .bottom-sheet-root.closed .bottom-sheet-background {
@@ -47,7 +46,6 @@
     justify-content: stretch;
     justify-items: stretch;
     transition: height 0.25s;
-    z-index: 10000;
 }
 
 .bottom-sheet-root.dragging .bottom-sheet {
