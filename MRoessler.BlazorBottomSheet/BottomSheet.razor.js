@@ -17,6 +17,7 @@ const NormalStyleClass = "normal"
 const MaximizedStyleClass = "maximized"
 const DraggingStyleClass = "dragging"
 const MinDragDistance = 50
+const NearestSnapPointLeeway = 100
 const FastDragMinDistance = 150
 const FastDragTimespan = 250
 
@@ -202,13 +203,15 @@ function computeNearestSnapPointInDirection(direction) {
 
 function computeNearestSnapPointAtPos() {
     const sheetBounds = _sheetElm.getBoundingClientRect()
-    const currentPos = (sheetBounds.height - sheetBounds.y) / sheetBounds.height
-    if (currentPos > 0.7)
+    if (sheetBounds.y < _layoutElm.getBoundingClientRect().y + NearestSnapPointLeeway)
         return ExpansionMaximized
-    else if (currentPos > 0.3)
+
+    else if (_normalExpansionMarker.getBoundingClientRect().y < sheetBounds.height + NearestSnapPointLeeway)
         return ExpansionNormal
-    else if (currentPos > 0.1)
+
+    else if (_minimizedExpansionMarker.getBoundingClientRect().y < sheetBounds.height + NearestSnapPointLeeway)
         return ExpansionMinimized
+
     else
         return ExpansionClosed
 }
