@@ -7,11 +7,14 @@
             data-allow-minimized-expansion=@AllowMaximizedState data-allow-normal-expansion=@AllowNormalState data-allow-maximized-expansion=@AllowMaximizedState
             data-visible=@IsVisible data-expansion=@((int)Expansion)
         >
-            @CreateSheetElement()
-        </div>
-
-        <div class="hidden-bottom-sheet-layout">
-            @CreateSheetElement()
+            <div class="bottom-sheet"> <!-- note: style attribute is handled by js code! -->
+                <div class="bottom-sheet-handle">
+                    @Handle
+                </div>
+                <div class="bottom-sheet-body">
+                    @ChildContent
+                </div>
+            </div>
         </div>
     </div>
 
@@ -22,14 +25,4 @@
         @<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="4" viewBox="0 0 80 4" fill="none">
             <rect x="20" width="40" height="4" rx="2" fill="#C4C4C4"/>
         </svg>; 
-
-    private RenderFragment CreateSheetElement() =>
-        @<div class="bottom-sheet"> <!-- note: style attribute is handled by js code! -->
-            <div class="bottom-sheet-handle">
-                @Handle
-            </div>
-            <div class="bottom-sheet-body">
-                @ChildContent
-            </div>
-        </div>;
 }

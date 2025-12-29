@@ -45,7 +45,7 @@
     flex-direction: column;
     justify-content: stretch;
     justify-items: stretch;
-    transition: height 0.25s;
+    transition: transform 0.25s;
 }
 
 .bottom-sheet-root.dragging .bottom-sheet {

@@ -9,7 +9,7 @@
     <div style="height: 100%;">
         <div style="height: 100%; display: flex; flex-direction: column;">
             <MudText Typo="Typo.h6" Class="my-5">Header <MudText Typo="Typo.subtitle2" Inline>(visible in all states)</MudText></MudText>
-            <BottomSheetSectionEnd Section="BottomSheetSection.Minimized" />
+            <MinimizedExpansionMarker />
 
             <MudText Typo="Typo.h6">Body <MudText Typo="Typo.subtitle2" Inline>(visible when expansion >= Normal)</MudText></MudText>
 
@@ -22,15 +22,16 @@
             </MudSelect>
 
             <MudText Typo="Typo.h6" Class="mt-5">Scrollable area</MudText>
+            <NormalExpansionMarker style="transform: translateY(10em);" />
+
             <div style="overflow-y: scroll; min-height: 20em;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at ipsum vel nisi viverra tristique. Fusce non imperdiet ipsum, vitae mollis tortor. Proin vulputate odio eget sapien scelerisque, sit amet dapibus mauris pulvinar. Phasellus quis leo vitae purus pellentesque commodo nec quis justo. Nullam sagittis pulvinar ligula, eu viverra diam iaculis eu. Praesent congue nisi a aliquam volutpat. Morbi suscipit pulvinar nulla, id consequat quam porta vitae. Sed sed ipsum in sapien luctus euismod. Donec eu risus ut libero lobortis interdum.
-                Praesent ac leo congue, consectetur est ut, bibendum metus. Curabitur sed leo tincidunt, sollicitudin felis quis, mollis risus. Ut iaculis lectus ac neque ornare condimentum. Praesent posuere sem sit amet luctus tempor. Nulla a magna id augue bibendum tempus et nec dolor. Etiam et libero dolor. Cras lacinia nisi ut lacus venenatis ullamcorper. Sed varius posuere cursus. Donec convallis nulla vitae magna lobortis laoreet. Praesent pulvinar gravida maximus. 
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at ipsum vel nisi viverra tristique. Fusce non imperdiet ipsum, vitae mollis tortor. Proin vulputate odio eget sapien scelerisque, sit amet dapibus mauris pulvinar. Phasellus quis leo vitae purus pellentesque commodo nec quis justo. Nullam sagittis pulvinar ligula, eu viverra diam iaculis eu. Praesent congue nisi a aliquam volutpat. Morbi suscipit pulvinar nulla, id consequat quam porta vitae. Sed sed ipsum in sapien luctus euismod. Donec eu risus ut libero lobortis interdum.
-                Praesent ac leo congue, consectetur est ut, bibendum metus. Curabitur sed leo tincidunt, sollicitudin felis quis, mollis risus. Ut iaculis lectus ac neque ornare condimentum. Praesent posuere sem sit amet luctus tempor. Nulla a magna id augue bibendum tempus et nec dolor. Etiam et libero dolor. Cras lacinia nisi ut lacus venenatis ullamcorper. Sed varius posuere cursus. Donec convallis nulla vitae magna lobortis laoreet. Praesent pulvinar gravida maximus. 
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at ipsum vel nisi viverra tristique. Fusce non imperdiet ipsum, vitae mollis tortor. Proin vulputate odio eget sapien scelerisque, sit amet dapibus mauris pulvinar. Phasellus quis leo vitae purus pellentesque commodo nec quis justo. Nullam sagittis pulvinar ligula, eu viverra diam iaculis eu. Praesent congue nisi a aliquam volutpat. Morbi suscipit pulvinar nulla, id consequat quam porta vitae. Sed sed ipsum in sapien luctus euismod. Donec eu risus ut libero lobortis interdum.
-                Praesent ac leo congue, consectetur est ut, bibendum metus. Curabitur sed leo tincidunt, sollicitudin felis quis, mollis risus. Ut iaculis lectus ac neque ornare condimentum. Praesent posuere sem sit amet luctus tempor. Nulla a magna id augue bibendum tempus et nec dolor. Etiam et libero dolor. Cras lacinia nisi ut lacus venenatis ullamcorper. Sed varius posuere cursus. Donec convallis nulla vitae magna lobortis laoreet. Praesent pulvinar gravida maximus. 
+                @for(int i = 1; i <= 3; i++) {
+                    <text>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at ipsum vel nisi viverra tristique. Fusce non imperdiet ipsum, vitae mollis tortor. Proin vulputate odio eget sapien scelerisque, sit amet dapibus mauris pulvinar. Phasellus quis leo vitae purus pellentesque commodo nec quis justo. Nullam sagittis pulvinar ligula, eu viverra diam iaculis eu. Praesent congue nisi a aliquam volutpat. Morbi suscipit pulvinar nulla, id consequat quam porta vitae. Sed sed ipsum in sapien luctus euismod. Donec eu risus ut libero lobortis interdum.
+                        Praesent ac leo congue, consectetur est ut, bibendum metus. Curabitur sed leo tincidunt, sollicitudin felis quis, mollis risus. Ut iaculis lectus ac neque ornare condimentum. Praesent posuere sem sit amet luctus tempor. Nulla a magna id augue bibendum tempus et nec dolor. Etiam et libero dolor. Cras lacinia nisi ut lacus venenatis ullamcorper. Sed varius posuere cursus. Donec convallis nulla vitae magna lobortis laoreet. Praesent pulvinar gravida maximus.
+                    </text>
+                }
             </div>
-            <BottomSheetSectionEnd Section="BottomSheetSection.Normal" />
 
             <MudText Typo="Typo.h6" Class="mt-5">Footer <MudText Typo="Typo.subtitle2" Inline>(only visible when Expansion = Maximized)</MudText></MudText>
         </div>

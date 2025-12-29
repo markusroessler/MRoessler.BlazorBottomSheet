@@ -30,13 +30,13 @@ let _layoutElm
 let _sheetElm
 
 /** @type {HTMLElement} */
-let _hiddenSheetElm
+let _handleElm
 
 /** @type {HTMLElement} */
-let _minimizedSectionEndElm
+let _minimizedExpansionMarker
 
 /** @type {HTMLElement} */
-let _normalSectionEndElm
+let _normalExpansionMarker
 
 /** @type {DotNetObject} */
 let _razorComp
@@ -45,10 +45,13 @@ let _razorComp
 let _isDragging
 
 /** @type {number} */
-let _dragStartHeight
+let _dragStartTouchY
 
 /** @type {number} */
-let _dragStartY
+let _dragStartSheetY
+
+/** @type {number} */
+let _dragAnchorY
 
 /** @type {number} */
 let _dragStartTime
@@ -62,11 +65,11 @@ export function init(rootElm, razorComp) {
     _razorComp = razorComp
 
     _layoutElm = rootElm.querySelector("div.bottom-sheet-layout")
-    _sheetElm = rootElm.querySelector("div.bottom-sheet")
+    _sheetElm = _layoutElm.querySelector("div.bottom-sheet")
+    _handleElm = _sheetElm.querySelector("div.bottom-sheet-handle")
 
-    _hiddenSheetElm = rootElm.querySelector("div.hidden-bottom-sheet-layout div.bottom-sheet")
-    _minimizedSectionEndElm = _hiddenSheetElm.querySelector("div[data-section-end='1']")
-    _normalSectionEndElm = _hiddenSheetElm.querySelector("div[data-section-end='2']")
+    _minimizedExpansionMarker = _sheetElm.querySelector("div[data-expansion-marker='1']")
+    _normalExpansionMarker = _sheetElm.querySelector("div[data-expansion-marker='2']")
 
     // note: not using pointer events because they get canceled when scrolling an element
     _sheetElm.addEventListener("touchstart", handlePointerDown)
@@ -95,8 +98,9 @@ function handlePointerDown(evt) {
     _isDragging = true
     _dragStartTime = Date.now()
     let firstTouch = evt.touches[0]
-    _dragStartHeight = _sheetElm.clientHeight
-    _dragStartY = computeSheetRelativeTouchPosY(firstTouch)
+    _dragStartTouchY = firstTouch.clientY
+    _dragAnchorY = computeDragAnchor(firstTouch)
+    _dragStartSheetY = _sheetElm.getBoundingClientRect().y
 }
 
 /** @param evt {TouchEvent} */
@@ -105,29 +109,23 @@ function handlePointerMove(evt) {
     if (!_isDragging)
         return
 
-    let firstTouch = evt.touches[0]
-    let touchY = computeSheetRelativeTouchPosY(firstTouch)
-    let dragDeltaY = touchY - _dragStartY
+    const firstTouch = evt.touches[0]
+    const dragDeltaY = firstTouch.clientY - _dragStartTouchY
 
     if (!shouldHandlePointerEvent(evt, dragDeltaY)) {
         console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
-        _dragStartY = touchY
+        _dragStartTouchY = firstTouch.clientY
+        _dragAnchorY = computeDragAnchor(firstTouch)
         _rootElm.classList.remove(DraggingStyleClass)
         return
     }
     _rootElm.classList.add(DraggingStyleClass)
 
-    const currentBounds = _sheetElm.getBoundingClientRect()
-    const targetY = firstTouch.clientY
-    const distanceToTargetY = currentBounds.y - targetY
-    const newHeight = currentBounds.height + distanceToTargetY + _dragStartY
-
-    _sheetElm.style.height = `${newHeight}px`
-    console.debug(`targetY: ${targetY}, newHeight: ${newHeight}`);
+    _sheetElm.style.transform = `translateY(${firstTouch.clientY - _dragAnchorY}px)`
+    // console.debug(`touchY: ${touchY}`);
 }
 
-/** @param evt {TouchEvent} */
-async function handlePointerUp(evt) {
+async function handlePointerUp() {
     console.debug(`handlePointerUp - _isDragging: ${_isDragging}`)
     if (!_isDragging)
         return
@@ -148,22 +146,22 @@ async function handlePointerUp(evt) {
 
 function computeFastDragDirection() {
     const dragTimespan = Date.now() - _dragStartTime
-    const dragDistance = _sheetElm.clientHeight - _dragStartHeight
     if (dragTimespan > FastDragTimespan)
         return 0
 
+    const dragDistance = _sheetElm.getBoundingClientRect().y - _dragStartSheetY
     console.debug(`dragDistance: ${dragDistance}`)
 
     if (dragDistance > FastDragMinDistance)
-        return 1
-    else if (dragDistance < -FastDragMinDistance)
         return -1
+    else if (dragDistance < -FastDragMinDistance)
+        return 1
 
     return 0
 }
 
 /** @param firstTouch {Touch} */
-function computeSheetRelativeTouchPosY(firstTouch) {
+function computeDragAnchor(firstTouch) {
     return firstTouch.clientY - _sheetElm.getBoundingClientRect().y
 }
 
@@ -188,10 +186,11 @@ function shouldHandlePointerEvent(evt, dragDeltaY) {
 }
 
 function computeDragMoveDirection() {
-    if (_sheetElm.clientHeight > _dragStartHeight + MinDragDistance)
-        return 1
-    else if (_sheetElm.clientHeight < _dragStartHeight - MinDragDistance)
+    const sheetPosY = _sheetElm.getBoundingClientRect().y
+    if (sheetPosY > _dragStartSheetY + MinDragDistance)
         return -1
+    else if (sheetPosY < _dragStartSheetY - MinDragDistance)
+        return 1
     else
         return 0
 }
@@ -202,7 +201,8 @@ function computeNearestSnapPointInDirection(direction) {
 }
 
 function computeNearestSnapPointAtPos() {
-    const currentPos = _sheetElm.clientHeight / _layoutElm.clientHeight
+    const sheetBounds = _sheetElm.getBoundingClientRect()
+    const currentPos = (sheetBounds.height - sheetBounds.y) / sheetBounds.height
     if (currentPos > 0.7)
         return ExpansionMaximized
     else if (currentPos > 0.3)
@@ -221,10 +221,10 @@ function computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos
     else if (fastDragDirection == 1)
         return Math.min(ExpansionMaximized, currentExpansion + 2)
 
-    if (nearestSnapPointInDirection != currentExpansion)
-        return nearestSnapPointInDirection
-    else
+    if (nearestSnapPointAtDragPos != currentExpansion)
         return nearestSnapPointAtDragPos
+    else
+        return nearestSnapPointInDirection
 }
 
 async function updateExpansion(expansion) {
@@ -232,28 +232,28 @@ async function updateExpansion(expansion) {
 
     if (expansion == ExpansionClosed) {
         _rootElm.classList.add(ClosedStyleClass)
-        _sheetElm.style.height = '0'
+        _sheetElm.style.transform = 'translateY(100%)'
     }
     else
         _rootElm.classList.remove(ClosedStyleClass)
 
     if (expansion == ExpansionMinimized) {
         _rootElm.classList.add(MinimizedStyleClass)
-        _sheetElm.style.height = `${computeSectionEndHeight(_minimizedSectionEndElm)}px`
+        _sheetElm.style.transform = `translateY(${computeSheetTranslateY(_minimizedExpansionMarker)}px)`
     }
     else
         _rootElm.classList.remove(MinimizedStyleClass)
 
     if (expansion == ExpansionNormal) {
         _rootElm.classList.add(NormalStyleClass)
-        _sheetElm.style.height = `${computeSectionEndHeight(_normalSectionEndElm)}px`
+        _sheetElm.style.transform = `translateY(${computeSheetTranslateY(_normalExpansionMarker)}px)`
     }
     else
         _rootElm.classList.remove(NormalStyleClass)
 
     if (expansion == ExpansionMaximized) {
         _rootElm.classList.add(MaximizedStyleClass)
-        _sheetElm.style.height = '100%'
+        _sheetElm.style.removeProperty('transform')
     }
     else
         _rootElm.classList.remove(MaximizedStyleClass)
@@ -262,9 +262,10 @@ async function updateExpansion(expansion) {
         await _razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
 }
 
-/** @param sectionElm {HTMLElement} */
-function computeSectionEndHeight(sectionElm) {
-    return sectionElm.getBoundingClientRect().bottom - _hiddenSheetElm.getBoundingClientRect().top
+/** @param expansionMarker {HTMLElement} */
+function computeSheetTranslateY(expansionMarker) {
+    const sheetBounds = _sheetElm.getBoundingClientRect()
+    return sheetBounds.height - (expansionMarker.getBoundingClientRect().top - sheetBounds.top)
 }
 
 async function updateVisible(visible) {
@@ -307,7 +308,7 @@ function handleLayoutAttributeChanges(mutations) {
 
 export function dispose() {
     try {
-        _handleElm?.removeEventListener("touchstart", handlePointerDown)
+        _sheetElm?.removeEventListener("touchstart", handlePointerDown)
         _layoutElm?.removeEventListener("touchend", handlePointerUp)
         _layoutElm?.removeEventListener("touchcancel", handlePointerUp)
         _layoutElm?.removeEventListener("touchmove", handlePointerMove)
