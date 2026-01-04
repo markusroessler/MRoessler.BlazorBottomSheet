@@ -77,7 +77,6 @@
 ::deep .bottom-sheet-layout.dragging * {
     user-select: none;
     pointer-events: none;
-    touch-action: none;
 }
 
 ::deep .bottom-sheet-layout.dragging *[style*="overflow-y: scroll"], 

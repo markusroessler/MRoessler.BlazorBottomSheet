@@ -60,11 +60,6 @@ let _dragStartTime
 /** @type {MutastionObserver} */
 let _layoutAttributesObserver = null
 
-/** @type {HTMLElement} */
-let _currentScrollable
-/** @type {number} */
-let _lockedScrollTop = -1
-
 /** @param razorComp { DotNetObject } */
 export function init(rootElm, razorComp) {
     _rootElm = rootElm
@@ -79,7 +74,6 @@ export function init(rootElm, razorComp) {
 
     // note: not using pointer events because they get canceled when scrolling an element
     _sheetElm.addEventListener("touchstart", handlePointerDown, { passive: true })
-    _sheetElm.addEventListener("scroll", handleSheetScroll, { passive: true, capture: true })
     _layoutElm.addEventListener("touchend", handlePointerUp, { passive: true })
     _layoutElm.addEventListener("touchmove", handlePointerMove, { passive: true })
     _layoutElm.addEventListener("touchcancel", handlePointerUp, { passive: true })
@@ -109,7 +103,6 @@ function handlePointerDown(evt) {
     _dragStartTouchY = firstTouch.clientY
     _dragAnchorY = computeDragAnchor(firstTouch)
     _dragStartSheetY = _sheetElm.getBoundingClientRect().y
-    _currentScrollable = findScrollable(evt)
 }
 
 /** @param evt {TouchEvent} */
@@ -121,10 +114,7 @@ function handlePointerMove(evt) {
     const firstTouch = evt.touches[0]
     const dragDeltaY = firstTouch.clientY - _dragStartTouchY
 
-    if (shouldDragSheet(dragDeltaY)) {
-        if (_currentScrollable && _lockedScrollTop == -1)
-            _lockedScrollTop = _currentScrollable.scrollTop
-
+    if (shouldDragSheet(evt, dragDeltaY)) {
         _rootElm.classList.add(DraggingStyleClass)
         _layoutElm.classList.add(DraggingStyleClass)
 
@@ -142,7 +132,6 @@ function handlePointerMove(evt) {
         _dragAnchorY = computeDragAnchor(firstTouch)
         _rootElm.classList.remove(DraggingStyleClass)
         _layoutElm.classList.remove(DraggingStyleClass)
-        _lockedScrollTop = -1
     }
 }
 
@@ -154,8 +143,6 @@ async function handlePointerUp() {
     _rootElm.classList.remove(DraggingStyleClass)
     _layoutElm.classList.remove(DraggingStyleClass)
 
-    setTimeout(() => _lockedScrollTop = -1, 500)
-
     const currentExpansion = getCurrentExpansion()
     const direction = computeDragMoveDirection()
     const nearestSnapPointInDirection = computeNearestSnapPointInDirection(direction)
@@ -166,11 +153,6 @@ async function handlePointerUp() {
 
     console.info(
         `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, fastDragDirection: ${fastDragDirection})`)
-}
-
-function handleSheetScroll() {
-    // if (_lockedScrollTop > -1)
-    //     _currentScrollable.scrollTop = _lockedScrollTop
 }
 
 function computeFastDragDirection() {
@@ -195,14 +177,16 @@ function computeDragAnchor(firstTouch) {
 }
 
 /** 
+ * @param evt {UIEvent} 
  * @param dragDeltaY {Number}
  * @returns {boolean}
  */
-function shouldDragSheet(dragDeltaY) {
-    if (!_currentScrollable)
+function shouldDragSheet(evt, dragDeltaY) {
+    const scrollable = findScrollable(evt)
+    if (!scrollable)
         return true
 
-    const scrollTop = Math.round(_currentScrollable.scrollTop)
+    const scrollTop = Math.round(scrollable.scrollTop)
     return !(dragDeltaY > 0 && scrollTop > 0 || dragDeltaY < 0 && !_sheetElm.style.transform)
 }
 
