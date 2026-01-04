@@ -60,6 +60,11 @@ let _dragStartTime
 /** @type {MutastionObserver} */
 let _layoutAttributesObserver = null
 
+/** @type {HTMLElement} */
+let _currentScrollable
+/** @type {number} */
+let _lockedScrollTop = -1
+
 /** @param razorComp { DotNetObject } */
 export function init(rootElm, razorComp) {
     _rootElm = rootElm
@@ -73,10 +78,11 @@ export function init(rootElm, razorComp) {
     _normalExpansionMarker = _sheetElm.querySelector("div[data-expansion-marker='2']")
 
     // note: not using pointer events because they get canceled when scrolling an element
-    _sheetElm.addEventListener("touchstart", handlePointerDown)
-    _layoutElm.addEventListener("touchend", handlePointerUp)
-    _layoutElm.addEventListener("touchmove", handlePointerMove)
-    _layoutElm.addEventListener("touchcancel", handlePointerUp)
+    _sheetElm.addEventListener("touchstart", handlePointerDown, { passive: true })
+    _sheetElm.addEventListener("scroll", handleSheetScroll, { passive: true, capture: true })
+    _layoutElm.addEventListener("touchend", handlePointerUp, { passive: true })
+    _layoutElm.addEventListener("touchmove", handlePointerMove, { passive: true })
+    _layoutElm.addEventListener("touchcancel", handlePointerUp, { passive: true })
 
     // watch attribute changes (eg. style/class) and dispatch a custom event
     _layoutAttributesObserver = new MutationObserver(handleLayoutAttributeChanges)
@@ -96,12 +102,14 @@ function handlePointerDown(evt) {
     console.debug(`handlePointerDown - _isDragging: ${_isDragging}`)
     if (_isDragging)
         return
+    let firstTouch = evt.touches[0]
+
     _isDragging = true
     _dragStartTime = Date.now()
-    let firstTouch = evt.touches[0]
     _dragStartTouchY = firstTouch.clientY
     _dragAnchorY = computeDragAnchor(firstTouch)
     _dragStartSheetY = _sheetElm.getBoundingClientRect().y
+    _currentScrollable = findScrollable(evt)
 }
 
 /** @param evt {TouchEvent} */
@@ -113,17 +121,29 @@ function handlePointerMove(evt) {
     const firstTouch = evt.touches[0]
     const dragDeltaY = firstTouch.clientY - _dragStartTouchY
 
-    if (!shouldHandlePointerEvent(evt, dragDeltaY)) {
+    if (shouldDragSheet(dragDeltaY)) {
+        if (_currentScrollable && _lockedScrollTop == -1)
+            _lockedScrollTop = _currentScrollable.scrollTop
+
+        _rootElm.classList.add(DraggingStyleClass)
+        _layoutElm.classList.add(DraggingStyleClass)
+
+        const translate = firstTouch.clientY - _dragAnchorY
+        if (translate > 0)
+            _sheetElm.style.transform = `translateY(${translate}px)`
+        else {
+            _sheetElm.style.removeProperty('transform')
+            _rootElm.classList.remove(DraggingStyleClass)
+            _layoutElm.classList.remove(DraggingStyleClass)
+        }
+    } else {
         console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
         _dragStartTouchY = firstTouch.clientY
         _dragAnchorY = computeDragAnchor(firstTouch)
         _rootElm.classList.remove(DraggingStyleClass)
-        return
+        _layoutElm.classList.remove(DraggingStyleClass)
+        _lockedScrollTop = -1
     }
-    _rootElm.classList.add(DraggingStyleClass)
-
-    _sheetElm.style.transform = `translateY(${firstTouch.clientY - _dragAnchorY}px)`
-    // console.debug(`touchY: ${touchY}`);
 }
 
 async function handlePointerUp() {
@@ -132,6 +152,9 @@ async function handlePointerUp() {
         return
     _isDragging = false
     _rootElm.classList.remove(DraggingStyleClass)
+    _layoutElm.classList.remove(DraggingStyleClass)
+
+    setTimeout(() => _lockedScrollTop = -1, 500)
 
     const currentExpansion = getCurrentExpansion()
     const direction = computeDragMoveDirection()
@@ -143,6 +166,11 @@ async function handlePointerUp() {
 
     console.info(
         `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, fastDragDirection: ${fastDragDirection})`)
+}
+
+function handleSheetScroll() {
+    // if (_lockedScrollTop > -1)
+    //     _currentScrollable.scrollTop = _lockedScrollTop
 }
 
 function computeFastDragDirection() {
@@ -167,23 +195,35 @@ function computeDragAnchor(firstTouch) {
 }
 
 /** 
- * @param evt {UIEvent} 
  * @param dragDeltaY {Number}
-*/
-function shouldHandlePointerEvent(evt, dragDeltaY) {
+ * @returns {boolean}
+ */
+function shouldDragSheet(dragDeltaY) {
+    if (!_currentScrollable)
+        return true
+
+    const scrollTop = Math.round(_currentScrollable.scrollTop)
+    return !(dragDeltaY > 0 && scrollTop > 0 || dragDeltaY < 0 && !_sheetElm.style.transform)
+}
+
+/** 
+ * @param evt {UIEvent} 
+ * @returns {HTMLElement}
+ */
+function findScrollable(evt) {
     /** @type {HTMLElement} */
     let currentElement = evt.target
     while (currentElement != null) {
         const elementStyle = window.getComputedStyle(currentElement)
         const overflowValue = elementStyle.getPropertyValue('overflow-y')
-        const scrollTop = Math.round(currentElement.scrollTop)
-        // check if the event can be handled by a scrollable element
-        if ((overflowValue == 'scroll' || overflowValue == 'auto')
-            && (dragDeltaY > 0 && scrollTop > 0 || dragDeltaY < 0 && scrollTop < currentElement.scrollHeight - currentElement.clientHeight))
-            return false;
+
+        if (overflowValue == 'scroll' || overflowValue == 'auto')
+            return currentElement;
+
         currentElement = currentElement.parentElement
     }
-    return true
+
+    return null
 }
 
 function computeDragMoveDirection() {

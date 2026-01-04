@@ -74,7 +74,14 @@
     pointer-events: none;
 }
 
-.bottom-sheet-root.dragging .bottom-sheet-layout * {
+::deep .bottom-sheet-layout.dragging * {
     user-select: none;
     pointer-events: none;
+    touch-action: none;
+}
+
+::deep .bottom-sheet-layout.dragging *[style*="overflow-y: scroll"], 
+::deep .bottom-sheet-layout.dragging *[style*="overflow-y: auto"]
+{
+    overflow-y: hidden !important;
 }
