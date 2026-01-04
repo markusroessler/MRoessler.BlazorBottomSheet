@@ -3,6 +3,7 @@
     <div @ref="_rootElm" class="bottom-sheet-root">
         <div class="bottom-sheet-background" @onclick="SetClosedAsync" />
 
+        <!-- TODO remove layout? -->
         <div class="bottom-sheet-layout" 
             data-allow-minimized-expansion=@AllowMaximizedState data-allow-normal-expansion=@AllowNormalState data-allow-maximized-expansion=@AllowMaximizedState
             data-visible=@IsVisible data-expansion=@((int)Expansion)
