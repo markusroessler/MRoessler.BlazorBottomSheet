@@ -22,9 +22,6 @@ const FastDragMinDistance = 150
 const FastDragTimespan = 250
 
 /** @type {HTMLElement} */
-let _rootElm
-
-/** @type {HTMLElement} */
 let _layoutElm
 
 /** @type {HTMLElement} */
@@ -61,11 +58,10 @@ let _dragStartTime
 let _layoutAttributesObserver = null
 
 /** @param razorComp { DotNetObject } */
-export function init(rootElm, razorComp) {
-    _rootElm = rootElm
+export function init(layoutElm, razorComp) {
+    _layoutElm = layoutElm
     _razorComp = razorComp
 
-    _layoutElm = rootElm.querySelector("div.bottom-sheet-layout")
     _sheetElm = _layoutElm.querySelector("div.bottom-sheet")
     _handleElm = _sheetElm.querySelector("div.bottom-sheet-handle")
 
@@ -115,7 +111,6 @@ function handlePointerMove(evt) {
     const dragDeltaY = firstTouch.clientY - _dragStartTouchY
 
     if (shouldDragSheet(evt, dragDeltaY)) {
-        _rootElm.classList.add(DraggingStyleClass)
         _layoutElm.classList.add(DraggingStyleClass)
 
         const translate = firstTouch.clientY - _dragAnchorY
@@ -123,14 +118,12 @@ function handlePointerMove(evt) {
             _sheetElm.style.transform = `translateY(${translate}px)`
         else {
             _sheetElm.style.removeProperty('transform')
-            _rootElm.classList.remove(DraggingStyleClass)
             _layoutElm.classList.remove(DraggingStyleClass)
         }
     } else {
         console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
         _dragStartTouchY = firstTouch.clientY
         _dragAnchorY = computeDragAnchor(firstTouch)
-        _rootElm.classList.remove(DraggingStyleClass)
         _layoutElm.classList.remove(DraggingStyleClass)
     }
 }
@@ -140,7 +133,6 @@ async function handlePointerUp() {
     if (!_isDragging)
         return
     _isDragging = false
-    _rootElm.classList.remove(DraggingStyleClass)
     _layoutElm.classList.remove(DraggingStyleClass)
 
     const currentExpansion = getCurrentExpansion()
@@ -258,32 +250,32 @@ async function updateExpansion(expansion) {
     const expansionChanged = getCurrentExpansion() == expansion
 
     if (expansion == ExpansionClosed) {
-        _rootElm.classList.add(ClosedStyleClass)
+        _layoutElm.classList.add(ClosedStyleClass)
         _sheetElm.style.transform = 'translateY(100%)'
     }
     else
-        _rootElm.classList.remove(ClosedStyleClass)
+        _layoutElm.classList.remove(ClosedStyleClass)
 
     if (expansion == ExpansionMinimized) {
-        _rootElm.classList.add(MinimizedStyleClass)
+        _layoutElm.classList.add(MinimizedStyleClass)
         _sheetElm.style.transform = `translateY(${computeSheetTranslateY(_minimizedExpansionMarker)}px)`
     }
     else
-        _rootElm.classList.remove(MinimizedStyleClass)
+        _layoutElm.classList.remove(MinimizedStyleClass)
 
     if (expansion == ExpansionNormal) {
-        _rootElm.classList.add(NormalStyleClass)
+        _layoutElm.classList.add(NormalStyleClass)
         _sheetElm.style.transform = `translateY(${computeSheetTranslateY(_normalExpansionMarker)}px)`
     }
     else
-        _rootElm.classList.remove(NormalStyleClass)
+        _layoutElm.classList.remove(NormalStyleClass)
 
     if (expansion == ExpansionMaximized) {
-        _rootElm.classList.add(MaximizedStyleClass)
+        _layoutElm.classList.add(MaximizedStyleClass)
         _sheetElm.style.removeProperty('transform')
     }
     else
-        _rootElm.classList.remove(MaximizedStyleClass)
+        _layoutElm.classList.remove(MaximizedStyleClass)
 
     if (expansionChanged)
         await _razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
@@ -292,27 +284,27 @@ async function updateExpansion(expansion) {
 /** @param expansionMarker {HTMLElement} */
 function computeSheetTranslateY(expansionMarker) {
     const sheetBounds = _sheetElm.getBoundingClientRect()
-    return sheetBounds.height - (expansionMarker.getBoundingClientRect().top - sheetBounds.top)
+    return sheetBounds.bottom - expansionMarker.getBoundingClientRect().top
 }
 
 async function updateVisible(visible) {
     if (visible)
-        _rootElm.classList.remove(HiddenStyleClass)
+        _layoutElm.classList.remove(HiddenStyleClass)
     else
-        _rootElm.classList.add(HiddenStyleClass)
+        _layoutElm.classList.add(HiddenStyleClass)
 }
 
 function getCurrentExpansion() {
-    if (_rootElm.classList.contains(MaximizedStyleClass))
+    if (_layoutElm.classList.contains(MaximizedStyleClass))
         return ExpansionMaximized
 
-    if (_rootElm.classList.contains(NormalStyleClass))
+    if (_layoutElm.classList.contains(NormalStyleClass))
         return ExpansionNormal
 
-    if (_rootElm.classList.contains(MinimizedStyleClass))
+    if (_layoutElm.classList.contains(MinimizedStyleClass))
         return ExpansionMinimized
 
-    if (_rootElm.classList.contains(ClosedStyleClass))
+    if (_layoutElm.classList.contains(ClosedStyleClass))
         return ExpansionClosed
 
     return -1
