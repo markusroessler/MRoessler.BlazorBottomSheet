@@ -138,7 +138,7 @@ function handlePointerMove(evt) {
         const translate = firstTouch.clientY - _dragAnchorY
         if (translate < _dragStartMinTranslateY) {
             _sheetElm.style.transform = `translateY(${_dragStartMinTranslateY}px)`
-
+            _layoutElm.classList.remove(DraggingStyleClass) // enable scroll
         } else if (translate > _dragStartMaxTranslateY) {
             _sheetElm.style.transform = `translateY(${_dragStartMaxTranslateY}px)`
 
@@ -147,7 +147,7 @@ function handlePointerMove(evt) {
 
         } else {
             _sheetElm.style.removeProperty('transform')
-            _layoutElm.classList.remove(DraggingStyleClass)
+            _layoutElm.classList.remove(DraggingStyleClass) // enable scroll
         }
 
     } else {
