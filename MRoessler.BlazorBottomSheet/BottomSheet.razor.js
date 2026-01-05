@@ -80,10 +80,15 @@ export function init(layoutElm, razorComp) {
     _normalExpansionMarker = _sheetElm.querySelector("div[data-expansion-marker='2']")
 
     // note: not using pointer events because they get canceled when scrolling an element
-    _sheetElm.addEventListener("touchstart", handlePointerDown, { passive: true })
+    _sheetElm.addEventListener("touchstart", handleTouchStart, { passive: true })
+    _layoutElm.addEventListener("touchmove", handleTouchMove, { passive: true })
     _layoutElm.addEventListener("touchend", handlePointerUp, { passive: true })
-    _layoutElm.addEventListener("touchmove", handlePointerMove, { passive: true })
     _layoutElm.addEventListener("touchcancel", handlePointerUp, { passive: true })
+
+    _sheetElm.addEventListener("mousedown", handleMouseDown, { passive: true })
+    _layoutElm.addEventListener("mousemove", handleMouseMove, { passive: true })
+    _layoutElm.addEventListener("mouseup", handlePointerUp, { passive: true })
+    _layoutElm.addEventListener("mouseleave", handlePointerUp, { passive: true })
 
     // watch attribute changes (eg. style/class) and dispatch a custom event
     _layoutAttributesObserver = new MutationObserver(handleLayoutAttributeChanges)
@@ -102,15 +107,25 @@ export function init(layoutElm, razorComp) {
 }
 
 /** @param evt {TouchEvent} */
-function handlePointerDown(evt) {
+function handleTouchStart(evt) {
+    let firstTouch = evt.touches[0]
+    handlePointerDown(firstTouch.clientY)
+}
+
+/** @param evt {MouseEvent} */
+function handleMouseDown(evt) {
+    handlePointerDown(evt.clientY)
+}
+
+/** @param clientY {number} */
+function handlePointerDown(clientY) {
     console.debug(`handlePointerDown - _isDragging: ${_isDragging}`)
     if (_isDragging)
         return
-    let firstTouch = evt.touches[0]
 
     _isDragging = true
-    _dragStartTouchY = firstTouch.clientY
-    _dragAnchorY = computeDragAnchor(firstTouch)
+    _dragStartTouchY = clientY
+    _dragAnchorY = computeDragAnchor(clientY)
     _dragStartSheetY = _sheetElm.getBoundingClientRect().y
 
     const allowExpansions = getAllowedExpansions()
@@ -119,23 +134,36 @@ function handlePointerDown(evt) {
 }
 
 /** @param evt {TouchEvent} */
-function handlePointerMove(evt) {
+function handleTouchMove(evt) {
+    const firstTouch = evt.touches[0]
+    handlePointerMove(evt, firstTouch.clientY)
+}
+
+/** @param evt {MouseEvent} */
+function handleMouseMove(evt) {
+    handlePointerMove(evt, evt.clientY)
+}
+
+/** 
+ * @param event {UIEvent}
+ * @param clientY {number} 
+ **/
+function handlePointerMove(event, clientY) {
     // console.debug(`handlePointerMove - _isDragging: ${_isDragging}`)
     if (!_isDragging)
         return
 
-    const firstTouch = evt.touches[0]
-    const dragDeltaY = firstTouch.clientY - _dragStartTouchY
+    const dragDeltaY = clientY - _dragStartTouchY
 
-    _dragSpeed = (firstTouch.clientY - _dragLastTouchY) / (Date.now() - _dragLastTime) * 1000
-    _dragLastTouchY = firstTouch.clientY
+    _dragSpeed = (clientY - _dragLastTouchY) / (Date.now() - _dragLastTime) * 1000
+    _dragLastTouchY = clientY
     _dragLastTime = Date.now()
     console.debug(`handlePointerMove - _dragSpeed: ${_dragSpeed}`)
 
-    if (shouldDragSheet(evt, dragDeltaY)) {
+    if (shouldDragSheet(event, dragDeltaY)) {
         _layoutElm.classList.add(DraggingStyleClass)
 
-        const translate = firstTouch.clientY - _dragAnchorY
+        const translate = clientY - _dragAnchorY
         if (translate < _dragStartMinTranslateY) {
             _sheetElm.style.transform = `translateY(${_dragStartMinTranslateY}px)`
             _layoutElm.classList.remove(DraggingStyleClass) // enable scroll
@@ -152,8 +180,8 @@ function handlePointerMove(evt) {
 
     } else {
         // console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
-        _dragStartTouchY = firstTouch.clientY
-        _dragAnchorY = computeDragAnchor(firstTouch)
+        _dragStartTouchY = clientY
+        _dragAnchorY = computeDragAnchor(clientY)
         _layoutElm.classList.remove(DraggingStyleClass)
     }
 }
@@ -192,9 +220,9 @@ function computeFastDragDirection() {
         return 0
 }
 
-/** @param firstTouch {Touch} */
-function computeDragAnchor(firstTouch) {
-    return firstTouch.clientY - _sheetElm.getBoundingClientRect().y
+/** @param clientY {number} */
+function computeDragAnchor(clientY) {
+    return clientY - _sheetElm.getBoundingClientRect().y
 }
 
 /** 
@@ -206,6 +234,9 @@ function shouldDragSheet(evt, dragDeltaY) {
     const scrollable = findScrollable(evt)
     if (!scrollable)
         return true
+
+    if (evt instanceof MouseEvent)
+        return false; /* let user select text */
 
     const scrollTop = Math.round(scrollable.scrollTop)
     return !(dragDeltaY > 0 && scrollTop > 0 || dragDeltaY < 0 && !_sheetElm.style.transform)
@@ -420,10 +451,15 @@ function handleLayoutResize() {
 
 export function dispose() {
     try {
-        _sheetElm?.removeEventListener("touchstart", handlePointerDown)
+        _sheetElm?.removeEventListener("touchstart", handleTouchStart)
+        _layoutElm?.removeEventListener("touchmove", handleTouchMove)
         _layoutElm?.removeEventListener("touchend", handlePointerUp)
         _layoutElm?.removeEventListener("touchcancel", handlePointerUp)
-        _layoutElm?.removeEventListener("touchmove", handlePointerMove)
+
+        _sheetElm?.removeEventListener("mousedown", handleMouseDown)
+        _layoutElm?.removeEventListener("mousemove", handleMouseMove)
+        _layoutElm?.removeEventListener("mouseup", handlePointerUp)
+        _layoutElm?.removeEventListener("mouseleave", handlePointerUp)
 
         if (_layoutAttributesObserver) {
             _layoutAttributesObserver.disconnect()
