@@ -16,9 +16,10 @@ const MinimizedStyleClass = "minimized"
 const NormalStyleClass = "normal"
 const MaximizedStyleClass = "maximized"
 const DraggingStyleClass = "dragging"
-const MinDragDistance = 50
+const DragInDirectionMinDistance = 50
 const NearestSnapPointLeeway = 100
 const FastDragMinSpeed = 1000
+const FastDragMinDistance = 100
 
 /** @type {HTMLElement} */
 let _layoutElm
@@ -153,6 +154,10 @@ async function handlePointerUp() {
 }
 
 function computeFastDragDirection() {
+    const sheetPosY = _sheetElm.getBoundingClientRect().y
+    if (Math.abs(_dragStartSheetY - sheetPosY) < FastDragMinDistance)
+        return 0
+
     if (_dragSpeed > FastDragMinSpeed)
         return -1
     else if (_dragSpeed < -FastDragMinSpeed)
@@ -202,9 +207,9 @@ function findScrollable(evt) {
 
 function computeDragMoveDirection() {
     const sheetPosY = _sheetElm.getBoundingClientRect().y
-    if (sheetPosY > _dragStartSheetY + MinDragDistance)
+    if (sheetPosY > _dragStartSheetY + DragInDirectionMinDistance)
         return -1
-    else if (sheetPosY < _dragStartSheetY - MinDragDistance)
+    else if (sheetPosY < _dragStartSheetY - DragInDirectionMinDistance)
         return 1
     else
         return 0
