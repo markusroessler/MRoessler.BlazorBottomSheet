@@ -3,16 +3,19 @@
 <PageTitle>Home</PageTitle>
 
 <MudStack>
-    <MudCheckBox Label="Allow Closed" @bind-Value="_allowClosedExpansion" />
-    <MudCheckBox Label="Allow Minimized" @bind-Value="_allowMinimizedExpansion" />
-    <MudCheckBox Label="Allow Normal" @bind-Value="_allowNormalExpansion" />
-    <MudCheckBox Label="Allow Maximized" @bind-Value="_allowMaximizedExpansion" />
+    <MudCheckBox Label="Allow closed" @bind-Value="_allowClosedExpansion" />
+    <MudCheckBox Label="Allow minimized" @bind-Value="_allowMinimizedExpansion" />
+    <MudCheckBox Label="Allow normal" @bind-Value="_allowNormalExpansion" />
+    <MudCheckBox Label="Allow maximized" @bind-Value="_allowMaximizedExpansion" />
+    <MudCheckBox Label="Modal" @bind-Value="_isModal" />
+    <MudCheckBox Label="Close on background click" @bind-Value="_closeOnBackgroundClick" />
 
     <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5">Open/Close BottomSheet</MudButton>
     <MudButton OnClick="ToggleButtonSheetVisible" Color="Color.Primary">Show/Hide BottomSheet</MudButton>
 </MudStack>
 
 <BottomSheet 
+    IsModal=_isModal CloseOnBackgroundClick=_closeOnBackgroundClick
     AllowClosedExpansion=_allowClosedExpansion AllowMinimizedExpansion=_allowMinimizedExpansion 
     AllowNormalExpansion=_allowNormalExpansion AllowMaximizedExpansion=_allowMaximizedExpansion
     @bind-Expansion=_expansion IsVisible=_isBottomSheetVisible

@@ -9,7 +9,9 @@
         data-expansion=@((int)Expansion)
         @attributes="AdditionalAttributes"
     >
-        <div class="bottom-sheet-background" @onclick="SetClosedAsync" />
+        @if (IsModal) {
+            <div class="bottom-sheet-background" @onclick="OnBackgroundClickAsync" />
+        }
 
         <div class="bottom-sheet closed" style="transform: translateY(100%);"> <!-- note: class and style attributes are handled by javascript -->
             <div class="bottom-sheet-handle">

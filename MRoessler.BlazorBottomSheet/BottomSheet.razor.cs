@@ -21,16 +21,22 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     public bool IsVisible { get; set; }
 
     [Parameter]
+    public bool IsModal { get; set; }
+
+    [Parameter]
+    public bool CloseOnBackgroundClick { get; set; }
+
+    [Parameter]
     public bool AllowClosedExpansion { get; set; } = true;
 
     [Parameter]
-    public bool AllowMinimizedExpansion { get; set; } = false;
+    public bool AllowMinimizedExpansion { get; set; }
 
     [Parameter]
     public bool AllowNormalExpansion { get; set; } = true;
 
     [Parameter]
-    public bool AllowMaximizedExpansion { get; set; } = false;
+    public bool AllowMaximizedExpansion { get; set; }
 
     [Parameter]
     public BottomSheetExpansion Expansion { get; set; }
@@ -83,8 +89,10 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         }
     }
 
-    private async Task SetClosedAsync()
+    private async Task OnBackgroundClickAsync()
     {
+        if (!CloseOnBackgroundClick)
+            return;
         Expansion = BottomSheetExpansion.Closed;
         StateHasChanged();
         await ExpansionChanged.InvokeAsync(Expansion);

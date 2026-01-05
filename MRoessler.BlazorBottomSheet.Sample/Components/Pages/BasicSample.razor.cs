@@ -19,6 +19,10 @@ public partial class BasicSample : ComponentBase
 
     private bool _allowMaximizedExpansion = true;
 
+    private bool _isModal = true;
+
+    private bool _closeOnBackgroundClick = true;
+
     private void ToggleButtonSheetVisible() => _isBottomSheetVisible = !_isBottomSheetVisible;
 
     private void ToggleButtonSheetOpen() => _expansion = _expansion == BottomSheetExpansion.Closed ? BottomSheetExpansion.Normal : BottomSheetExpansion.Closed;
