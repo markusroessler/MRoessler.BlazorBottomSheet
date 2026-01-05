@@ -18,17 +18,13 @@ const MaximizedStyleClass = "maximized"
 const DraggingStyleClass = "dragging"
 const MinDragDistance = 50
 const NearestSnapPointLeeway = 100
-const FastDragMinDistance = 150
-const FastDragTimespan = 250
+const FastDragMinSpeed = 1000
 
 /** @type {HTMLElement} */
 let _layoutElm
 
 /** @type {HTMLElement} */
 let _sheetElm
-
-/** @type {HTMLElement} */
-let _handleElm
 
 /** @type {HTMLElement} */
 let _minimizedExpansionMarker
@@ -46,13 +42,19 @@ let _isDragging
 let _dragStartTouchY
 
 /** @type {number} */
+let _dragLastTouchY
+
+/** @type {number} */
 let _dragStartSheetY
 
 /** @type {number} */
 let _dragAnchorY
 
 /** @type {number} */
-let _dragStartTime
+let _dragLastTime
+
+/** @type {number} */
+let _dragSpeed
 
 /** @type {MutastionObserver} */
 let _layoutAttributesObserver = null
@@ -63,7 +65,6 @@ export function init(layoutElm, razorComp) {
     _razorComp = razorComp
 
     _sheetElm = _layoutElm.querySelector("div.bottom-sheet")
-    _handleElm = _sheetElm.querySelector("div.bottom-sheet-handle")
 
     _minimizedExpansionMarker = _sheetElm.querySelector("div[data-expansion-marker='1']")
     _normalExpansionMarker = _sheetElm.querySelector("div[data-expansion-marker='2']")
@@ -95,7 +96,6 @@ function handlePointerDown(evt) {
     let firstTouch = evt.touches[0]
 
     _isDragging = true
-    _dragStartTime = Date.now()
     _dragStartTouchY = firstTouch.clientY
     _dragAnchorY = computeDragAnchor(firstTouch)
     _dragStartSheetY = _sheetElm.getBoundingClientRect().y
@@ -103,12 +103,17 @@ function handlePointerDown(evt) {
 
 /** @param evt {TouchEvent} */
 function handlePointerMove(evt) {
-    console.debug(`handlePointerMove - _isDragging: ${_isDragging}`)
+    // console.debug(`handlePointerMove - _isDragging: ${_isDragging}`)
     if (!_isDragging)
         return
 
     const firstTouch = evt.touches[0]
     const dragDeltaY = firstTouch.clientY - _dragStartTouchY
+
+    _dragSpeed = (firstTouch.clientY - _dragLastTouchY) / (Date.now() - _dragLastTime) * 1000
+    _dragLastTouchY = firstTouch.clientY
+    _dragLastTime = Date.now()
+    console.debug(`handlePointerMove - _dragSpeed: ${_dragSpeed}`)
 
     if (shouldDragSheet(evt, dragDeltaY)) {
         _layoutElm.classList.add(DraggingStyleClass)
@@ -121,7 +126,7 @@ function handlePointerMove(evt) {
             _layoutElm.classList.remove(DraggingStyleClass)
         }
     } else {
-        console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
+        // console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
         _dragStartTouchY = firstTouch.clientY
         _dragAnchorY = computeDragAnchor(firstTouch)
         _layoutElm.classList.remove(DraggingStyleClass)
@@ -148,19 +153,12 @@ async function handlePointerUp() {
 }
 
 function computeFastDragDirection() {
-    const dragTimespan = Date.now() - _dragStartTime
-    if (dragTimespan > FastDragTimespan)
-        return 0
-
-    const dragDistance = _sheetElm.getBoundingClientRect().y - _dragStartSheetY
-    console.debug(`dragDistance: ${dragDistance}`)
-
-    if (dragDistance > FastDragMinDistance)
+    if (_dragSpeed > FastDragMinSpeed)
         return -1
-    else if (dragDistance < -FastDragMinDistance)
+    else if (_dragSpeed < -FastDragMinSpeed)
         return 1
-
-    return 0
+    else
+        return 0
 }
 
 /** @param firstTouch {Touch} */
