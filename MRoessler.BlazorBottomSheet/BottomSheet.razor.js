@@ -60,6 +60,9 @@ let _dragSpeed
 /** @type {MutastionObserver} */
 let _layoutAttributesObserver = null
 
+/** @type {ResizeObserver} */
+let _layoutResizeObserver = null
+
 /** @param razorComp { DotNetObject } */
 export function init(layoutElm, razorComp) {
     _layoutElm = layoutElm
@@ -84,6 +87,9 @@ export function init(layoutElm, razorComp) {
             "data-expansion", "data-visible"
         ]
     })
+
+    _layoutResizeObserver = new ResizeObserver(handleLayoutResize);
+    _layoutResizeObserver.observe(_layoutElm);
 
     updateVisible(_layoutElm.hasAttribute("data-visible"))
     updateExpansion(Number(_layoutElm.getAttribute("data-expansion")))
@@ -287,7 +293,7 @@ async function updateExpansion(expansion) {
 /** @param expansionMarker {HTMLElement} */
 function computeSheetTranslateY(expansionMarker) {
     const sheetBounds = _sheetElm.getBoundingClientRect()
-    return sheetBounds.bottom - expansionMarker.getBoundingClientRect().top
+    return Math.max(0, sheetBounds.bottom - expansionMarker.getBoundingClientRect().top)
 }
 
 async function updateVisible(visible) {
@@ -328,6 +334,10 @@ function handleLayoutAttributeChanges(mutations) {
     }
 }
 
+function handleLayoutResize() {
+    updateExpansion(getCurrentExpansion())
+}
+
 export function dispose() {
     try {
         _sheetElm?.removeEventListener("touchstart", handlePointerDown)
@@ -338,6 +348,11 @@ export function dispose() {
         if (_layoutAttributesObserver) {
             _layoutAttributesObserver.disconnect()
             _layoutAttributesObserver = null
+        }
+
+        if (_layoutResizeObserver) {
+            _layoutResizeObserver.disconnect()
+            _layoutResizeObserver = null
         }
     } catch (e) {
         console.error("Error during BottomSheet cleanup:", e)
