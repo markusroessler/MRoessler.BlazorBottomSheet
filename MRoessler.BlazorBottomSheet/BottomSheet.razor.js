@@ -82,13 +82,13 @@ export function init(layoutElm, razorComp) {
     // note: not using pointer events because they get canceled when scrolling an element
     _sheetElm.addEventListener("touchstart", handleTouchStart, { passive: true })
     _layoutElm.addEventListener("touchmove", handleTouchMove, { passive: true })
-    _layoutElm.addEventListener("touchend", handlePointerUp, { passive: true })
-    _layoutElm.addEventListener("touchcancel", handlePointerUp, { passive: true })
+    _layoutElm.addEventListener("touchend", handleDragStop, { passive: true })
+    _layoutElm.addEventListener("touchcancel", handleDragStop, { passive: true })
 
     _sheetElm.addEventListener("mousedown", handleMouseDown, { passive: true })
     _layoutElm.addEventListener("mousemove", handleMouseMove, { passive: true })
-    _layoutElm.addEventListener("mouseup", handlePointerUp, { passive: true })
-    _layoutElm.addEventListener("mouseleave", handlePointerUp, { passive: true })
+    _layoutElm.addEventListener("mouseup", handleDragStop, { passive: true })
+    _layoutElm.addEventListener("mouseleave", handleDragStop, { passive: true })
 
     // watch attribute changes (eg. style/class) and dispatch a custom event
     _layoutAttributesObserver = new MutationObserver(handleLayoutAttributeChanges)
@@ -109,17 +109,17 @@ export function init(layoutElm, razorComp) {
 /** @param evt {TouchEvent} */
 function handleTouchStart(evt) {
     let firstTouch = evt.touches[0]
-    handlePointerDown(firstTouch.clientY)
+    handleDragStart(firstTouch.clientY)
 }
 
 /** @param evt {MouseEvent} */
 function handleMouseDown(evt) {
     if (!hasSelectableText(evt.target)) /* let user select text */
-        handlePointerDown(evt.clientY)
+        handleDragStart(evt.clientY)
 }
 
 /** @param clientY {number} */
-function handlePointerDown(clientY) {
+function handleDragStart(clientY) {
     console.debug(`handlePointerDown - _isDragging: ${_isDragging}`)
     if (_isDragging)
         return
@@ -137,19 +137,19 @@ function handlePointerDown(clientY) {
 /** @param evt {TouchEvent} */
 function handleTouchMove(evt) {
     const firstTouch = evt.touches[0]
-    handlePointerMove(evt, firstTouch.clientY)
+    handleDragMove(evt, firstTouch.clientY)
 }
 
 /** @param evt {MouseEvent} */
 function handleMouseMove(evt) {
-    handlePointerMove(evt, evt.clientY)
+    handleDragMove(evt, evt.clientY)
 }
 
 /** 
  * @param event {UIEvent}
  * @param clientY {number} 
  **/
-function handlePointerMove(event, clientY) {
+function handleDragMove(event, clientY) {
     // console.debug(`handlePointerMove - _isDragging: ${_isDragging}`)
     if (!_isDragging)
         return
@@ -187,7 +187,7 @@ function handlePointerMove(event, clientY) {
     }
 }
 
-async function handlePointerUp() {
+async function handleDragStop() {
     console.debug(`handlePointerUp - _isDragging: ${_isDragging}`)
     if (!_isDragging)
         return
@@ -471,13 +471,13 @@ export function dispose() {
     try {
         _sheetElm?.removeEventListener("touchstart", handleTouchStart)
         _layoutElm?.removeEventListener("touchmove", handleTouchMove)
-        _layoutElm?.removeEventListener("touchend", handlePointerUp)
-        _layoutElm?.removeEventListener("touchcancel", handlePointerUp)
+        _layoutElm?.removeEventListener("touchend", handleDragStop)
+        _layoutElm?.removeEventListener("touchcancel", handleDragStop)
 
         _sheetElm?.removeEventListener("mousedown", handleMouseDown)
         _layoutElm?.removeEventListener("mousemove", handleMouseMove)
-        _layoutElm?.removeEventListener("mouseup", handlePointerUp)
-        _layoutElm?.removeEventListener("mouseleave", handlePointerUp)
+        _layoutElm?.removeEventListener("mouseup", handleDragStop)
+        _layoutElm?.removeEventListener("mouseleave", handleDragStop)
 
         if (_layoutAttributesObserver) {
             _layoutAttributesObserver.disconnect()
