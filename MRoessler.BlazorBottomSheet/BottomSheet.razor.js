@@ -57,6 +57,12 @@ let _dragLastTime
 /** @type {number} */
 let _dragSpeed
 
+/** @type {number} */
+let _dragStartMinTranslateY
+
+/** @type {number} */
+let _dragStartMaxTranslateY
+
 /** @type {MutastionObserver} */
 let _layoutAttributesObserver = null
 
@@ -106,6 +112,10 @@ function handlePointerDown(evt) {
     _dragStartTouchY = firstTouch.clientY
     _dragAnchorY = computeDragAnchor(firstTouch)
     _dragStartSheetY = _sheetElm.getBoundingClientRect().y
+
+    const allowExpansions = getAllowedExpansions()
+    _dragStartMinTranslateY = computeSheetTranslateYByExpansion(allowExpansions.at(-1))
+    _dragStartMaxTranslateY = computeSheetTranslateYByExpansion(allowExpansions.at(0))
 }
 
 /** @param evt {TouchEvent} */
@@ -126,12 +136,20 @@ function handlePointerMove(evt) {
         _layoutElm.classList.add(DraggingStyleClass)
 
         const translate = firstTouch.clientY - _dragAnchorY
-        if (translate > 0)
+        if (translate < _dragStartMinTranslateY) {
+            _sheetElm.style.transform = `translateY(${_dragStartMinTranslateY}px)`
+
+        } else if (translate > _dragStartMaxTranslateY) {
+            _sheetElm.style.transform = `translateY(${_dragStartMaxTranslateY}px)`
+
+        } else if (translate > 0) {
             _sheetElm.style.transform = `translateY(${translate}px)`
-        else {
+
+        } else {
             _sheetElm.style.removeProperty('transform')
             _layoutElm.classList.remove(DraggingStyleClass)
         }
+
     } else {
         // console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
         _dragStartTouchY = firstTouch.clientY
@@ -295,42 +313,67 @@ function getAllowedExpansions() {
 async function updateExpansion(expansion) {
     const expansionChanged = getCurrentExpansion() !== expansion
 
-    if (expansion == ExpansionClosed) {
+    if (expansion == ExpansionClosed)
         _layoutElm.classList.add(ClosedStyleClass)
-        _sheetElm.style.transform = 'translateY(100%)'
-    }
     else
         _layoutElm.classList.remove(ClosedStyleClass)
 
-    if (expansion == ExpansionMinimized) {
+    if (expansion == ExpansionMinimized)
         _layoutElm.classList.add(MinimizedStyleClass)
-        _sheetElm.style.transform = `translateY(${computeSheetTranslateY(_minimizedExpansionMarker)}px)`
-    }
     else
         _layoutElm.classList.remove(MinimizedStyleClass)
 
-    if (expansion == ExpansionNormal) {
+    if (expansion == ExpansionNormal)
         _layoutElm.classList.add(NormalStyleClass)
-        _sheetElm.style.transform = `translateY(${computeSheetTranslateY(_normalExpansionMarker)}px)`
-    }
     else
         _layoutElm.classList.remove(NormalStyleClass)
 
-    if (expansion == ExpansionMaximized) {
+    if (expansion == ExpansionMaximized)
         _layoutElm.classList.add(MaximizedStyleClass)
-        _sheetElm.style.removeProperty('transform')
-    }
     else
         _layoutElm.classList.remove(MaximizedStyleClass)
+
+    updateTransform(expansion)
 
     if (expansionChanged)
         await _razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
 }
 
+function updateTransform(expansion) {
+    if (expansion == ExpansionClosed)
+        _sheetElm.style.transform = 'translateY(100%)'
+
+    else if (expansion == ExpansionMinimized)
+        _sheetElm.style.transform = `translateY(${computeSheetTranslateYByMarker(_minimizedExpansionMarker)}px)`
+
+    else if (expansion == ExpansionNormal)
+        _sheetElm.style.transform = `translateY(${computeSheetTranslateYByMarker(_normalExpansionMarker)}px)`
+
+    else if (expansion == ExpansionMaximized)
+        _sheetElm.style.removeProperty('transform')
+}
+
 /** @param expansionMarker {HTMLElement} */
-function computeSheetTranslateY(expansionMarker) {
+function computeSheetTranslateYByMarker(expansionMarker) {
     const sheetBounds = _sheetElm.getBoundingClientRect()
     return Math.max(0, sheetBounds.bottom - expansionMarker.getBoundingClientRect().top)
+}
+
+/**
+ * @param expansion {number}
+ */
+function computeSheetTranslateYByExpansion(expansion) {
+    if (expansion == ExpansionClosed)
+        return _sheetElm.getBoundingClientRect().height
+
+    if (expansion == ExpansionMinimized)
+        return computeSheetTranslateYByMarker(_minimizedExpansionMarker)
+
+    else if (expansion == ExpansionNormal)
+        return computeSheetTranslateYByMarker(_normalExpansionMarker)
+
+    else
+        return 0
 }
 
 async function updateVisible(visible) {
