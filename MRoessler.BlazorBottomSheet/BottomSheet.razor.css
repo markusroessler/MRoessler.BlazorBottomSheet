@@ -62,9 +62,11 @@
     pointer-events: none;
 }
 
-.bottom-sheet-layout.dragging * {
-    user-select: none;
-    pointer-events: none;
+@media (pointer: coarse) { /* only for touch input */
+    .bottom-sheet-layout.dragging * {
+        user-select: none;
+        pointer-events: none;
+    }
 }
 
 .bottom-sheet-layout.dragging ::deep *[style*="overflow-y: scroll"], 

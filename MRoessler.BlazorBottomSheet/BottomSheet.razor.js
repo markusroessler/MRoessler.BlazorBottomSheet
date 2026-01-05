@@ -114,7 +114,8 @@ function handleTouchStart(evt) {
 
 /** @param evt {MouseEvent} */
 function handleMouseDown(evt) {
-    handlePointerDown(evt.clientY)
+    if (!hasSelectableText(evt.target)) /* let user select text */
+        handlePointerDown(evt.clientY)
 }
 
 /** @param clientY {number} */
@@ -186,8 +187,8 @@ function handlePointerMove(event, clientY) {
     }
 }
 
-async function handlePointerUp() {
-    console.debug(`handlePointerUp - _isDragging: ${_isDragging}`)
+async function handlePointerUp(evt) {
+    console.debug(`handlePointerUp - _isDragging: ${_isDragging}, evt: ${evt}`)
     if (!_isDragging)
         return
     _isDragging = false
@@ -205,6 +206,23 @@ async function handlePointerUp() {
 
     console.info(
         `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, fastDragDirection: ${fastDragDirection})`)
+}
+
+/**
+ * @param elm {Element}
+ */
+function hasSelectableText(elm) {
+    if (elm.textContent.trim().length == 0)
+        return false
+
+    let currentElement = elm
+    while (currentElement != null) {
+        if (window.getComputedStyle(currentElement).userSelect === 'none')
+            return false
+        currentElement = currentElement.parentElement
+    }
+
+    return true
 }
 
 function computeFastDragDirection() {
@@ -231,12 +249,12 @@ function computeDragAnchor(clientY) {
  * @returns {boolean}
  */
 function shouldDragSheet(evt, dragDeltaY) {
+    if (evt instanceof MouseEvent)
+        return true
+
     const scrollable = findScrollable(evt)
     if (!scrollable)
         return true
-
-    if (evt instanceof MouseEvent)
-        return false; /* let user select text */
 
     const scrollTop = Math.round(scrollable.scrollTop)
     return !(dragDeltaY > 0 && scrollTop > 0 || dragDeltaY < 0 && !_sheetElm.style.transform)
