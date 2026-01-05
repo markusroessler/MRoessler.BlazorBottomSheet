@@ -247,7 +247,7 @@ function computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos
 }
 
 async function updateExpansion(expansion) {
-    const expansionChanged = getCurrentExpansion() == expansion
+    const expansionChanged = getCurrentExpansion() !== expansion
 
     if (expansion == ExpansionClosed) {
         _layoutElm.classList.add(ClosedStyleClass)
