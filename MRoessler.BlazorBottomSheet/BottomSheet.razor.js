@@ -83,7 +83,7 @@ export function init(layoutElm, razorComp) {
     _layoutAttributesObserver = new MutationObserver(handleLayoutAttributeChanges)
     _layoutAttributesObserver.observe(_layoutElm, {
         attributes: true, attributeFilter: [
-            "data-allow-minimized-expansion", "data-allow-normal-expansion", "data-allow-maximized-expansion",
+            "data-allow-closed-expansion", "data-allow-minimized-expansion", "data-allow-normal-expansion", "data-allow-maximized-expansion",
             "data-expansion", "data-visible"
         ]
     })
@@ -152,7 +152,9 @@ async function handlePointerUp() {
     const nearestSnapPointInDirection = computeNearestSnapPointInDirection(direction)
     const nearestSnapPointAtDragPos = computeNearestSnapPointAtPos()
     const fastDragDirection = computeFastDragDirection()
-    const newExpansion = computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos, fastDragDirection)
+
+    let newExpansion = computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos, fastDragDirection)
+    newExpansion = coerceExpansion(newExpansion)
     await updateExpansion(newExpansion)
 
     console.info(
@@ -253,6 +255,41 @@ function computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos
         return nearestSnapPointAtDragPos
     else
         return nearestSnapPointInDirection
+}
+
+function coerceExpansion(newExpansion) {
+    const currentExpansion = getCurrentExpansion()
+    const allowedExpansions = getAllowedExpansions()
+    if (newExpansion == currentExpansion || allowedExpansions.includes(newExpansion))
+        return newExpansion
+
+    if (newExpansion > currentExpansion) {
+        return allowedExpansions.find(e => e > currentExpansion) ?? currentExpansion
+    } else {
+        return allowedExpansions.find(e => e < currentExpansion) ?? currentExpansion
+    }
+}
+
+/**
+ * @returns {Array}
+ */
+function getAllowedExpansions() {
+    /** @type {Array} */
+    let allowedExpansions = []
+
+    if (_layoutElm.hasAttribute('data-allow-closed-expansion'))
+        allowedExpansions.push(ExpansionClosed)
+
+    if (_layoutElm.hasAttribute('data-allow-minimized-expansion'))
+        allowedExpansions.push(ExpansionMinimized)
+
+    if (_layoutElm.hasAttribute('data-allow-normal-expansion'))
+        allowedExpansions.push(ExpansionNormal)
+
+    if (_layoutElm.hasAttribute('data-allow-maximized-expansion'))
+        allowedExpansions.push(ExpansionMaximized)
+
+    return allowedExpansions
 }
 
 async function updateExpansion(expansion) {

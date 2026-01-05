@@ -21,13 +21,16 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
     public bool IsVisible { get; set; }
 
     [Parameter]
-    public bool AllowMinimizedState { get; set; } = false;
+    public bool AllowClosedExpansion { get; set; } = true;
 
     [Parameter]
-    public bool AllowNormalState { get; set; } = true;
+    public bool AllowMinimizedExpansion { get; set; } = false;
 
     [Parameter]
-    public bool AllowMaximizedState { get; set; } = false;
+    public bool AllowNormalExpansion { get; set; } = true;
+
+    [Parameter]
+    public bool AllowMaximizedExpansion { get; set; } = false;
 
     [Parameter]
     public BottomSheetExpansion Expansion { get; set; }

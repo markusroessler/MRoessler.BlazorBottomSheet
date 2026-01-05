@@ -1,9 +1,10 @@
 ﻿<SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
     <!-- note: class attribute is handled by js code! -->
     <div @ref="_layoutElm" class="bottom-sheet-layout"
-        data-allow-minimized-expansion=@AllowMaximizedState 
-        data-allow-normal-expansion=@AllowNormalState 
-        data-allow-maximized-expansion=@AllowMaximizedState
+        data-allow-closed-expansion=@AllowClosedExpansion
+        data-allow-minimized-expansion=@AllowMinimizedExpansion
+        data-allow-normal-expansion=@AllowNormalExpansion
+        data-allow-maximized-expansion=@AllowMaximizedExpansion
         data-visible=@IsVisible 
         data-expansion=@((int)Expansion)
     >
