@@ -2,13 +2,15 @@
 
 <PageTitle>Home</PageTitle>
 
-<MudButton OnClick="ToggleButtonSheetVisible">Show/Hide BottomSheet</MudButton>
-<MudButton OnClick="ToggleButtonSheetOpen">Open/Close BottomSheet</MudButton>
+<MudStack>
+    <MudCheckBox Label="Allow Closed" @bind-Value="_allowClosedExpansion" />
+    <MudCheckBox Label="Allow Minimized" @bind-Value="_allowMinimizedExpansion" />
+    <MudCheckBox Label="Allow Normal" @bind-Value="_allowNormalExpansion" />
+    <MudCheckBox Label="Allow Maximized" @bind-Value="_allowMaximizedExpansion" />
 
-<MudCheckBox Label="Allow Closed" @bind-Value="_allowClosedExpansion" />
-<MudCheckBox Label="Allow Minimized" @bind-Value="_allowMinimizedExpansion" />
-<MudCheckBox Label="Allow Normal" @bind-Value="_allowNormalExpansion" />
-<MudCheckBox Label="Allow Maximized" @bind-Value="_allowMaximizedExpansion" />
+    <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5">Open/Close BottomSheet</MudButton>
+    <MudButton OnClick="ToggleButtonSheetVisible" Color="Color.Primary">Show/Hide BottomSheet</MudButton>
+</MudStack>
 
 <BottomSheet 
     AllowClosedExpansion=_allowClosedExpansion AllowMinimizedExpansion=_allowMinimizedExpansion 
