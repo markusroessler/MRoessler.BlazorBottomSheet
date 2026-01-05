@@ -284,7 +284,7 @@ function coerceExpansion(newExpansion) {
     if (newExpansion > currentExpansion) {
         return allowedExpansions.find(e => e > currentExpansion) ?? currentExpansion
     } else {
-        return allowedExpansions.find(e => e < currentExpansion) ?? currentExpansion
+        return allowedExpansions.findLast(e => e < currentExpansion) ?? currentExpansion
     }
 }
 
