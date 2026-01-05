@@ -9,7 +9,7 @@ using Microsoft.JSInterop;
 
 namespace MRoessler.BlazorBottomSheet;
 
-public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
+public partial class BottomSheet : ComponentBase, IAsyncDisposable
 {
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
@@ -37,6 +37,9 @@ public sealed partial class BottomSheet : ComponentBase, IAsyncDisposable
 
     [Parameter]
     public EventCallback<BottomSheetExpansion> ExpansionChanged { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
 
     private readonly Guid _sectionContentId = Guid.NewGuid();
 

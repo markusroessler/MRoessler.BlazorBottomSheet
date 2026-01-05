@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MRoessler.BlazorBottomSheet;
 
-public sealed partial class BottomSheetOutlet : ComponentBase
+public partial class BottomSheetOutlet : ComponentBase
 {
     internal const string ContentSectionName = "BottomSheetContent";
 
