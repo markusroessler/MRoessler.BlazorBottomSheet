@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
 
-public partial class Home : ComponentBase
+public partial class BasicSample : ComponentBase
 {
     private bool _isBottomSheetVisible = true;
     private BottomSheetExpansion _expansion;
