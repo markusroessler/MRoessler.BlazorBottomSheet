@@ -187,8 +187,8 @@ function handlePointerMove(event, clientY) {
     }
 }
 
-async function handlePointerUp(evt) {
-    console.debug(`handlePointerUp - _isDragging: ${_isDragging}, evt: ${evt}`)
+async function handlePointerUp() {
+    console.debug(`handlePointerUp - _isDragging: ${_isDragging}`)
     if (!_isDragging)
         return
     _isDragging = false
