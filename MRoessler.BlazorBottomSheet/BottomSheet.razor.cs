@@ -52,10 +52,15 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     public bool AllowMaximizedExpansion { get; set; }
 
     /// <summary>
-    /// the current expansion state
+    /// the expansion state to apply
     /// </summary>
     [Parameter]
-    public BottomSheetExpansion Expansion { get; set; }
+    public BottomSheetExpansion? Expansion { get; set; }
+
+    /// <summary>
+    /// the actual expansion state (see https://learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding?view=aspnetcore-10.0#bind-across-more-than-two-components)
+    /// </summary>
+    private BottomSheetExpansion _expansion;
 
     [Parameter]
     public EventCallback<BottomSheetExpansion> ExpansionChanged { get; set; }
@@ -93,6 +98,9 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     {
         base.OnParametersSet();
         Handle ??= CreateDefaultHandle();
+
+        if (Expansion != null)
+            _expansion = Expansion.Value;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -109,9 +117,9 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     {
         if (!CloseOnBackgroundClick)
             return;
-        Expansion = BottomSheetExpansion.Closed;
+        _expansion = BottomSheetExpansion.Closed;
         StateHasChanged();
-        await ExpansionChanged.InvokeAsync(Expansion);
+        await ExpansionChanged.InvokeAsync(_expansion);
     }
 
     /// <summary>
@@ -121,9 +129,9 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [EditorBrowsable(EditorBrowsableState.Never)]
     public async Task SetExpansionAsync(int expansion)
     {
-        Expansion = (BottomSheetExpansion)expansion;
+        _expansion = (BottomSheetExpansion)expansion;
         StateHasChanged();
-        await ExpansionChanged.InvokeAsync(Expansion);
+        await ExpansionChanged.InvokeAsync(_expansion);
     }
 
     public async ValueTask DisposeAsync()
