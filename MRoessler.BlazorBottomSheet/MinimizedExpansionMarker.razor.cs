@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace MRoessler.BlazorBottomSheet;
 
+/// <summary>
+/// Marker to be placed within the <see cref="BottomSheet"/> content for height-autosizing
+/// </summary>
 public partial class MinimizedExpansionMarker : ComponentBase
 {
     [Parameter(CaptureUnmatchedValues = true)]
