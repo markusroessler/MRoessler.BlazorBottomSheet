@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Components;
 
 namespace MRoessler.BlazorBottomSheet;
 
+/// <summary>
+/// Outputs the contents of <see cref="BottomSheet"/>s. 
+/// Place this in your MainLayout.
+/// </summary>
 public partial class BottomSheetOutlet : ComponentBase
 {
     internal const string ContentSectionName = "BottomSheetContent";

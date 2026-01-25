@@ -9,17 +9,30 @@ using Microsoft.JSInterop;
 
 namespace MRoessler.BlazorBottomSheet;
 
+/// <summary>
+/// A BottomSheet that displays its contents in a <see cref="BottomSheetOutlet"/>
+/// </summary>
 public partial class BottomSheet : ComponentBase, IAsyncDisposable
 {
+    /// <summary>
+    /// The BottomSheet's content.
+    /// Place <see cref="MinimizedExpansionMarker"/> and <see cref="NormalExpansionMarker"/> within this content for automatic height computation
+    /// </summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>
+    /// Use this to overwrite the default drag handle
+    /// </summary>
     [Parameter]
     public RenderFragment? Handle { get; set; }
 
     [Parameter]
     public bool IsVisible { get; set; }
 
+    /// <summary>
+    /// whether to prevent interaction with the overlayed content
+    /// </summary>
     [Parameter]
     public bool IsModal { get; set; }
 
@@ -38,6 +51,9 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public bool AllowMaximizedExpansion { get; set; }
 
+    /// <summary>
+    /// the current expansion state
+    /// </summary>
     [Parameter]
     public BottomSheetExpansion Expansion { get; set; }
 
@@ -98,6 +114,9 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         await ExpansionChanged.InvokeAsync(Expansion);
     }
 
+    /// <summary>
+    /// INTERNAL API
+    /// </summary>
     [JSInvokable]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public async Task SetExpansionAsync(int expansion)
