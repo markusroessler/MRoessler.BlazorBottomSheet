@@ -1,5 +1,14 @@
 ﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Playwright.NUnit;
+using MRoessler.BlazorBottomSheet.Sample.Components;
+using MudBlazor.Services;
 
 namespace MRoessler.BlazorBottomSheet.Sample.Test;
 
@@ -7,23 +16,28 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test;
 [TestFixture]
 public class Tests : PageTest
 {
-    [SetUp]
-    public void Setup()
+    WebApplicationFactory<Program> _webAppFactory;
+
+    [OneTimeSetUp]
+    public void OneTimeSetup()
     {
+        _webAppFactory = new WebApplicationFactory<Program>();
+        _webAppFactory.UseKestrel(5001);
+        _webAppFactory.StartServer();
     }
 
-    [Test]
-    public void Test1()
+    [OneTimeTearDown]
+    public async Task OneTimeTeardownAsync()
     {
-        Assert.Pass();
+        await _webAppFactory.DisposeAsync();
     }
 
     [Test]
     public async Task HasTitle()
     {
-        await Page.GotoAsync("https://playwright.dev");
+        await Page.GotoAsync("http://localhost:5001");
 
         // Expect a title "to contain" a substring.
-        await Expect(Page).ToHaveTitleAsync(new Regex("Playwright"));
+        await Expect(Page).ToHaveTitleAsync(new Regex("Home"));
     }
 }
