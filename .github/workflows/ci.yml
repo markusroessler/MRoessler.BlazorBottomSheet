@@ -44,6 +44,9 @@ jobs:
       id: build
       run: |
         dotnet build -c:Debug -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
+    
+    - name: Setup Playwright
+      run: pwsh MRoessler.BlazorBottomSheet.Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
     - name: Test
       if: always()
