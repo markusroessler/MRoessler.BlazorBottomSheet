@@ -1,0 +1,14 @@
+name: Archive feature branch (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  call-archive-workflow:
+    uses: markusroessler/Github.Actions.Workflows/.github/workflows/archive-feature-branch.yml@v1
+    with:
+      git-branch: ${{ github.ref_name }}
+      
