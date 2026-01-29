@@ -48,9 +48,9 @@ public static class LocatorExtensions
     {
         var bounds = await locator.BoundingBoxAsync();
 
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 10; i++)
         {
-            await Task.Delay(500);
+            await Task.Delay(100);
 
             var newBounds = await locator.BoundingBoxAsync();
             if (Equals(bounds, newBounds))
