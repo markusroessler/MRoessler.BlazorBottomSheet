@@ -8,7 +8,7 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test;
 
 public static class LocatorExtensions
 {
-    public static async Task PanAsync(this ILocator locator, int deltaX, int deltaY, int steps = 5)
+    public static async Task PanAsync(this ILocator locator, int deltaX, int deltaY, int steps = 5, int stepDelayMs = 100)
     {
         var bounds = await locator.BoundingBoxAsync();
         double centerX = bounds.X + bounds.Width / 2;
@@ -37,6 +37,7 @@ public static class LocatorExtensions
                 }
             };
             await locator.DispatchEventAsync("touchmove", new { touches, changedTouches = touches, targetTouches = touches });
+            await Task.Delay(stepDelayMs);
         }
 
         await locator.DispatchEventAsync("touchend");
