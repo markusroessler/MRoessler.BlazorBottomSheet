@@ -8,12 +8,7 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test;
 
 public static class LocatorExtensions
 {
-    public static void Foobar(string param)
-    {
-
-    }
-
-    public static async Task Pan(this ILocator locator, int deltaX, int deltaY, int steps = 5)
+    public static async Task PanAsync(this ILocator locator, int deltaX, int deltaY, int steps = 5)
     {
         var bounds = await locator.BoundingBoxAsync();
         double centerX = bounds.X + bounds.Width / 2;
@@ -45,5 +40,34 @@ public static class LocatorExtensions
         }
 
         await locator.DispatchEventAsync("touchend");
+    }
+
+
+    public static async Task WhenBoundsStable(this ILocator locator)
+    {
+        var bounds = await locator.BoundingBoxAsync();
+
+        for (int i = 0; i < 2; i++)
+        {
+            await Task.Delay(500);
+
+            var newBounds = await locator.BoundingBoxAsync();
+            if (Equals(bounds, newBounds))
+                return;
+
+            bounds = newBounds;
+        }
+
+        throw new TimeoutException("Element is still unstable");
+    }
+
+
+    private static bool Equals(LocatorBoundingBoxResult bounds1, LocatorBoundingBoxResult bounds2)
+    {
+        return bounds1 == bounds2
+            || (bounds1.X == bounds2.X
+                && bounds1.Y == bounds2.Y
+                && bounds1.Width == bounds2.Width
+                && bounds1.Height == bounds2.Height);
     }
 }

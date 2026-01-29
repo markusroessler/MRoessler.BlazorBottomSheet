@@ -57,30 +57,35 @@ public class Tests : PageTest
         await Page.GetByTestId("open-close-button").ClickAsync();
 
         // check default expansion (normal)
+        await bottomSheet.WhenBoundsStable();
         await Expect(bottomSheet).ToBeInViewportAsync();
         await Expect(bottomSheetLayout).ToContainClassAsync("normal");
         await Expect(normalMarker).ToBeInViewportAsync();
         await Expect(footer).Not.ToBeInViewportAsync();
 
         // drag up to maximized expansion
-        await handle.Pan(0, -Page.ViewportSize.Height / 2);
+        await handle.PanAsync(0, -Page.ViewportSize.Height / 2);
+        await bottomSheet.WhenBoundsStable();
         await Expect(bottomSheetLayout).ToContainClassAsync("maximized");
         await Expect(footer).ToBeInViewportAsync();
 
         // drag down to normal expansion
-        await handle.Pan(0, Page.ViewportSize.Height / 2);
+        await handle.PanAsync(0, Page.ViewportSize.Height / 2);
+        await bottomSheet.WhenBoundsStable();
         await Expect(bottomSheetLayout).ToContainClassAsync("normal");
         await Expect(footer).Not.ToBeInViewportAsync();
         await Expect(normalMarker).ToBeInViewportAsync();
 
         // drag down to minimized expansion
-        await handle.Pan(0, Page.ViewportSize.Height / 4);
+        await handle.PanAsync(0, Page.ViewportSize.Height / 4);
+        await bottomSheet.WhenBoundsStable();
         await Expect(bottomSheetLayout).ToContainClassAsync("minimized");
         await Expect(normalMarker).Not.ToBeInViewportAsync();
         await Expect(minimizedMarker).ToBeInViewportAsync();
 
         // drag down to closed expansion
-        await handle.Pan(0, Page.ViewportSize.Height / 8);
+        await handle.PanAsync(0, Page.ViewportSize.Height / 6);
+        await bottomSheet.WhenBoundsStable();
         await Expect(bottomSheetLayout).ToContainClassAsync("closed");
         await Expect(minimizedMarker).Not.ToBeInViewportAsync();
         await Expect(bottomSheet).Not.ToBeInViewportAsync();
