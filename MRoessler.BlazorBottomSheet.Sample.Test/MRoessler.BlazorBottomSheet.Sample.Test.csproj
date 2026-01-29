@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
-    <RunSettingsFilePath>$(MSBuildProjectDirectory)/runsettings/chromium.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>
