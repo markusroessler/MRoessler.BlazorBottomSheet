@@ -29,6 +29,7 @@ public class BasicSampleTest : PageTest
     ILocator _normalMarker;
     ILocator _footer;
     ILocator _handle;
+    ILocator _openCloseButton;
 
 
     [OneTimeSetUp]
@@ -54,6 +55,7 @@ public class BasicSampleTest : PageTest
         _normalMarker = Page.GetByTestId("normal-marker");
         _footer = Page.GetByTestId("footer");
         _handle = Page.GetByTestId("bottom-sheet-handle");
+        _openCloseButton = Page.GetByTestId("open-close-button");
     }
 
     public override BrowserNewContextOptions ContextOptions()
@@ -61,15 +63,17 @@ public class BasicSampleTest : PageTest
         return Playwright.Devices[Environment.GetEnvironmentVariable("DEVICE_NAME")];
     }
 
+    private Task<IResponse> GotoBasicSamplePageAsync() => Page.GotoAsync("http://localhost:5001");
+
     [Test]
     public async Task Test_SlowDragInDirection()
     {
-        await Page.GotoAsync("http://localhost:5001");
+        await GotoBasicSamplePageAsync();
 
         await Expect(_bottomSheet).Not.ToBeInViewportAsync();
         await Expect(_bottomSheet).ToContainClassAsync("closed");
 
-        await Page.GetByTestId("open-close-button").ClickAsync();
+        await _openCloseButton.ClickAsync();
 
         // check default expansion (normal)
         await _bottomSheet.WhenBoundsStable();
@@ -106,15 +110,16 @@ public class BasicSampleTest : PageTest
         await Expect(_bottomSheet).Not.ToBeInViewportAsync();
     }
 
+
     [Test]
     public async Task Test_FastDragInDirection()
     {
-        await Page.GotoAsync("http://localhost:5001");
+        await GotoBasicSamplePageAsync();
 
         await Expect(_bottomSheet).Not.ToBeInViewportAsync();
         await Expect(_bottomSheet).ToContainClassAsync("closed");
 
-        await Page.GetByTestId("open-close-button").ClickAsync();
+        await _openCloseButton.ClickAsync();
 
         // check default expansion (normal)
         await _bottomSheet.WhenBoundsStable();
