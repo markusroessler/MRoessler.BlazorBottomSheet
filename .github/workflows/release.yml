@@ -48,11 +48,18 @@ jobs:
         run: dotnet tool restore
 
       - name: Pack nuget package
-        run: dotnet pack MRoessler.BlazorBottomSheet -p:Version=${{ inputs.release-version }}
+        run: dotnet pack MRoessler.BlazorBottomSheet -p:Version=${{ inputs.release-version }} -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1"
+      
+      - name: Setup Playwright
+        run: |
+          dotnet build MRoessler.BlazorBottomSheet.Sample.Test 
+          pwsh MRoessler.BlazorBottomSheet.Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
       - name: Test
         if: always()
-        run: dotnet test -c:Release -f:net10.0 --filter TestCategory!~sample --logger:html --logger:"trx;LogFileName=TestResults/TestResults.trx" --no-restore
+        run: | 
+          dotnet test -c:Release -f:net10.0 --no-restore --filter TestCategory!~sample \
+          --logger:html --logger:"trx;LogFileName=TestResults/TestResults.trx" --settings ci.runsettings
 
       - name: Collect Build Results
         id: collect-build-results
@@ -76,7 +83,7 @@ jobs:
         with:
           name: ${{ inputs.release-version }}
           tag: "${{ inputs.release-version }}"
-          artifacts: MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.nupkg
+          artifacts: MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.*
           generateReleaseNotes: true
           draft: false
           prerelease: ${{ github.ref_name != 'main' }}
