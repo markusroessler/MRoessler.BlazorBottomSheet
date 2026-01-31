@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -65,124 +68,168 @@ public class BasicSampleTest : PageTest
 
     private Task<IResponse> GotoBasicSamplePageAsync() => Page.GotoAsync("http://localhost:5001");
 
-    [Test]
-    public async Task Test_SlowDragInDirection()
+    /// <summary>
+    /// note: can't use Teardown method for coverage export because it runs too late (Page-Context is gone)
+    /// </summary>
+    private async Task TestAsync(Func<Task> test)
     {
-        await GotoBasicSamplePageAsync();
+        try
+        {
+            await test();
+        }
+        finally
+        {
+            await TryExportCoverage();
+        }
+    }
 
-        await Expect(_bottomSheet).Not.ToBeInViewportAsync();
-        await Expect(_bottomSheet).ToContainClassAsync("closed");
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "it's a 'try'-method")]
+    private async Task TryExportCoverage()
+    {
+        try
+        {
+            var coverageJson = await Page.EvaluateAsync<ExpandoObject>("window.__coverage__");
+            if (coverageJson != null)
+            {
+                var outDir = Path.Combine(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", ".."), ".nyc_output");
+                Directory.CreateDirectory(outDir);
+                File.WriteAllText(Path.Combine(outDir, $"{TestContext.CurrentContext.Test.MethodName}.json"), JsonSerializer.Serialize(coverageJson));
+            }
+        }
+        catch (Exception ex)
+        {
+            TestContext.Error.WriteLine("Failed to export coverage " + ex);
+        }
+    }
 
-        await _openCloseButton.ClickAsync();
+    [Test]
+    public Task Test_SlowDragInDirection()
+    {
+        return TestAsync(async () =>
+        {
+            await GotoBasicSamplePageAsync();
 
-        // check default expansion (normal)
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheet).ToBeInViewportAsync();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
-        await Expect(_normalMarker).ToBeInViewportAsync();
-        await Expect(_footer).Not.ToBeInViewportAsync();
+            await Expect(_bottomSheet).Not.ToBeInViewportAsync();
+            await Expect(_bottomSheet).ToContainClassAsync("closed");
 
-        // drag up to maximized expansion
-        await _handle.PanAsync(0, -Page.ViewportSize.Height / 2, stepDelayMs: SlowDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
-        await Expect(_footer).ToBeInViewportAsync();
+            await _openCloseButton.ClickAsync();
 
-        // drag down to normal expansion
-        await _handle.PanAsync(0, Page.ViewportSize.Height / 2, stepDelayMs: SlowDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
-        await Expect(_footer).Not.ToBeInViewportAsync();
-        await Expect(_normalMarker).ToBeInViewportAsync();
+            // check default expansion (normal)
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheet).ToBeInViewportAsync();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
+            await Expect(_normalMarker).ToBeInViewportAsync();
+            await Expect(_footer).Not.ToBeInViewportAsync();
 
-        // drag down to minimized expansion
-        await _handle.PanAsync(0, Page.ViewportSize.Height / 4, stepDelayMs: SlowDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("minimized");
-        await Expect(_normalMarker).Not.ToBeInViewportAsync();
-        await Expect(_minimizedMarker).ToBeInViewportAsync();
+            // drag up to maximized expansion
+            await _handle.PanAsync(0, -Page.ViewportSize.Height / 2, stepDelayMs: SlowDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
+            await Expect(_footer).ToBeInViewportAsync();
 
-        // drag down to closed expansion
-        await _handle.PanAsync(0, Page.ViewportSize.Height / 6, stepDelayMs: SlowDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("closed");
-        await Expect(_minimizedMarker).Not.ToBeInViewportAsync();
-        await Expect(_bottomSheet).Not.ToBeInViewportAsync();
+            // drag down to normal expansion
+            await _handle.PanAsync(0, Page.ViewportSize.Height / 2, stepDelayMs: SlowDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
+            await Expect(_footer).Not.ToBeInViewportAsync();
+            await Expect(_normalMarker).ToBeInViewportAsync();
+
+            // drag down to minimized expansion
+            await _handle.PanAsync(0, Page.ViewportSize.Height / 4, stepDelayMs: SlowDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("minimized");
+            await Expect(_normalMarker).Not.ToBeInViewportAsync();
+            await Expect(_minimizedMarker).ToBeInViewportAsync();
+
+            // drag down to closed expansion
+            await _handle.PanAsync(0, Page.ViewportSize.Height / 6, stepDelayMs: SlowDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("closed");
+            await Expect(_minimizedMarker).Not.ToBeInViewportAsync();
+            await Expect(_bottomSheet).Not.ToBeInViewportAsync();
+
+        });
     }
 
 
     [Test]
-    public async Task Test_FastDragInDirection()
+    public Task Test_FastDragInDirection()
     {
-        await GotoBasicSamplePageAsync();
+        return TestAsync(async () =>
+        {
+            await GotoBasicSamplePageAsync();
 
-        await Expect(_bottomSheet).Not.ToBeInViewportAsync();
-        await Expect(_bottomSheet).ToContainClassAsync("closed");
+            await Expect(_bottomSheet).Not.ToBeInViewportAsync();
+            await Expect(_bottomSheet).ToContainClassAsync("closed");
 
-        await _openCloseButton.ClickAsync();
+            await _openCloseButton.ClickAsync();
 
-        // check default expansion (normal)
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheet).ToBeInViewportAsync();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
-        await Expect(_normalMarker).ToBeInViewportAsync();
-        await Expect(_footer).Not.ToBeInViewportAsync();
+            // check default expansion (normal)
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheet).ToBeInViewportAsync();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
+            await Expect(_normalMarker).ToBeInViewportAsync();
+            await Expect(_footer).Not.ToBeInViewportAsync();
 
-        // slow drag to minimized expansion
-        await _handle.PanAsync(0, Page.ViewportSize.Height / 4, stepDelayMs: SlowDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("minimized");
-        await Expect(_normalMarker).Not.ToBeInViewportAsync();
-        await Expect(_minimizedMarker).ToBeInViewportAsync();
+            // slow drag to minimized expansion
+            await _handle.PanAsync(0, Page.ViewportSize.Height / 4, stepDelayMs: SlowDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("minimized");
+            await Expect(_normalMarker).Not.ToBeInViewportAsync();
+            await Expect(_minimizedMarker).ToBeInViewportAsync();
 
-        // fast drag to maximized expansion
-        await _handle.PanAsync(0, -Page.ViewportSize.Height / 2, stepDelayMs: FastDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
-        await Expect(_footer).ToBeInViewportAsync();
+            // fast drag to maximized expansion
+            await _handle.PanAsync(0, -Page.ViewportSize.Height / 2, stepDelayMs: FastDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
+            await Expect(_footer).ToBeInViewportAsync();
 
-        // fast drag to minimized expansion
-        await _handle.PanAsync(0, Page.ViewportSize.Height / 2, stepDelayMs: FastDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("minimized");
-        await Expect(_normalMarker).Not.ToBeInViewportAsync();
-        await Expect(_minimizedMarker).ToBeInViewportAsync();
+            // fast drag to minimized expansion
+            await _handle.PanAsync(0, Page.ViewportSize.Height / 2, stepDelayMs: FastDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("minimized");
+            await Expect(_normalMarker).Not.ToBeInViewportAsync();
+            await Expect(_minimizedMarker).ToBeInViewportAsync();
+        });
     }
 
     [Test]
-    public async Task Test_SlowDragToPosition()
+    public Task Test_SlowDragToPosition()
     {
-        await GotoBasicSamplePageAsync();
+        return TestAsync(async () =>
+        {
+            await GotoBasicSamplePageAsync();
 
-        await Expect(_bottomSheet).Not.ToBeInViewportAsync();
-        await Expect(_bottomSheet).ToContainClassAsync("closed");
+            await Expect(_bottomSheet).Not.ToBeInViewportAsync();
+            await Expect(_bottomSheet).ToContainClassAsync("closed");
 
-        await _openCloseButton.ClickAsync();
+            await _openCloseButton.ClickAsync();
 
-        // check default expansion (normal)
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheet).ToBeInViewportAsync();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
-        await Expect(_normalMarker).ToBeInViewportAsync();
-        await Expect(_footer).Not.ToBeInViewportAsync();
+            // check default expansion (normal)
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheet).ToBeInViewportAsync();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
+            await Expect(_normalMarker).ToBeInViewportAsync();
+            await Expect(_footer).Not.ToBeInViewportAsync();
 
-        // drag up to maximized expansion
-        await _handle.PanAsync(0, -Page.ViewportSize.Height, steps: 2, stepDelayMs: SlowDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
-        await Expect(_footer).ToBeInViewportAsync();
+            // drag up to maximized expansion
+            await _handle.PanAsync(0, -Page.ViewportSize.Height, steps: 2, stepDelayMs: SlowDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
+            await Expect(_footer).ToBeInViewportAsync();
 
-        // drag down to minimized expansion
-        await _handle.PanAsync(0, Page.ViewportSize.Height - 100, steps: 2, stepDelayMs: SlowDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("minimized");
-        await Expect(_normalMarker).Not.ToBeInViewportAsync();
-        await Expect(_minimizedMarker).ToBeInViewportAsync();
+            // drag down to minimized expansion
+            await _handle.PanAsync(0, Page.ViewportSize.Height - 100, steps: 2, stepDelayMs: SlowDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("minimized");
+            await Expect(_normalMarker).Not.ToBeInViewportAsync();
+            await Expect(_minimizedMarker).ToBeInViewportAsync();
 
-        // drag up to maximized expansion
-        await _handle.PanAsync(0, -Page.ViewportSize.Height, steps: 2, stepDelayMs: SlowDragStepDelayMs);
-        await _bottomSheet.WhenBoundsStable();
-        await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
-        await Expect(_footer).ToBeInViewportAsync();
+            // drag up to maximized expansion
+            await _handle.PanAsync(0, -Page.ViewportSize.Height, steps: 2, stepDelayMs: SlowDragStepDelayMs);
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
+            await Expect(_footer).ToBeInViewportAsync();
+        });
     }
 }

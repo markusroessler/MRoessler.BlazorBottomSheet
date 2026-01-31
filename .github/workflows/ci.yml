@@ -34,6 +34,9 @@ jobs:
     - name: Remove setup-dotnet problem matcher
       run: echo "::remove-matcher owner=csc::"
 
+    - name: Instrument js files for code coverage
+      run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
+
     - name: Restore
       run: dotnet restore
 
@@ -53,6 +56,10 @@ jobs:
       run: |
         dotnet test -c:Debug -f:net10.0 --no-build --filter TestCategory!~sample --logger:html \
         --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci.runsettings
+
+    - name: Convert js coverage results
+      run: nyc report --reporter=cobertura
+      if: always()
 
     - name: Collect Build Results
       id: collect-build-results
