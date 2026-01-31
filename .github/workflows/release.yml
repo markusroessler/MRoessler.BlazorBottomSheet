@@ -83,9 +83,7 @@ jobs:
         with:
           name: ${{ inputs.release-version }}
           tag: "${{ inputs.release-version }}"
-          artifacts: | 
-            MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.nupkg,
-            MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.snupkg
+          artifacts: MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.*
           generateReleaseNotes: true
           draft: false
           prerelease: ${{ github.ref_name != 'main' }}
