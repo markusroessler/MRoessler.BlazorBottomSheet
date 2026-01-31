@@ -1,0 +1,87 @@
+name: Release Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: "Version to release"
+        required: true
+        default: ""
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  dotnet-linux:
+    name: .NET (Linux)
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_VERSION: 10.0.101
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Git Config
+        run: |
+          # see https://api.github.com/users/github-actions%5Bbot%5D
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: "*/*.csproj"
+
+      - name: Remove setup-dotnet problem matcher
+        run: echo "::remove-matcher owner=csc::"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: Pack nuget package
+        run: dotnet pack MRoessler.BlazorBottomSheet -p:Version=${{ inputs.release-version }}
+
+      - name: Test
+        if: always()
+        run: dotnet test -c:Release -f:net10.0 --filter TestCategory!~sample --logger:html --logger:"trx;LogFileName=TestResults/TestResults.trx" --no-restore
+
+      - name: Collect Build Results
+        id: collect-build-results
+        if: always()
+        run: dotnet export-dotnet-results-for-github --export-step-summary true --github-server-url ${{ github.server_url }} --github-repo ${{ github.repository }} --github-ref-name ${{ github.ref_name }} --culture "de-DE"
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: blazor-bottomsheet-ci-linux-test-report
+          path: "**/TestResults/*.html"
+
+      - name: Create Tag
+        run: |
+          git tag -a "${{ inputs.release-version }}" -m "Release ${{ inputs.release-version }} [skip ci]"
+          git push origin "refs/tags/${{ inputs.release-version }}"
+
+      - name: Publish Github Release
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
+        with:
+          name: ${{ inputs.release-version }}
+          tag: "${{ inputs.release-version }}"
+          artifacts: MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.nupkg
+          generateReleaseNotes: true
+          draft: false
+          prerelease: ${{ github.ref_name != 'main' }}
+          makeLatest: ${{ github.ref_name == 'main' }}
+
+      - name: Push nuget package
+        run: dotnet nuget push MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.nupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
+
