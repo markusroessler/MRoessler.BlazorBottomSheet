@@ -58,7 +58,7 @@ jobs:
       if: always()
       run: |
         dotnet test -c:Debug -f:net10.0 --no-build --filter TestCategory!~sample --logger:html \
-          --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci.runsettings
+        --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci.runsettings
 
     - name: Convert js coverage results
       run: |
