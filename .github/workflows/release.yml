@@ -83,12 +83,12 @@ jobs:
         with:
           name: ${{ inputs.release-version }}
           tag: "${{ inputs.release-version }}"
-          artifacts: MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.nupkg
+          artifacts: MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.snupkg
           generateReleaseNotes: true
           draft: false
           prerelease: ${{ github.ref_name != 'main' }}
           makeLatest: ${{ github.ref_name == 'main' }}
 
       - name: Push nuget package
-        run: dotnet nuget push MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.nupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.snupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
 

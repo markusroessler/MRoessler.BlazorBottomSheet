@@ -5,6 +5,22 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+  
+  <!-- package info -->
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageDescription>.NET Blazor BottomSheet implementation for mobile apps</PackageDescription>
+    <RepositoryUrl>https://github.com/markusroessler/MRoessler.BlazorBottomSheet</RepositoryUrl>
+  </PropertyGroup>
+  
+  <!-- symbol/source config -->
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <EmbedAllSources>true</EmbedAllSources>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
