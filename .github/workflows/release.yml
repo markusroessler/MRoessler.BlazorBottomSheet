@@ -48,7 +48,7 @@ jobs:
         run: dotnet tool restore
 
       - name: Pack nuget package
-        run: dotnet pack MRoessler.BlazorBottomSheet -p:Version=${{ inputs.release-version }}
+        run: dotnet pack MRoessler.BlazorBottomSheet -p:Version=${{ inputs.release-version }} -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1"
       
       - name: Setup Playwright
         run: |
