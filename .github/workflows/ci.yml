@@ -63,7 +63,7 @@ jobs:
     - name: Convert js coverage results
       run: |
         git restore MRoessler.BlazorBottomSheet
-        nyc report --reporter=cobertura --reporter=text --reporter=html --report-dir js-coverage-report >> js-coverage-report.txt
+        nyc report --reporter=cobertura --report-dir js-coverage-report
       if: always()
 
     - name: Collect Build Results
@@ -80,9 +80,7 @@ jobs:
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: blazor-bottomsheet-ci-linux-coverage-report
-        path: |
-          TestResults/coverage-report
-          js-coverage-report
+        path: TestResults/coverage-report
 
     - name: Upload Test Report
       if: always()
@@ -95,13 +93,7 @@ jobs:
       if: always()
       run: | 
         echo "## Coverage Results" >> $GITHUB_STEP_SUMMARY
-        echo "### C#" >> $GITHUB_STEP_SUMMARY
         cat TestResults/coverage-report/SummaryGithub.md | sed -e 's/# Summary//g' >> $GITHUB_STEP_SUMMARY
-        
-        echo "### Javascript" >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        cat js-coverage-report.txt >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
     
     - name: Publish Lines of Code
       if: always()
