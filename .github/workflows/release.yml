@@ -57,7 +57,8 @@ jobs:
 
       - name: Test
         if: always()
-        run: dotnet test -c:Release -f:net10.0 --filter TestCategory!~sample --logger:html --logger:"trx;LogFileName=TestResults/TestResults.trx" --no-restore
+        run: dotnet test -c:Release -f:net10.0 --no-restore --filter TestCategory!~sample \
+          --logger:html --logger:"trx;LogFileName=TestResults/TestResults.trx" --settings ci.runsettings
 
       - name: Collect Build Results
         id: collect-build-results
