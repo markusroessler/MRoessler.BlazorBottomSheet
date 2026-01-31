@@ -63,7 +63,7 @@ jobs:
     - name: Convert js coverage results
       run: |
         git restore MRoessler.BlazorBottomSheet
-        nyc report --reporter=text --reporter=html --report-dir js-coverage-report >> js-coverage-report.txt
+        nyc report --reporter=cobertura --reporter=text --reporter=html --report-dir js-coverage-report >> js-coverage-report.txt
       if: always()
 
     - name: Collect Build Results
