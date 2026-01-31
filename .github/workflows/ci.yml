@@ -61,10 +61,7 @@ jobs:
         --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci.runsettings
 
     - name: Convert js coverage results
-      id: convert-js-coverage
-      run: |
-        nycCoverageText=$(nyc report --reporter=text --reporter=html --report-dir js-coverage-report)
-        echo "nycCoverageText=$nycCoverageText" >> $GITHUB_OUTPUT
+      run: nyc report --reporter=text --reporter=html --report-dir js-coverage-report >> js-coverage-report.txt
       if: always()
 
     - name: Collect Build Results
@@ -100,7 +97,9 @@ jobs:
         cat TestResults/coverage-report/SummaryGithub.md | sed -e 's/# Summary//g' >> $GITHUB_STEP_SUMMARY
         
         echo "### Javascript" >> $GITHUB_STEP_SUMMARY
-        echo "${{ steps.convert-js-coverage.outputs.nycCoverageText }}" >> $GITHUB_STEP_SUMMARY
+        echo "```" >> $GITHUB_STEP_SUMMARY
+        cat js-coverage-report.txt >> $GITHUB_STEP_SUMMARY
+        echo "```" >> $GITHUB_STEP_SUMMARY
     
     - name: Publish Lines of Code
       if: always()
