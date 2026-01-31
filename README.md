@@ -9,7 +9,7 @@
 
 
 ## Getting Started
-- Install nuget package (TODO)
+- Install [nuget package](https://www.nuget.org/packages/MRoessler.BlazorBottomSheet)
 
 - Register BottomSheet services in `Program.cs`
 ```csharp
