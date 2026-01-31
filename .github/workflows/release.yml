@@ -49,6 +49,11 @@ jobs:
 
       - name: Pack nuget package
         run: dotnet pack MRoessler.BlazorBottomSheet -p:Version=${{ inputs.release-version }}
+      
+      - name: Setup Playwright
+        run: |
+          dotnet build MRoessler.BlazorBottomSheet.Sample.Test 
+          pwsh MRoessler.BlazorBottomSheet.Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
       - name: Test
         if: always()
