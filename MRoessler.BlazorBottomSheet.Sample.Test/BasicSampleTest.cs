@@ -14,6 +14,7 @@ using Microsoft.Playwright.NUnit;
 using Microsoft.Playwright.TestAdapter;
 using MRoessler.BlazorBottomSheet.Sample.Components;
 using MudBlazor.Services;
+using NUnit.Framework.Interfaces;
 
 namespace MRoessler.BlazorBottomSheet.Sample.Test;
 
@@ -59,6 +60,21 @@ public class BasicSampleTest : PageTest
         _footer = Page.GetByTestId("footer");
         _handle = Page.GetByTestId("bottom-sheet-handle");
         _openCloseButton = Page.GetByTestId("open-close-button");
+    }
+
+    [TearDown]
+    public async Task TeardownAsync()
+    {
+        if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
+        {
+            var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "Screenshots");
+            Directory.CreateDirectory(dir);
+
+            var fileName = $"failure_{TestContext.CurrentContext.Test.Name}.png";
+            var path = Path.Combine(dir, fileName);
+            await Page.ScreenshotAsync(new() { Path = path });
+            // TestContext.AddTestAttachment(path);
+        }
     }
 
     public override BrowserNewContextOptions ContextOptions()
