@@ -33,6 +33,9 @@ jobs:
 
     - name: Remove setup-dotnet problem matcher
       run: echo "::remove-matcher owner=csc::"
+    
+    - name: Install nyc
+      run: npm install -g nyc 
 
     - name: Instrument js files for code coverage
       run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
