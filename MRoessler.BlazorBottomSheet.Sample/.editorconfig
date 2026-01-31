@@ -1,0 +1,5 @@
+[*.{cs,vb}]
+
+# CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
+# not resolvable for now: https://github.com/dotnet/razor/issues/8715
+dotnet_diagnostic.CA1515.severity = none

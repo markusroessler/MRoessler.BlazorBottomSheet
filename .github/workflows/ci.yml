@@ -33,6 +33,12 @@ jobs:
 
     - name: Remove setup-dotnet problem matcher
       run: echo "::remove-matcher owner=csc::"
+    
+    - name: Install nyc
+      run: npm install -g nyc 
+
+    - name: Instrument js files for code coverage
+      run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
 
     - name: Restore
       run: dotnet restore
@@ -44,12 +50,21 @@ jobs:
       id: build
       run: |
         dotnet build -c:Debug -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
+    
+    - name: Setup Playwright
+      run: pwsh MRoessler.BlazorBottomSheet.Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
     - name: Test
       if: always()
       run: |
         dotnet test -c:Debug -f:net10.0 --no-build --filter TestCategory!~sample --logger:html \
-        --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+        --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci.runsettings
+
+    - name: Convert js coverage results
+      run: |
+        git restore MRoessler.BlazorBottomSheet
+        nyc report --reporter=cobertura --report-dir js-coverage-report
+      if: always()
 
     - name: Collect Build Results
       id: collect-build-results

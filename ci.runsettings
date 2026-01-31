@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <EnvironmentVariables>
+      <BROWSER>chromium</BROWSER>
+      <DEVICE_NAME>Pixel 7</DEVICE_NAME>
+    </EnvironmentVariables>
+  </RunConfiguration>
+
+  <Playwright>
+    <BrowserName>chromium</BrowserName>
+    <LaunchOptions>
+      <!-- <Headless>false</Headless> -->
+      <!-- <SlowMo>200</SlowMo> -->
+    </LaunchOptions>
+  </Playwright>
+
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <!-- Realms.GeneratedAttribute -->
+          <ExcludeByAttribute>GeneratedAttribute</ExcludeByAttribute>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

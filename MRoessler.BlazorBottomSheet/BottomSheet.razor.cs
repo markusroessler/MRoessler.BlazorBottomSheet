@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -66,6 +67,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     public EventCallback<BottomSheetExpansion> ExpansionChanged { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
+    [SuppressMessage("Usage", "CA2227:Collection properties should be read only...", Justification = "...but not Blazor Parameters")]
     public IDictionary<string, object>? AdditionalAttributes { get; set; }
 
     private readonly Guid _sectionContentId = Guid.NewGuid();
@@ -135,6 +137,12 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     }
 
     public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore().ConfigureAwait(false);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual async ValueTask DisposeAsyncCore()
     {
         if (_disposed)
             return;

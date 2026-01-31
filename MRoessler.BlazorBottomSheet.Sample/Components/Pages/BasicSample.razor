@@ -10,7 +10,7 @@
     <MudCheckBox Label="Modal" @bind-Value="_isModal" />
     <MudCheckBox Label="Close on background click" @bind-Value="_closeOnBackgroundClick" />
 
-    <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5">Open/Close BottomSheet</MudButton>
+    <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button">Open/Close BottomSheet</MudButton>
     <MudButton OnClick="ToggleButtonSheetVisible" Color="Color.Primary">Show/Hide BottomSheet</MudButton>
 </MudStack>
 
@@ -47,7 +47,7 @@
                 }
             </div>
 
-            <MudText Typo="Typo.h6" Class="mt-5">Footer <MudText Typo="Typo.subtitle2" Inline>(only visible when Expansion = Maximized)</MudText></MudText>
+            <MudText Typo="Typo.h6" Class="mt-5">Footer <MudText Typo="Typo.subtitle2" Inline data-testid="footer">(only visible when Expansion = Maximized)</MudText></MudText>
         </div>
     </div>
 </BottomSheet>
