@@ -3,6 +3,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![build](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
+[![Line Coverage](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/blob/badges/badges/badge_linecoverage.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/MRoessler.BlazorBottomSheet.svg?style=flat-square&label=NuGet)](https://www.nuget.org/packages/MRoessler.BlazorBottomSheet)
 
 <img src="https://i.imgur.com/RZPqpeT.png" alt="screenshot-1" height="400">

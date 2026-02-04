@@ -2,7 +2,7 @@ name: CI Build
 
 on: [push, workflow_dispatch]
 permissions:
-  contents: read
+  contents: write
   packages: read
 
 
@@ -21,8 +21,9 @@ jobs:
 
     - name: Git Config
       run: |
-        # prevent git error "detected dubious ownership in repository at '...'"
-        git config --global --add safe.directory $GITHUB_WORKSPACE
+        # see https://api.github.com/users/github-actions%5Bbot%5D
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
     
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
@@ -81,6 +82,17 @@ jobs:
       with:
         name: blazor-bottomsheet-ci-linux-coverage-report
         path: TestResults/coverage-report
+
+    # push coverage badges to tag without attaching the commit to a branch (for readme.md)
+    - name: Commit Coverage Badges
+      if: always() && github.ref_name == 'main'
+      run: |
+        mkdir badges
+        mv TestResults/coverage-report/badge_linecoverage.svg badges
+        git add badges/*
+        git commit -m "updated badges"
+        git tag badges 
+        git push --force origin badges
 
     - name: Upload Test Report
       if: always()
