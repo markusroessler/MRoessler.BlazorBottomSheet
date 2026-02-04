@@ -83,6 +83,7 @@ jobs:
         name: blazor-bottomsheet-ci-linux-coverage-report
         path: TestResults/coverage-report
 
+    # push coverage badges to tag without attaching the commit to a branch (for readme.md)
     - name: Commit Coverage Badges
       if: always() && github.ref_name != 'main'
       run: |
