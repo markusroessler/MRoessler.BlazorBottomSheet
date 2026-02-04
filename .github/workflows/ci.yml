@@ -88,10 +88,7 @@ jobs:
       if: always() && github.ref_name != 'main'
       run: |
         mkdir badges
-        sed -i 's/Coverage/Line Coverage/g' TestResults/coverage-report/badge_linecoverage.svg
-        sed -i 's/Coverage/Branch Coverage/g' TestResults/coverage-report/badge_branchcoverage.svg
         mv TestResults/coverage-report/badge_linecoverage.svg badges
-        mv TestResults/coverage-report/badge_branchcoverage.svg badges
         git add badges/*
         git commit -m "updated badges"
         git tag badges 
