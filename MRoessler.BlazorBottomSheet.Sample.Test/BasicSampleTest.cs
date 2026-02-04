@@ -13,6 +13,7 @@ using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using Microsoft.Playwright.TestAdapter;
 using MRoessler.BlazorBottomSheet.Sample.Components;
+using MRoessler.BlazorBottomSheet.Sample.Utils;
 using MudBlazor.Services;
 using NUnit.Framework.Interfaces;
 
@@ -34,7 +35,7 @@ public class BasicSampleTest : PageTest
     ILocator _footer;
     ILocator _handle;
     ILocator _openCloseButton;
-
+    TestHelper _testHelper;
 
     [OneTimeSetUp]
     public void OneTimeSetup()
@@ -42,6 +43,7 @@ public class BasicSampleTest : PageTest
         _webAppFactory = new WebApplicationFactory<Program>();
         _webAppFactory.UseKestrel(5001);
         _webAppFactory.StartServer();
+        _testHelper = _webAppFactory.Services.GetRequiredService<TestHelper>();
     }
 
     [OneTimeTearDown]
@@ -246,6 +248,37 @@ public class BasicSampleTest : PageTest
             await _bottomSheet.WhenBoundsStable();
             await Expect(_bottomSheetLayout).ToContainClassAsync("maximized");
             await Expect(_footer).ToBeInViewportAsync();
+        });
+    }
+
+    [Test]
+    public Task Test_ToggleIsOpen()
+    {
+        return TestAsync(async () =>
+        {
+            await GotoBasicSamplePageAsync();
+
+            await Expect(_bottomSheet).Not.ToBeInViewportAsync();
+            await Expect(_bottomSheet).ToContainClassAsync("closed");
+
+            var samplePageInstanceIdElm = await Page.GetByTestId("sample-instance-id").ElementHandleAsync();
+            var samplePageInstanceId = Guid.Parse(await samplePageInstanceIdElm.TextContentAsync());
+
+            var samplePage = _testHelper.ActiveBasicSamplePages[samplePageInstanceId];
+            var basicSampleViewModel = samplePage.ViewModel;
+            var syncContextDispatcher = samplePage.SyncContextDispatcher;
+
+            syncContextDispatcher.Invoke(() => basicSampleViewModel.SetIsOpen(true));
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheet).ToBeInViewportAsync();
+            await Expect(_bottomSheetLayout).ToContainClassAsync("normal");
+            await Expect(_normalMarker).ToBeInViewportAsync();
+            await Expect(_footer).Not.ToBeInViewportAsync();
+
+            syncContextDispatcher.Invoke(() => basicSampleViewModel.SetIsOpen(false));
+            await _bottomSheet.WhenBoundsStable();
+            await Expect(_bottomSheet).Not.ToBeInViewportAsync();
+            await Expect(_bottomSheet).ToContainClassAsync("closed");
         });
     }
 }
