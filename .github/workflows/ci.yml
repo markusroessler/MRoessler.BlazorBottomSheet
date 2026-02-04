@@ -82,6 +82,16 @@ jobs:
         name: blazor-bottomsheet-ci-linux-coverage-report
         path: TestResults/coverage-report
 
+    - name: Commit Coverage Badges
+      run: |
+        mkdir badges
+        mv TestResults/coverage-report/badge_linecoverage.svg badges
+        mv TestResults/coverage-report/badge_branchcoverage.svg badges
+        git add badges/*
+        git commit -m "updated badges"
+        git tag badges 
+        git push origin badges
+
     - name: Upload Test Report
       if: always()
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
