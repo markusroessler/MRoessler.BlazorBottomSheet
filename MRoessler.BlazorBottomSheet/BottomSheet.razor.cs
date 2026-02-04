@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,19 +53,36 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public bool AllowMaximizedExpansion { get; set; }
 
+    private BottomSheetExpansion _expansion;
     /// <summary>
     /// the expansion state to apply
     /// </summary>
     [Parameter]
-    public BottomSheetExpansion? Expansion { get; set; }
+    public BottomSheetExpansion Expansion { get; set; }
+    [Parameter]
+    public EventCallback<BottomSheetExpansion> ExpansionChanged { get; set; }
+
+    private bool _isOpen;
+    /// <summary>
+    /// Alternative to <see cref="Expansion"/> for easier ViewModel bindings.
+    /// When set to true <see cref="DefaultExpansion"/> will be applied.
+    /// </summary>
+    [Parameter]
+    public bool IsOpen { get; set; }
+    [Parameter]
+    public EventCallback<bool> IsOpenChanged { get; set; }
+
+    /// <summary>
+    /// <see cref="Expansion"/> to be applied when <see cref="IsOpen"/> is set to true
+    /// </summary>
+    [Parameter]
+    public BottomSheetExpansion DefaultExpansion { get; set; } = BottomSheetExpansion.Normal;
 
     /// <summary>
     /// the actual expansion state (see https://learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding?view=aspnetcore-10.0#bind-across-more-than-two-components)
     /// </summary>
-    private BottomSheetExpansion _expansion;
+    private BottomSheetExpansion _expansionToRender;
 
-    [Parameter]
-    public EventCallback<BottomSheetExpansion> ExpansionChanged { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     [SuppressMessage("Usage", "CA2227:Collection properties should be read only...", Justification = "...but not Blazor Parameters")]
@@ -96,13 +114,25 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         OutletState.RegisterSectionContentId(_sectionContentId);
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        base.OnParametersSet();
+        await base.OnParametersSetAsync();
+
         Handle ??= CreateDefaultHandle();
 
-        if (Expansion != null)
-            _expansion = Expansion.Value;
+        if (Expansion != _expansion)
+        {
+            var isOpenChanged = _expansion == BottomSheetExpansion.Closed || Expansion == BottomSheetExpansion.Closed;
+            _expansionToRender = _expansion = Expansion;
+            if (isOpenChanged)
+                await IsOpenChanged.InvokeAsync(_expansionToRender != BottomSheetExpansion.Closed);
+        }
+        else if (IsOpen != _isOpen)
+        {
+            _isOpen = IsOpen;
+            _expansionToRender = IsOpen ? DefaultExpansion : BottomSheetExpansion.Closed;
+            await ExpansionChanged.InvokeAsync(_expansionToRender);
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -115,13 +145,12 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         }
     }
 
-    private async Task OnBackgroundClickAsync()
+    private Task OnBackgroundClickAsync()
     {
-        if (!CloseOnBackgroundClick)
-            return;
-        _expansion = BottomSheetExpansion.Closed;
-        StateHasChanged();
-        await ExpansionChanged.InvokeAsync(_expansion);
+        if (CloseOnBackgroundClick)
+            return UpdateExpansionAsync(BottomSheetExpansion.Closed);
+        else
+            return Task.CompletedTask;
     }
 
     /// <summary>
@@ -129,11 +158,21 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     /// </summary>
     [JSInvokable]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public async Task SetExpansionAsync(int expansion)
+    public Task SetExpansionAsync(int expansion) => UpdateExpansionAsync((BottomSheetExpansion)expansion);
+
+    private async Task UpdateExpansionAsync(BottomSheetExpansion expansion)
     {
-        _expansion = (BottomSheetExpansion)expansion;
+        if (_expansionToRender == expansion)
+            return;
+
+        var isOpenChanged = _expansionToRender == BottomSheetExpansion.Closed || expansion == BottomSheetExpansion.Closed;
+        _expansionToRender = expansion;
         StateHasChanged();
-        await ExpansionChanged.InvokeAsync(_expansion);
+
+        await ExpansionChanged.InvokeAsync(_expansionToRender);
+
+        if (isOpenChanged)
+            await IsOpenChanged.InvokeAsync(_expansionToRender != BottomSheetExpansion.Closed);
     }
 
     public async ValueTask DisposeAsync()
