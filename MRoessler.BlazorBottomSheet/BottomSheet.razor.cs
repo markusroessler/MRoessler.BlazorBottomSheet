@@ -38,6 +38,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public bool IsModal { get; set; }
 
+    // TODO rename to AutoClose?
     [Parameter]
     public bool CloseOnBackgroundClick { get; set; }
 
