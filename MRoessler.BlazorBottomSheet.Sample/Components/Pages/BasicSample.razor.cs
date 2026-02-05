@@ -10,6 +10,13 @@ namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
 
 public sealed partial class BasicSample : ComponentBase, IDisposable
 {
+    const string AllowCloseOption = "Allow close";
+    const string AllowMinimizeOption = "Allow minimize";
+    const string AllowNormalOption = "Allow normal";
+    const string AllowMaximizeOption = "Allow maximize";
+    const string IsModalOption = "Modal";
+    const string CloseOnBackgroundClickOption = "Close on background click";
+
     [Inject]
     public BasicSampleViewModel ViewModel { get; set; } = default!;
 
@@ -23,17 +30,8 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
 
     private BottomSheetExpansion _expansion;
 
-    private bool _allowClosedExpansion = true;
 
-    private bool _allowMinimizedExpansion = true;
-
-    private bool _allowNormalExpansion = true;
-
-    private bool _allowMaximizedExpansion = true;
-
-    private bool _isModal = true;
-
-    private bool _closeOnBackgroundClick = true;
+    IReadOnlyCollection<string> _selectedOptions = [AllowCloseOption, AllowMinimizeOption, AllowNormalOption, AllowMaximizeOption, IsModalOption, CloseOnBackgroundClickOption];
 
     readonly Guid _instanceId = Guid.NewGuid();
 
