@@ -16,6 +16,7 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
     const string AllowMaximizeOption = "Allow maximize";
     const string IsModalOption = "Modal";
     const string CloseOnBackgroundClickOption = "Close on background click";
+    const string ApplyMudBlazorStylingOption = "Apply MudBlazor styling";
 
     [Inject]
     public BasicSampleViewModel ViewModel { get; set; } = default!;
@@ -36,10 +37,6 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
     readonly Guid _instanceId = Guid.NewGuid();
 
 
-    private void ToggleButtonSheetVisible() => _isBottomSheetVisible = !_isBottomSheetVisible;
-
-    private void ToggleButtonSheetOpen() => _expansion = _expansion == BottomSheetExpansion.Closed ? BottomSheetExpansion.Normal : BottomSheetExpansion.Closed;
-
     protected override void OnInitialized()
     {
 
@@ -50,6 +47,14 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
     }
 
     private void ViewModel_StateChanged() => StateHasChanged();
+
+
+    private void ToggleButtonSheetVisible() => _isBottomSheetVisible = !_isBottomSheetVisible;
+
+    private void ToggleButtonSheetOpen() => _expansion = _expansion == BottomSheetExpansion.Closed ? BottomSheetExpansion.Normal : BottomSheetExpansion.Closed;
+
+    private string GetBottomSheetClass() => _selectedOptions.Contains(ApplyMudBlazorStylingOption) ? "mud-bottom-sheet-layout" : "";
+
 
     public void Dispose()
     {

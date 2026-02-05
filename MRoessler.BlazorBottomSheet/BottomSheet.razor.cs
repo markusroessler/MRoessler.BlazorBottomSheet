@@ -83,6 +83,17 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     /// </summary>
     private BottomSheetExpansion _expansionToRender;
 
+    /// <summary>
+    /// style class to apply on root layout element
+    /// </summary>
+    [Parameter]
+    public string Class { get; set; } = "";
+
+    /// <summary>
+    /// style to apply on root layout element
+    /// </summary>
+    [Parameter]
+    public string Style { get; set; } = "";
 
     [Parameter(CaptureUnmatchedValues = true)]
     [SuppressMessage("Usage", "CA2227:Collection properties should be read only...", Justification = "...but not Blazor Parameters")]

@@ -3,3 +3,13 @@
     /* note: see MainLayout theme */
     z-index: 1400;
 }
+
+.mud-bottom-sheet-layout .bottom-sheet {
+    background-color: var(--mud-palette-surface);
+    border: 2px solid var(--mud-palette-divider);
+    /* box-shadow: var(--mud-elevation-5); */
+}
+
+.mud-bottom-sheet-layout .bottom-sheet-handle rect {
+    fill: var(--mud-palette-lines-inputs);
+}
