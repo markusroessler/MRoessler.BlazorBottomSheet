@@ -8,14 +8,14 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
 public static class BottomSheetLocatorExtensions
 {
-    public static ILocator GetBottomSheet(this ILocator parentLocator) => parentLocator.GetByTestId("bottom-sheet");
+    public static ILocator BottomSheet(this ILocator parentLocator) => parentLocator.GetByTestId("bottom-sheet");
 
-    public static ILocator GetMinimizedMarker(this ILocator parentLocator) => parentLocator.GetByTestId("minimized-marker");
+    public static ILocator MinimizedMarker(this ILocator parentLocator) => parentLocator.GetByTestId("minimized-marker");
 
-    public static ILocator GetNormalMarker(this ILocator parentLocator) => parentLocator.GetByTestId("normal-marker");
+    public static ILocator NormalMarker(this ILocator parentLocator) => parentLocator.GetByTestId("normal-marker");
 
-    public static ILocator GetHandle(this ILocator parentLocator) => parentLocator.GetByTestId("bottom-sheet-handle");
+    public static ILocator Handle(this ILocator parentLocator) => parentLocator.GetByTestId("bottom-sheet-handle");
 
-    public static ILocator GetBackground(this ILocator parentLocator) => parentLocator.GetByTestId("bottom-sheet-background");
+    public static ILocator Background(this ILocator parentLocator) => parentLocator.GetByTestId("bottom-sheet-background");
 
 }

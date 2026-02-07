@@ -29,8 +29,8 @@ public class TwoSheetsSampleTest : CustomPageTest
 
             var sheetLayout1 = GetSheetLayout1();
             var sheetLayout2 = GetSheetLayout2();
-            var sheet1 = sheetLayout1.GetBottomSheet();
-            var sheet2 = sheetLayout2.GetBottomSheet();
+            var sheet1 = sheetLayout1.BottomSheet();
+            var sheet2 = sheetLayout2.BottomSheet();
 
             await Expect(sheet1).Not.ToBeInViewportAsync();
             await Expect(sheet1).ToContainClassAsync("closed");
@@ -41,10 +41,10 @@ public class TwoSheetsSampleTest : CustomPageTest
             await sheet1.WhenBoundsStable();
             await Expect(sheet1).ToBeInViewportAsync();
             await Expect(sheetLayout1).ToContainClassAsync("minimized");
-            await Expect(sheet1.GetMinimizedMarker()).ToBeInViewportAsync();
-            await Expect(sheet1.GetNormalMarker()).Not.ToBeInViewportAsync();
+            await Expect(sheet1.MinimizedMarker()).ToBeInViewportAsync();
+            await Expect(sheet1.NormalMarker()).Not.ToBeInViewportAsync();
 
-            await sheetLayout1.GetBackground().ClickAsync();
+            await sheetLayout1.Background().ClickAsync();
             await sheet1.WhenBoundsStable();
             await Expect(sheet1).Not.ToBeInViewportAsync();
             await Expect(sheet1).ToContainClassAsync("closed");
@@ -55,10 +55,10 @@ public class TwoSheetsSampleTest : CustomPageTest
             await sheet2.WhenBoundsStable();
             await Expect(sheet2).ToBeInViewportAsync();
             await Expect(sheetLayout2).ToContainClassAsync("minimized");
-            await Expect(sheet2.GetMinimizedMarker()).ToBeInViewportAsync();
-            await Expect(sheet2.GetNormalMarker()).Not.ToBeInViewportAsync();
+            await Expect(sheet2.MinimizedMarker()).ToBeInViewportAsync();
+            await Expect(sheet2.NormalMarker()).Not.ToBeInViewportAsync();
 
-            await sheetLayout2.GetBackground().ClickAsync();
+            await sheetLayout2.Background().ClickAsync();
             await sheet2.WhenBoundsStable();
             await Expect(sheet2).Not.ToBeInViewportAsync();
             await Expect(sheet2).ToContainClassAsync("closed");
