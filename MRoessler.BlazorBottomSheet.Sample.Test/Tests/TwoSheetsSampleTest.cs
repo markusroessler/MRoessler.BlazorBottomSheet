@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
-namespace MRoessler.BlazorBottomSheet.Sample.Test;
+namespace MRoessler.BlazorBottomSheet.Sample.Test.Tests;
 
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]

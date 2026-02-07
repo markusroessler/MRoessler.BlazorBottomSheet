@@ -12,7 +12,7 @@ using Microsoft.Playwright.NUnit;
 using MRoessler.BlazorBottomSheet.Sample.Utils;
 using NUnit.Framework.Interfaces;
 
-namespace MRoessler.BlazorBottomSheet.Sample.Test;
+namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
 public abstract class CustomPageTest : PageTest
 {
