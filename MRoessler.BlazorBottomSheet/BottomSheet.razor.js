@@ -94,7 +94,6 @@ export function init(layoutElm, razorComp) {
     _layoutAttributesObserver = new MutationObserver(handleLayoutAttributeChanges)
     _layoutAttributesObserver.observe(_layoutElm, {
         attributes: true, attributeFilter: [
-            "data-class",
             "data-allow-closed-expansion", "data-allow-minimized-expansion", "data-allow-normal-expansion", "data-allow-maximized-expansion",
             "data-expansion", "data-visible"
         ]
@@ -105,7 +104,6 @@ export function init(layoutElm, razorComp) {
 
     updateVisible(_layoutElm.hasAttribute("data-visible"))
     updateExpansion(Number(_layoutElm.getAttribute("data-expansion")))
-    updateLayoutElmClasses(_layoutElm.getAttribute("data-class"))
 }
 
 /** @param evt {TouchEvent} */
@@ -461,28 +459,8 @@ function handleLayoutAttributeChanges(mutations) {
                 updateExpansion(Number(newValue))
             else if (attributeName == "data-visible")
                 updateVisible(_layoutElm.hasAttribute(attributeName))
-            else if (attributeName == "data-class") {
-                updateLayoutElmClasses(newValue)
-            }
         }
     }
-}
-
-/** @type {String[]} */
-let _addedLayoutElmClasses = []
-/**
- * @param newValue {String}
- */
-function updateLayoutElmClasses(newValue) {
-
-    if (_addedLayoutElmClasses.length > 0)
-        _layoutElm.classList.remove(_addedLayoutElmClasses)
-
-    const newClasses = newValue ? newValue.split(" ") : []
-    if (newClasses.length > 0)
-        _layoutElm.classList.add(newClasses)
-
-    _addedLayoutElmClasses = newClasses
 }
 
 function handleLayoutResize() {

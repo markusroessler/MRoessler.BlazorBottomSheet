@@ -4,11 +4,11 @@
     z-index: 1400;
 }
 
-.mud-bottom-sheet-layout .bottom-sheet {
-    background-color: var(--mud-palette-surface);
-    border: 2px solid var(--mud-palette-divider);
+.mud-bottom-sheet {
+    background-color: var(--mud-palette-surface) !important;
+    border: 2px solid var(--mud-palette-divider) !important;
 }
 
-.mud-bottom-sheet-layout .bottom-sheet-handle rect {
+.mud-bottom-sheet .bottom-sheet-handle rect {
     fill: var(--mud-palette-lines-inputs);
 }

@@ -53,7 +53,7 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
 
     private void ToggleButtonSheetOpen() => _expansion = _expansion == BottomSheetExpansion.Closed ? BottomSheetExpansion.Normal : BottomSheetExpansion.Closed;
 
-    private string GetBottomSheetClass() => _selectedOptions.Contains(ApplyMudBlazorStylingOption) ? "mud-bottom-sheet-layout" : "";
+    private string GetBottomSheetClass() => _selectedOptions.Contains(ApplyMudBlazorStylingOption) ? "mud-bottom-sheet" : "";
 
 
     public void Dispose()
