@@ -30,7 +30,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     public RenderFragment? Handle { get; set; }
 
     [Parameter]
-    public bool IsVisible { get; set; }
+    public bool IsVisible { get; set; } = true;
 
     /// <summary>
     /// whether to prevent interaction with the overlayed content
