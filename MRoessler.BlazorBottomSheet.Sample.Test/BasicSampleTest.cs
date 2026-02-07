@@ -19,14 +19,12 @@ using NUnit.Framework.Interfaces;
 
 namespace MRoessler.BlazorBottomSheet.Sample.Test;
 
-[Parallelizable(ParallelScope.Self)]
 [TestFixture]
-public class BasicSampleTest : PageTest
+[Parallelizable(ParallelScope.Self)]
+public class BasicSampleTest : CustomPageTest
 {
     const int SlowDragStepDelayMs = 100;
     const int FastDragStepDelayMs = 0;
-
-    WebApplicationFactory<Program> _webAppFactory;
 
     ILocator _bottomSheet;
     ILocator _bottomSheetLayout;
@@ -35,22 +33,7 @@ public class BasicSampleTest : PageTest
     ILocator _footer;
     ILocator _handle;
     ILocator _openCloseButton;
-    TestHelper _testHelper;
 
-    [OneTimeSetUp]
-    public void OneTimeSetup()
-    {
-        _webAppFactory = new WebApplicationFactory<Program>();
-        _webAppFactory.UseKestrel(5001);
-        _webAppFactory.StartServer();
-        _testHelper = _webAppFactory.Services.GetRequiredService<TestHelper>();
-    }
-
-    [OneTimeTearDown]
-    public async Task OneTimeTeardownAsync()
-    {
-        await _webAppFactory.DisposeAsync();
-    }
 
     [SetUp]
     public void Setup()
@@ -64,61 +47,8 @@ public class BasicSampleTest : PageTest
         _openCloseButton = Page.GetByTestId("open-close-button");
     }
 
-    [TearDown]
-    public async Task TeardownAsync()
-    {
-        if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
-        {
-            var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "Screenshots");
-            Directory.CreateDirectory(dir);
+    private Task<IResponse> GotoBasicSamplePageAsync() => Page.GotoAsync(WebAppFactory.ClientOptions.BaseAddress.ToString());
 
-            var fileName = $"failure_{TestContext.CurrentContext.Test.Name}.png";
-            var path = Path.Combine(dir, fileName);
-            await Page.ScreenshotAsync(new() { Path = path });
-            // TestContext.AddTestAttachment(path);
-        }
-    }
-
-    public override BrowserNewContextOptions ContextOptions()
-    {
-        return Playwright.Devices[Environment.GetEnvironmentVariable("DEVICE_NAME")];
-    }
-
-    private Task<IResponse> GotoBasicSamplePageAsync() => Page.GotoAsync("http://localhost:5001");
-
-    /// <summary>
-    /// note: can't use Teardown method for coverage export because it runs too late (Page-Context is gone)
-    /// </summary>
-    private async Task TestAsync(Func<Task> test)
-    {
-        try
-        {
-            await test();
-        }
-        finally
-        {
-            await TryExportCoverage();
-        }
-    }
-
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "it's a 'try'-method")]
-    private async Task TryExportCoverage()
-    {
-        try
-        {
-            var coverageJson = await Page.EvaluateAsync<ExpandoObject>("window.__coverage__");
-            if (coverageJson != null)
-            {
-                var outDir = Path.Combine(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", ".."), ".nyc_output");
-                Directory.CreateDirectory(outDir);
-                File.WriteAllText(Path.Combine(outDir, $"{TestContext.CurrentContext.Test.MethodName}.json"), JsonSerializer.Serialize(coverageJson));
-            }
-        }
-        catch (Exception ex)
-        {
-            TestContext.Error.WriteLine("Failed to export coverage " + ex);
-        }
-    }
 
     [Test]
     public Task Test_SlowDragInDirection()
@@ -264,7 +194,7 @@ public class BasicSampleTest : PageTest
             var samplePageInstanceIdElm = await Page.GetByTestId("sample-instance-id").ElementHandleAsync();
             var samplePageInstanceId = Guid.Parse(await samplePageInstanceIdElm.TextContentAsync());
 
-            var samplePage = _testHelper.ActiveBasicSamplePages[samplePageInstanceId];
+            var samplePage = TestHelper.ActiveBasicSamplePages[samplePageInstanceId];
             var basicSampleViewModel = samplePage.ViewModel;
             var syncContextDispatcher = samplePage.SyncContextDispatcher;
 

@@ -6,12 +6,12 @@
     <MudStack>
         <span data-testid="sample-instance-id" style="display: none;">@_instanceId</span>
 
-        <MudButton OnClick="ToggleIsOpen1" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button">Open/Close BottomSheet 1</MudButton>
-        <MudButton OnClick="ToggleIsOpen2" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button">Open/Close BottomSheet 2</MudButton>
+        <MudButton OnClick="ToggleIsOpen1" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button-1">Open/Close BottomSheet 1</MudButton>
+        <MudButton OnClick="ToggleIsOpen2" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button-2">Open/Close BottomSheet 2</MudButton>
     </MudStack>
 </MudPaper>
 
-<BottomSheet Class="mud-bottom-sheet" BackgroundClass="mud-bottom-sheet-background"
+<BottomSheet data-testid="bottom-sheet-layout-1" Class="mud-bottom-sheet" BackgroundClass="mud-bottom-sheet-background"
     IsModal CloseOnBackgroundClick AllowMinimizedExpansion AllowNormalExpansion
     @bind-Expansion=_expansion1
 >
@@ -31,7 +31,7 @@
     </div>
 </BottomSheet>
 
-<BottomSheet Class="mud-bottom-sheet" BackgroundClass="mud-bottom-sheet-background"
+<BottomSheet data-testid="bottom-sheet-layout-2" Class="mud-bottom-sheet" BackgroundClass="mud-bottom-sheet-background"
     IsModal CloseOnBackgroundClick AllowMinimizedExpansion AllowNormalExpansion
     @bind-Expansion=_expansion2
 >
