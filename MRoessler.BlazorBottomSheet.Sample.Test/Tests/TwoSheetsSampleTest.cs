@@ -12,40 +12,13 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.Tests;
 [Parallelizable(ParallelScope.Self)]
 public class TwoSheetsSampleTest : CustomPageTest
 {
+    Task<IResponse> GotoSamplePageAsync() => Page.GotoAsync($"{WebAppFactory.ClientOptions.BaseAddress}two-sheets");
 
-    ILocator _openCloseButton1;
-    ILocator _openCloseButton2;
+    ILocator GetSheetLayout1() => Page.GetByTestId("bottom-sheet-layout-1");
+    ILocator GetSheetLayout2() => Page.GetByTestId("bottom-sheet-layout-2");
+    ILocator GetOpenCloseButton1() => Page.GetByTestId("open-close-button-1");
+    ILocator GetOpenCloseButton2() => Page.GetByTestId("open-close-button-2");
 
-    ILocator _bottomSheetLayout1;
-    ILocator _bottomSheetLayout2;
-
-    ILocator _bottomSheet1;
-    ILocator _bottomSheet2;
-
-    ILocator _minimizedMarker1;
-    ILocator _minimizedMarker2;
-    ILocator _normalMarker1;
-    ILocator _normalMarker2;
-
-    [SetUp]
-    public void Setup()
-    {
-        _openCloseButton1 = Page.GetByTestId("open-close-button-1");
-        _openCloseButton2 = Page.GetByTestId("open-close-button-2");
-
-        _bottomSheetLayout1 = Page.GetByTestId("bottom-sheet-layout-1");
-        _bottomSheetLayout2 = Page.GetByTestId("bottom-sheet-layout-2");
-
-        _bottomSheet1 = _bottomSheetLayout1.GetByTestId("bottom-sheet");
-        _bottomSheet2 = _bottomSheetLayout2.GetByTestId("bottom-sheet");
-
-        _minimizedMarker1 = _bottomSheetLayout1.GetByTestId("minimized-marker");
-        _minimizedMarker2 = _bottomSheetLayout2.GetByTestId("minimized-marker");
-        _normalMarker1 = _bottomSheetLayout1.GetByTestId("normal-marker");
-        _normalMarker2 = _bottomSheetLayout2.GetByTestId("normal-marker");
-    }
-
-    private Task<IResponse> GotoSamplePageAsync() => Page.GotoAsync($"{WebAppFactory.ClientOptions.BaseAddress}two-sheets");
 
     [Test]
     public Task Test_Open()
@@ -54,16 +27,41 @@ public class TwoSheetsSampleTest : CustomPageTest
         {
             await GotoSamplePageAsync();
 
-            await Expect(_bottomSheet1).Not.ToBeInViewportAsync();
-            await Expect(_bottomSheet1).ToContainClassAsync("closed");
+            var sheetLayout1 = GetSheetLayout1();
+            var sheetLayout2 = GetSheetLayout2();
+            var sheet1 = sheetLayout1.GetBottomSheet();
+            var sheet2 = sheetLayout2.GetBottomSheet();
 
-            await _openCloseButton1.ClickAsync();
+            await Expect(sheet1).Not.ToBeInViewportAsync();
+            await Expect(sheet1).ToContainClassAsync("closed");
 
-            await _bottomSheet1.WhenBoundsStable();
-            await Expect(_bottomSheet1).ToBeInViewportAsync();
-            await Expect(_bottomSheetLayout1).ToContainClassAsync("minimized");
-            await Expect(_minimizedMarker1).ToBeInViewportAsync();
-            await Expect(_normalMarker1).Not.ToBeInViewportAsync();
+            await GetOpenCloseButton1().ClickAsync();
+
+            // open and close first sheet
+            await sheet1.WhenBoundsStable();
+            await Expect(sheet1).ToBeInViewportAsync();
+            await Expect(sheetLayout1).ToContainClassAsync("minimized");
+            await Expect(sheet1.GetMinimizedMarker()).ToBeInViewportAsync();
+            await Expect(sheet1.GetNormalMarker()).Not.ToBeInViewportAsync();
+
+            await sheetLayout1.GetBackground().ClickAsync();
+            await sheet1.WhenBoundsStable();
+            await Expect(sheet1).Not.ToBeInViewportAsync();
+            await Expect(sheet1).ToContainClassAsync("closed");
+
+            await GetOpenCloseButton2().ClickAsync();
+
+            // open and close second sheet
+            await sheet2.WhenBoundsStable();
+            await Expect(sheet2).ToBeInViewportAsync();
+            await Expect(sheetLayout2).ToContainClassAsync("minimized");
+            await Expect(sheet2.GetMinimizedMarker()).ToBeInViewportAsync();
+            await Expect(sheet2.GetNormalMarker()).Not.ToBeInViewportAsync();
+
+            await sheetLayout2.GetBackground().ClickAsync();
+            await sheet2.WhenBoundsStable();
+            await Expect(sheet2).Not.ToBeInViewportAsync();
+            await Expect(sheet2).ToContainClassAsync("closed");
         });
     }
 }

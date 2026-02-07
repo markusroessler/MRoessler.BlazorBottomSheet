@@ -39,12 +39,12 @@ public class BasicSampleTest : CustomPageTest
     [SetUp]
     public void Setup()
     {
-        _bottomSheet = Page.GetByTestId("bottom-sheet");
         _bottomSheetLayout = Page.GetByTestId("bottom-sheet-layout");
-        _minimizedMarker = Page.GetByTestId("minimized-marker");
-        _normalMarker = Page.GetByTestId("normal-marker");
-        _footer = Page.GetByTestId("footer");
-        _handle = Page.GetByTestId("bottom-sheet-handle");
+        _bottomSheet = _bottomSheetLayout.GetBottomSheet();
+        _minimizedMarker = _bottomSheetLayout.GetMinimizedMarker();
+        _normalMarker = _bottomSheetLayout.GetNormalMarker();
+        _footer = _bottomSheetLayout.GetByTestId("footer");
+        _handle = _bottomSheetLayout.GetHandle();
         _openCloseButton = Page.GetByTestId("open-close-button");
     }
 
