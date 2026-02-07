@@ -85,10 +85,16 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     private BottomSheetExpansion _expansionToRender;
 
     /// <summary>
-    /// style class to apply on BottomSheet element
+    /// style class to apply on the BottomSheet element
     /// </summary>
     [Parameter]
     public string Class { get; set; } = "";
+
+    /// <summary>
+    /// style class to apply on the BottomSheet background (visible when <see cref="IsModal"/> is true)
+    /// </summary>
+    [Parameter]
+    public string BackgroundClass { get; set; } = "";
 
     [Parameter(CaptureUnmatchedValues = true)]
     [SuppressMessage("Usage", "CA2227:Collection properties should be read only...", Justification = "...but not Blazor Parameters")]

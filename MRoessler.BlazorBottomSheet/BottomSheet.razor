@@ -10,7 +10,7 @@
         @attributes="AdditionalAttributes"
     >
         @if (IsModal) {
-            <div class="bottom-sheet-background" @onclick="OnBackgroundClickAsync" />
+            <div class="bottom-sheet-background @BackgroundClass" @onclick="OnBackgroundClickAsync" />
         }
 
         <div class="bottom-sheet closed @Class" style="transform: translateY(100%);" data-testid="bottom-sheet"> <!-- note: style attributes are handled by javascript -->

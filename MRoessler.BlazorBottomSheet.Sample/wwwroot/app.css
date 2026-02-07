@@ -12,3 +12,7 @@
 .mud-bottom-sheet .bottom-sheet-handle rect {
     fill: var(--mud-palette-lines-inputs);
 }
+
+.mud-bottom-sheet-background {
+    background-color: var(--mud-palette-background) !important;
+}
