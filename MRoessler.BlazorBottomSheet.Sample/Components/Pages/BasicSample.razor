@@ -1,24 +1,29 @@
 ﻿@page "/"
 
 <PageTitle>Sample</PageTitle>
-<span data-testid="sample-instance-id" style="display: none;">@_instanceId</span>
 
-<MudStack>
-    <MudCheckBox Label="Allow closed" @bind-Value="_allowClosedExpansion" />
-    <MudCheckBox Label="Allow minimized" @bind-Value="_allowMinimizedExpansion" />
-    <MudCheckBox Label="Allow normal" @bind-Value="_allowNormalExpansion" />
-    <MudCheckBox Label="Allow maximized" @bind-Value="_allowMaximizedExpansion" />
-    <MudCheckBox Label="Modal" @bind-Value="_isModal" />
-    <MudCheckBox Label="Close on background click" @bind-Value="_closeOnBackgroundClick" />
+<MudPaper Class="pa-2" Style="height: 100%;">
+    <MudStack>
+        <span data-testid="sample-instance-id" style="display: none;">@_instanceId</span>
+        <MudChipSet @bind-SelectedValues="_selectedOptions" SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info">
+            <MudChip Value="@AllowCloseOption" />
+            <MudChip Value="@AllowMinimizeOption" />
+            <MudChip Value="@AllowNormalOption" />
+            <MudChip Value="@AllowMaximizeOption" />
+            <MudChip Value="@IsModalOption" />
+            <MudChip Value="@CloseOnBackgroundClickOption" />
+            <MudChip Value="@ApplyMudBlazorStylingOption" />
+        </MudChipSet>
 
-    <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button">Open/Close BottomSheet</MudButton>
-    <MudButton OnClick="ToggleButtonSheetVisible" Color="Color.Primary">Show/Hide BottomSheet</MudButton>
-</MudStack>
+        <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button">Open/Close BottomSheet</MudButton>
+        <MudButton OnClick="ToggleButtonSheetVisible" Color="Color.Primary">Show/Hide BottomSheet</MudButton>
+    </MudStack>
+</MudPaper>
 
-<BottomSheet 
-    IsModal=_isModal CloseOnBackgroundClick=_closeOnBackgroundClick
-    AllowClosedExpansion=_allowClosedExpansion AllowMinimizedExpansion=_allowMinimizedExpansion 
-    AllowNormalExpansion=_allowNormalExpansion AllowMaximizedExpansion=_allowMaximizedExpansion
+<BottomSheet Class=@GetBottomSheetClass() BackgroundClass=@GetBottomSheetBackgroundClass()
+    IsModal=_selectedOptions.Contains(IsModalOption) CloseOnBackgroundClick=_selectedOptions.Contains(CloseOnBackgroundClickOption)
+    AllowClosedExpansion=_selectedOptions.Contains(AllowCloseOption) AllowMinimizedExpansion=_selectedOptions.Contains(AllowMinimizeOption) 
+    AllowNormalExpansion=_selectedOptions.Contains(AllowNormalOption) AllowMaximizedExpansion=_selectedOptions.Contains(AllowMaximizeOption)
     @bind-IsOpen:get=ViewModel.State.IsOpen @bind-IsOpen:set=ViewModel.SetIsOpen 
     @bind-Expansion=_expansion IsVisible=_isBottomSheetVisible
 >

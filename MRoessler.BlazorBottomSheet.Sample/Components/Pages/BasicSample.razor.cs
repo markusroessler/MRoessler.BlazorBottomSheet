@@ -10,6 +10,14 @@ namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
 
 public sealed partial class BasicSample : ComponentBase, IDisposable
 {
+    const string AllowCloseOption = "Allow Close";
+    const string AllowMinimizeOption = "Allow Minimize";
+    const string AllowNormalOption = "Allow Normal";
+    const string AllowMaximizeOption = "Allow Maximize";
+    const string IsModalOption = "Modal";
+    const string CloseOnBackgroundClickOption = "Auto-Close";
+    const string ApplyMudBlazorStylingOption = "MudBlazor Styling";
+
     [Inject]
     public BasicSampleViewModel ViewModel { get; set; } = default!;
 
@@ -23,24 +31,11 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
 
     private BottomSheetExpansion _expansion;
 
-    private bool _allowClosedExpansion = true;
 
-    private bool _allowMinimizedExpansion = true;
-
-    private bool _allowNormalExpansion = true;
-
-    private bool _allowMaximizedExpansion = true;
-
-    private bool _isModal = true;
-
-    private bool _closeOnBackgroundClick = true;
+    IReadOnlyCollection<string> _selectedOptions = [AllowCloseOption, AllowMinimizeOption, AllowNormalOption, AllowMaximizeOption, IsModalOption, CloseOnBackgroundClickOption, ApplyMudBlazorStylingOption];
 
     readonly Guid _instanceId = Guid.NewGuid();
 
-
-    private void ToggleButtonSheetVisible() => _isBottomSheetVisible = !_isBottomSheetVisible;
-
-    private void ToggleButtonSheetOpen() => _expansion = _expansion == BottomSheetExpansion.Closed ? BottomSheetExpansion.Normal : BottomSheetExpansion.Closed;
 
     protected override void OnInitialized()
     {
@@ -52,6 +47,15 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
     }
 
     private void ViewModel_StateChanged() => StateHasChanged();
+
+
+    private void ToggleButtonSheetVisible() => _isBottomSheetVisible = !_isBottomSheetVisible;
+
+    private void ToggleButtonSheetOpen() => _expansion = _expansion == BottomSheetExpansion.Closed ? BottomSheetExpansion.Normal : BottomSheetExpansion.Closed;
+
+    private string GetBottomSheetClass() => _selectedOptions.Contains(ApplyMudBlazorStylingOption) ? "mud-bottom-sheet" : "";
+    private string GetBottomSheetBackgroundClass() => _selectedOptions.Contains(ApplyMudBlazorStylingOption) ? "mud-bottom-sheet-background" : "";
+
 
     public void Dispose()
     {
