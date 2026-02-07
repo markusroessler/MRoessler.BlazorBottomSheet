@@ -1,4 +1,4 @@
-@page "/two-sheets"
+@page "/multiple-sheets"
 
 <PageTitle>Dynamic Content Sample</PageTitle>
 
@@ -6,8 +6,8 @@
     <MudStack>
         <span data-testid="sample-instance-id" style="display: none;">@_instanceId</span>
 
-        <MudButton OnClick="ToggleIsOpen1" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button-1">Open/Close BottomSheet 1</MudButton>
-        <MudButton OnClick="ToggleIsOpen2" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button-2">Open/Close BottomSheet 2</MudButton>
+        <MudButton OnClick="ToggleIsOpen1" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button-1">Open BottomSheet 1</MudButton>
+        <MudButton OnClick="ToggleIsOpen2" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button-2">Open BottomSheet 2</MudButton>
     </MudStack>
 </MudPaper>
 

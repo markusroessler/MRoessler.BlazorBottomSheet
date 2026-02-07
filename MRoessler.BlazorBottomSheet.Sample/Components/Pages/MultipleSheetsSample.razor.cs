@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
 
-public partial class TwoSheetsSample
+public partial class MultipleSheetsSample
 {
     readonly Guid _instanceId = Guid.NewGuid();
 

@@ -10,9 +10,9 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.Tests;
 
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]
-public class TwoSheetsSampleTest : CustomPageTest
+public class MultipleSheetsSampleTest : CustomPageTest
 {
-    Task<IResponse> GotoSamplePageAsync() => Page.GotoAsync($"{WebAppFactory.ClientOptions.BaseAddress}two-sheets");
+    Task<IResponse> GotoSamplePageAsync() => Page.GotoAsync($"{WebAppFactory.ClientOptions.BaseAddress}multiple-sheets");
 
     ILocator GetSheetLayout1() => Page.GetByTestId("bottom-sheet-layout-1");
     ILocator GetSheetLayout2() => Page.GetByTestId("bottom-sheet-layout-2");
