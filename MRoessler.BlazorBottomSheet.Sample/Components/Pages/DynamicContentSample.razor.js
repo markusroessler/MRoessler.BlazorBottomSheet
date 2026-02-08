@@ -14,15 +14,6 @@ export class DynamicContentSample {
     /** @type {HTMLElement} */
     #revealedElm
 
-    /** @type {HTMLElement} */
-    #mainContentElm
-
-    /** @type {HTMLElement} */
-    #minExpansionMarker
-
-    /** @type {HTMLElement} */
-    #normalExpansionMarker
-
 
     /**
      * @param rootElm {HTMLElement}
@@ -31,11 +22,7 @@ export class DynamicContentSample {
     constructor(rootElm, sheet) {
         this.#rootElm = rootElm
         this.#sheet = sheet
-
-        this.#revealedElm = rootElm.querySelector("*[data-revealed-content]");
-        this.#mainContentElm = rootElm.querySelector("*[data-main-content]");
-        this.#minExpansionMarker = sheet.minimizedExpansionMarker
-        this.#normalExpansionMarker = sheet.normalExpansionMarker
+        this.#revealedElm = rootElm.querySelector(".revealed-content");
 
         sheet.addEventListener(SheetMoveEventName, (evt) => this.#layoutRevealedContent(evt), { passive: true })
     }
@@ -53,10 +40,10 @@ export class DynamicContentSample {
         const mainContentTranslateY = this.#clamp(mainContentTranslateYUnbounded, 0, revealedElmBounds.height)
         const revealedElmOpacity = this.#clamp((mainContentTranslateYUnbounded - revealedElmBounds.height) / (viewportHeight / 4), 0.0, 1.0)
 
-        this.#mainContentElm.style.transform = `translateY(${mainContentTranslateY}px)`
-        this.#minExpansionMarker.style.transform = `translateY(${-mainContentTranslateY}px)`
-        this.#normalExpansionMarker.style.transform = `translateY(${-mainContentTranslateY}px)`
-        this.#revealedElm.style.opacity = revealedElmOpacity
+
+        this.#rootElm.style.setProperty("--main-content-transform", `translateY(${mainContentTranslateY}px)`)
+        this.#rootElm.style.setProperty("--expansion-marker-transform", `translateY(${-mainContentTranslateY}px)`)
+        this.#rootElm.style.setProperty("--revealed-content-opacity", revealedElmOpacity)
     }
 
     #clamp(val, min, max) {

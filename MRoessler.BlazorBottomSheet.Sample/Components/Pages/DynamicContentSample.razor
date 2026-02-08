@@ -14,13 +14,13 @@
     IsModal CloseOnBackgroundClick AllowMinimizedExpansion AllowNormalExpansion
     @bind-Expansion=_expansion
 >
-    <div @ref="_rootElm" style="height: 100%;">
+    <div @ref="_rootElm" style="height: 100%;"> <!-- note: style gets updated by js! -->
         <div style="height: 100%; display: grid;">
-            <MudText Typo="Typo.h6" Class="py-0 my-0" Style="grid-row: 1; grid-column: 1; align-self: start;" data-revealed-content>Dynamic Content<br/>
+            <MudText Typo="Typo.h6" Class="py-0 my-0 revealed-content">Dynamic Content<br/>
                 <MudText Typo="Typo.subtitle2" Inline>revealed when BottomSheet is dragged towards normal expansion</MudText>
             </MudText>
             
-            <MudStack data-main-content Spacing=0 Style="grid-row: 1; grid-column: 1; background-color: var(--mud-palette-surface);">
+            <MudStack Spacing=0 Class="main-content">
                 <MudText Typo="Typo.h6" Class="my-4">Header</MudText>
                 <MinimizedExpansionMarker />
 
