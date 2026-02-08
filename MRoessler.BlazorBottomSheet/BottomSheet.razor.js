@@ -27,8 +27,21 @@ export function createBottomSheet(layoutElm, razorComp) {
     return new BottomSheet(layoutElm, razorComp)
 }
 
+export class BottomSheetDragEvent extends Event {
+    /** @type {number} */
+    #translateY
 
-export class BottomSheet {
+    constructor(translateY) {
+        super("sheet-drag");
+        this.#translateY = translateY
+    }
+
+    get translateY() {
+        return this.#translateY
+    }
+}
+
+export class BottomSheet extends EventTarget {
     /** @type {HTMLElement} */
     #layoutElm
 
@@ -80,6 +93,8 @@ export class BottomSheet {
 
     /** @param razorComp { DotNetObject } */
     constructor(layoutElm, razorComp) {
+        super()
+
         this.#layoutElm = layoutElm
         this.#razorComp = razorComp
 
@@ -175,16 +190,16 @@ export class BottomSheet {
 
             const translate = clientY - this.#dragAnchorY
             if (translate < this.#dragStartMinTranslateY) {
-                this.#sheetElm.style.transform = `translateY(${this.#dragStartMinTranslateY}px)`
+                this.#updateTranslateY(this.#dragStartMinTranslateY)
                 this.#layoutElm.classList.remove(DraggingStyleClass) // enable scroll
             } else if (translate > this.#dragStartMaxTranslateY) {
-                this.#sheetElm.style.transform = `translateY(${this.#dragStartMaxTranslateY}px)`
+                this.#updateTranslateY(this.#dragStartMaxTranslateY)
 
             } else if (translate > 0) {
-                this.#sheetElm.style.transform = `translateY(${translate}px)`
+                this.#updateTranslateY(translate)
 
             } else {
-                this.#sheetElm.style.removeProperty('transform')
+                this.#updateTranslateY(0)
                 this.#layoutElm.classList.remove(DraggingStyleClass) // enable scroll
             }
 
@@ -399,16 +414,24 @@ export class BottomSheet {
 
     #updateTransform(expansion) {
         if (expansion == ExpansionClosed)
-            this.#sheetElm.style.transform = 'translateY(100%)'
+            this.#updateTranslateY(document.documentElement.clientHeight)
 
         else if (expansion == ExpansionMinimized)
-            this.#sheetElm.style.transform = `translateY(${this.#computeSheetTranslateYByMarker(this.#minimizedExpansionMarker)}px)`
+            this.#updateTranslateY(this.#computeSheetTranslateYByMarker(this.#minimizedExpansionMarker))
 
         else if (expansion == ExpansionNormal)
-            this.#sheetElm.style.transform = `translateY(${this.#computeSheetTranslateYByMarker(this.#normalExpansionMarker)}px)`
+            this.#updateTranslateY(this.#computeSheetTranslateYByMarker(this.#normalExpansionMarker))
 
         else if (expansion == ExpansionMaximized)
+            this.#updateTranslateY(0)
+    }
+
+    #updateTranslateY(translateY) {
+        if (translateY == 0)
             this.#sheetElm.style.removeProperty('transform')
+        else
+            this.#sheetElm.style.transform = `translateY(${translateY}px)`
+        this.dispatchEvent(new BottomSheetDragEvent(translateY))
     }
 
     /** @param expansionMarker {HTMLElement} */

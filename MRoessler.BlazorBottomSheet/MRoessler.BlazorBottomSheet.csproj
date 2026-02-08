@@ -36,4 +36,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
   </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>MRoessler.BlazorBottomSheet.Sample</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

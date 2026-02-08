@@ -104,7 +104,12 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
 
     private readonly DotNetObjectReference<BottomSheet> _thisRef;
     private IJSObjectReference? _jsModule;
-    private IJSObjectReference? _jsBottomSheet;
+
+    /// <summary>
+    /// Reference to the javascript object.
+    /// You may use this to add event listeners.
+    /// </summary>
+    public IJSObjectReference? JavaScriptObjRef { get; private set; }
 
     [Inject]
     private BottomSheetOutletState OutletState { get; set; } = default!;
@@ -148,13 +153,18 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         }
     }
 
+    readonly TaskCompletionSource _whenRenderedOnce = new();
+
+    public Task WhenRenderedOnce() => _whenRenderedOnce.Task;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
             _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor.js");
-            _jsBottomSheet = await _jsModule.InvokeAsync<IJSObjectReference>("createBottomSheet", _layoutElm, _thisRef);
+            JavaScriptObjRef = await _jsModule.InvokeAsync<IJSObjectReference>("createBottomSheet", _layoutElm, _thisRef);
+            _whenRenderedOnce.SetResult();
         }
     }
 
@@ -199,13 +209,15 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         if (_disposed)
             return;
 
+        _whenRenderedOnce.TrySetCanceled();
+
         OutletState.DeregisterSectionContentId(_sectionContentId);
         _thisRef.Dispose();
 
-        if (_jsBottomSheet != null)
+        if (JavaScriptObjRef != null)
         {
-            await _jsBottomSheet.InvokeVoidAsync("dispose");
-            await _jsBottomSheet.TryDisposeAsync();
+            await JavaScriptObjRef.InvokeVoidAsync("dispose");
+            await JavaScriptObjRef.TryDisposeAsync();
         }
 
         if (_jsModule != null)

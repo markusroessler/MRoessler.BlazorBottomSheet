@@ -1,0 +1,4 @@
+/* ::deep .header {
+    --dyn-content-bottom: calc(var(--dyn-content-relative-bottom) + var(--bottom-sheet-top));
+    top: clamp(0, calc(100vh - var(--dyn-content-bottom)), var(--dyn-content-height));
+} */
