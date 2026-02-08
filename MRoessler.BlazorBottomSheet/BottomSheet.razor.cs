@@ -119,12 +119,16 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
 
     private ElementReference _layoutElm;
 
+    private TaskCompletionSource? _whenRenderedOnce;
+
     private bool _disposed;
+
 
     public BottomSheet()
     {
         _thisRef = DotNetObjectReference.Create(this);
     }
+
 
     protected override void OnInitialized()
     {
@@ -153,9 +157,15 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         }
     }
 
-    readonly TaskCompletionSource _whenRenderedOnce = new();
-
-    public Task WhenRenderedOnce() => _whenRenderedOnce.Task;
+    /// <summary>
+    /// Use this to wait for the sheet render at least once.
+    /// <see cref="JavaScriptObjRef"/> should be set after the first render.
+    /// </summary>
+    public Task WhenRenderedOnce()
+    {
+        _whenRenderedOnce ??= new();
+        return _whenRenderedOnce.Task;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -164,7 +174,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         {
             _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor.js");
             JavaScriptObjRef = await _jsModule.InvokeAsync<IJSObjectReference>("createBottomSheet", _layoutElm, _thisRef);
-            _whenRenderedOnce.SetResult();
+            _whenRenderedOnce?.SetResult();
         }
     }
 
@@ -209,7 +219,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         if (_disposed)
             return;
 
-        _whenRenderedOnce.TrySetCanceled();
+        _whenRenderedOnce?.TrySetCanceled();
 
         OutletState.DeregisterSectionContentId(_sectionContentId);
         _thisRef.Dispose();

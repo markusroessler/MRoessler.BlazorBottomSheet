@@ -34,8 +34,8 @@ export class DynamicContentSample {
 
         this.#revealedElm = rootElm.querySelector("*[data-revealed-content]");
         this.#mainContentElm = rootElm.querySelector("*[data-main-content]");
-        this.#minExpansionMarker = sheet.minimizedExpansionMarker()
-        this.#normalExpansionMarker = sheet.normalExpansionMarker()
+        this.#minExpansionMarker = sheet.minimizedExpansionMarker
+        this.#normalExpansionMarker = sheet.normalExpansionMarker
 
         sheet.addEventListener(SheetMoveEventName, (evt) => this.#layoutRevealedContent(evt), { passive: true })
     }
