@@ -113,16 +113,19 @@ export class BottomSheet extends EventTarget {
         this.#minimizedExpansionMarker = this.#sheetElm.querySelector("div[data-expansion-marker='1']")
         this.#normalExpansionMarker = this.#sheetElm.querySelector("div[data-expansion-marker='2']")
 
-        // note: not using pointer events because they get canceled when scrolling an element
-        this.#sheetElm.addEventListener("touchstart", evt => this.#handleTouchStart(evt), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("touchend", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("touchcancel", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
-
-        this.#sheetElm.addEventListener("mousedown", evt => this.#handleMouseDown(evt), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("mousemove", evt => this.#handleMouseMove(evt), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("mouseup", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("mouseleave", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
+        const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+        if (isTouchDevice) {
+            // note: not using pointer events because they get canceled when scrolling an element
+            this.#sheetElm.addEventListener("touchstart", evt => this.#handleTouchStart(evt), { passive: true, signal: this.#abortController.signal })
+            this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: true, signal: this.#abortController.signal })
+            this.#layoutElm.addEventListener("touchend", evt => this.#handleDragStop(evt), { passive: true, signal: this.#abortController.signal })
+            this.#layoutElm.addEventListener("touchcancel", evt => this.#handleDragStop(evt), { passive: true, signal: this.#abortController.signal })
+        } else {
+            this.#sheetElm.addEventListener("mousedown", evt => this.#handleMouseDown(evt), { passive: true, signal: this.#abortController.signal })
+            this.#layoutElm.addEventListener("mousemove", evt => this.#handleMouseMove(evt), { passive: true, signal: this.#abortController.signal })
+            this.#layoutElm.addEventListener("mouseup", evt => this.#handleDragStop(evt), { passive: true, signal: this.#abortController.signal })
+            this.#layoutElm.addEventListener("mouseleave", evt => this.#handleDragStop(evt), { passive: true, signal: this.#abortController.signal })
+        }
 
         // watch attribute changes (eg. style/class) and dispatch a custom event
         this.#layoutAttributesObserver = new MutationObserver((mutations) => this.#handleLayoutAttributeChanges(mutations))
@@ -226,10 +229,11 @@ export class BottomSheet extends EventTarget {
         }
     }
 
-    async #handleDragStop() {
-        console.debug(`handlePointerUp - _isDragging: ${this.#isDragging}`)
+    async #handleDragStop(evt) {
+        console.debug(`handleDragStop - evt: ${evt}, _isDragging: ${this.#isDragging}`)
         if (!this.#isDragging)
             return
+
         this.#isDragging = false
         this.#layoutElm.classList.remove(DraggingStyleClass)
 
