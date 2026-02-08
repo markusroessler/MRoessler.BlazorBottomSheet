@@ -1,6 +1,6 @@
 ﻿<SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
     <!-- note: class attribute is handled by js code! -->
-    <div @ref="_layoutElm" class="bottom-sheet-layout" data-testid="bottom-sheet-layout"
+    <div @ref="_layoutElm" class="bottom-sheet-layout"
         data-allow-closed-expansion=@AllowClosedExpansion
         data-allow-minimized-expansion=@AllowMinimizedExpansion
         data-allow-normal-expansion=@AllowNormalExpansion
@@ -10,7 +10,7 @@
         @attributes="AdditionalAttributes"
     >
         @if (IsModal) {
-            <div class="bottom-sheet-background @BackgroundClass" @onclick="OnBackgroundClickAsync" />
+            <div class="bottom-sheet-background @BackgroundClass" @onclick="OnBackgroundClickAsync" data-testid="bottom-sheet-background" />
         }
 
         <div class="bottom-sheet closed @Class" style="transform: translateY(100%);" data-testid="bottom-sheet"> <!-- note: style attributes are handled by javascript -->

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 
-namespace MRoessler.BlazorBottomSheet.Sample.Test;
+namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
 public static class LocatorExtensions
 {
