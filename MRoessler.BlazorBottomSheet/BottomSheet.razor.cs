@@ -104,6 +104,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
 
     private readonly DotNetObjectReference<BottomSheet> _thisRef;
     private IJSObjectReference? _jsModule;
+    private IJSObjectReference? _jsBottomSheet;
 
     [Inject]
     private BottomSheetOutletState OutletState { get; set; } = default!;
@@ -153,7 +154,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         if (firstRender)
         {
             _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor.js");
-            await _jsModule.InvokeVoidAsync("init", _layoutElm, _thisRef);
+            _jsBottomSheet = await _jsModule.InvokeAsync<IJSObjectReference>("createBottomSheet", _layoutElm, _thisRef);
         }
     }
 
@@ -201,11 +202,14 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         OutletState.DeregisterSectionContentId(_sectionContentId);
         _thisRef.Dispose();
 
-        if (_jsModule != null)
+        if (_jsBottomSheet != null)
         {
-            await _jsModule.InvokeVoidAsync("dispose");
-            await _jsModule.TryDisposeAsync();
+            await _jsBottomSheet.InvokeVoidAsync("dispose");
+            await _jsBottomSheet.TryDisposeAsync();
         }
+
+        if (_jsModule != null)
+            await _jsModule.TryDisposeAsync();
 
         _disposed = true;
     }

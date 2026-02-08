@@ -20,7 +20,7 @@
     </MudStack>
 </MudPaper>
 
-<BottomSheet Class=@GetBottomSheetClass() BackgroundClass=@GetBottomSheetBackgroundClass()
+<BottomSheet data-testid="bottom-sheet-layout" Class=@GetBottomSheetClass() BackgroundClass=@GetBottomSheetBackgroundClass()
     IsModal=_selectedOptions.Contains(IsModalOption) CloseOnBackgroundClick=_selectedOptions.Contains(CloseOnBackgroundClickOption)
     AllowClosedExpansion=_selectedOptions.Contains(AllowCloseOption) AllowMinimizedExpansion=_selectedOptions.Contains(AllowMinimizeOption) 
     AllowNormalExpansion=_selectedOptions.Contains(AllowNormalOption) AllowMaximizedExpansion=_selectedOptions.Contains(AllowMaximizeOption)
