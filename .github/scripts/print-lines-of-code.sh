@@ -1,8 +1,11 @@
 #!/bin/bash
-allSourceCodeFiles=$(git ls-files | grep -E '\.cs$|\.js$|\.razor$')
-appCount=$(echo "$allSourceCodeFiles" | grep -E '.*Sample/' | xargs grep -v '^$' | wc -l)
-libCount=$(echo "$allSourceCodeFiles" | grep -E -v '.*Test/.*|Sample.*/' | xargs grep -v '^$' | wc -l)
-testCount=$(echo "$allSourceCodeFiles" | grep -E '.*Test/.*' | xargs grep -v '^$' | wc -l)
+scriptDir=$(dirname "$0")
+source "$scriptDir/lines-of-codes-lib.sh"
+
+allSourceCodeFiles=$(printAllSourceCodeFiles)
+appCount=$(printAppCount $allSourceCodeFiles)
+libCount=$(printLibCount $allSourceCodeFiles)
+testCount=$(printTestCount $allSourceCodeFiles)
 totalCount=$(echo "$allSourceCodeFiles" | xargs grep -v '^$' | wc -l)
 
 echo "## Lines of Code"
