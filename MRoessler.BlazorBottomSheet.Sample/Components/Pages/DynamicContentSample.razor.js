@@ -46,8 +46,8 @@ export class DynamicContentSample {
     #layoutRevealedContent(evt) {
         const viewportHeight = document.documentElement.clientHeight
         const revealedElmBounds = this.#revealedElm.getBoundingClientRect()
-        const rootElmBounds = this.#rootElm.getBoundingClientRect()
-        const revealedElmRelativeBottom = revealedElmBounds.bottom - rootElmBounds.top
+        const sheetElmBounds = this.#sheet.sheetElement.getBoundingClientRect()
+        const revealedElmRelativeBottom = revealedElmBounds.bottom - sheetElmBounds.top
 
         const mainContentTranslateYUnbounded = viewportHeight - evt.sheetTranslateY - revealedElmRelativeBottom
         const mainContentTranslateY = this.#clamp(mainContentTranslateYUnbounded, 0, revealedElmBounds.height)

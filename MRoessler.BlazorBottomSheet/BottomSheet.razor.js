@@ -138,11 +138,16 @@ export class BottomSheet extends EventTarget {
         this.#updateExpansion(Number(this.#layoutElm.getAttribute("data-expansion")))
     }
 
+
+    /** @returns {HTMLElement} */
+    get sheetElement() { return this.#sheetElm }
+
     /** @returns {HTMLElement} */
     get minimizedExpansionMarker() { return this.#minimizedExpansionMarker }
 
     /** @returns {HTMLElement} */
     get normalExpansionMarker() { return this.#normalExpansionMarker }
+
 
     /** @param evt {TouchEvent} */
     #handleTouchStart(evt) {

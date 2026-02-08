@@ -16,14 +16,12 @@
 >
     <div @ref="_rootElm" style="height: 100%;">
         <div style="height: 100%; display: grid;">
-            <MudText Typo="Typo.h6" Class="py-5 my-0" Style="grid-row: 1; grid-column: 1; align-self: start;" data-revealed-content>Dynamic Content 
-                <MudText Typo="Typo.subtitle2" Inline>(revealed when BottomSheet is dragged towards normal expansion)</MudText>
+            <MudText Typo="Typo.h6" Class="py-0 my-0" Style="grid-row: 1; grid-column: 1; align-self: start;" data-revealed-content>Dynamic Content<br/>
+                <MudText Typo="Typo.subtitle2" Inline>revealed when BottomSheet is dragged towards normal expansion</MudText>
             </MudText>
             
-            <MudStack data-main-content Style="grid-row: 1; grid-column: 1; background-color: var(--mud-palette-surface);">
-                <MudText Typo="Typo.h6" Class="my-5">Header 
-                    <MudText Typo="Typo.subtitle2" Inline>(visible in all states)</MudText>
-                </MudText>
+            <MudStack data-main-content Spacing=0 Style="grid-row: 1; grid-column: 1; background-color: var(--mud-palette-surface);">
+                <MudText Typo="Typo.h6" Class="my-4">Header</MudText>
                 <MinimizedExpansionMarker />
 
                 <div style="overflow-y: scroll; min-height: 20em;">
