@@ -1,0 +1,27 @@
+::deep .main-content {
+    grid-row: 1; 
+    grid-column: 1;
+    background-color: var(--mud-palette-surface);
+    transform: var(--main-content-transform);
+}
+
+::deep .revealed-content {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: start;
+    opacity: var(--revealed-content-opacity);
+}
+
+::deep .expansion-marker {
+    transform: var(--expansion-marker-transform);
+}
+
+::deep .main-content,
+::deep .expansion-marker {
+    transition: transform 0.25s;
+}
+
+.bottom-sheet-layout.dragging * ::deep .main-content,
+.bottom-sheet-layout.dragging * ::deep .expansion-marker  {
+    transition: none;
+}

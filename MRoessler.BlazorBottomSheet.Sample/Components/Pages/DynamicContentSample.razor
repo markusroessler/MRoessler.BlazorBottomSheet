@@ -1,0 +1,40 @@
+@page "/dynamic-content"
+
+<PageTitle>Dynamic Content Sample</PageTitle>
+
+<MudPaper Class="pa-2" Style="height: 100%;">
+    <MudStack>
+        <span data-testid="sample-instance-id" style="display: none;">@_instanceId</span>
+
+        <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button">Open/Close BottomSheet</MudButton>
+    </MudStack>
+</MudPaper>
+
+<BottomSheet @ref="_sheet" Class="mud-bottom-sheet" BackgroundClass="mud-bottom-sheet-background"
+    IsModal CloseOnBackgroundClick AllowMinimizedExpansion AllowNormalExpansion
+    @bind-Expansion=_expansion
+>
+    <div @ref="_rootElm" style="height: 100%;"> <!-- note: style gets updated by js! -->
+        <div style="height: 100%; display: grid;">
+            <MudPaper Outlined Class="revealed-content pa-2">
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.h6" Class="py-0 my-4">Dynamic Content</MudText>
+                    <MudText Typo="Typo.subtitle2" Inline>revealed when the BottomSheet is dragged towards normal expansion</MudText>
+                </MudStack>
+            </MudPaper>
+            
+            <MudStack Spacing=0 Class="main-content">
+                <MudText Typo="Typo.h6" Class="my-4">Header</MudText>
+                <MinimizedExpansionMarker />
+
+                <div style="overflow-y: scroll; min-height: 20em;">
+                    <text>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at ipsum vel nisi viverra tristique. Fusce non imperdiet ipsum, vitae mollis tortor. Proin vulputate odio eget sapien scelerisque, sit amet dapibus mauris pulvinar. Phasellus quis leo vitae purus pellentesque commodo nec quis justo. Nullam sagittis pulvinar ligula, eu viverra diam iaculis eu. Praesent congue nisi a aliquam volutpat. Morbi suscipit pulvinar nulla, id consequat quam porta vitae. Sed sed ipsum in sapien luctus euismod. Donec eu risus ut libero lobortis interdum.
+                        Praesent ac leo congue, consectetur est ut, bibendum metus. Curabitur sed leo tincidunt, sollicitudin felis quis, mollis risus. Ut iaculis lectus ac neque ornare condimentum. Praesent posuere sem sit amet luctus tempor. Nulla a magna id augue bibendum tempus et nec dolor. Etiam et libero dolor. Cras lacinia nisi ut lacus venenatis ullamcorper. Sed varius posuere cursus. Donec convallis nulla vitae magna lobortis laoreet. Praesent pulvinar gravida maximus.
+                    </text>
+                </div>
+                <NormalExpansionMarker />
+            </MudStack>
+        </div>
+    </div>
+</BottomSheet>

@@ -1,3 +1,5 @@
+export const SheetMoveEventName = "sheet-drag"
+
 /** @type {number} */
 const ExpansionClosed = 0
 
@@ -27,8 +29,27 @@ export function createBottomSheet(layoutElm, razorComp) {
     return new BottomSheet(layoutElm, razorComp)
 }
 
+/**
+ * Event that is raised when the sheet is moved
+ */
+export class BottomSheetMoveEvent extends Event {
+    /** @type {number} */
+    #sheetTranslateY
 
-export class BottomSheet {
+    constructor(sheetTranslateY) {
+        super(SheetMoveEventName);
+        this.#sheetTranslateY = sheetTranslateY
+    }
+
+    /**
+     * @returns {Number} the translateY transformation in pixels that was applied on the sheet
+     */
+    get sheetTranslateY() {
+        return this.#sheetTranslateY
+    }
+}
+
+export class BottomSheet extends EventTarget {
     /** @type {HTMLElement} */
     #layoutElm
 
@@ -71,15 +92,19 @@ export class BottomSheet {
     /** @type {number} */
     #dragStartMaxTranslateY
 
-    /** @type {MutastionObserver} */
+    /** @type {MutationObserver} */
     #layoutAttributesObserver = null
 
     /** @type {ResizeObserver} */
     #layoutResizeObserver = null
 
+    #abortController = new AbortController()
+
 
     /** @param razorComp { DotNetObject } */
     constructor(layoutElm, razorComp) {
+        super()
+
         this.#layoutElm = layoutElm
         this.#razorComp = razorComp
 
@@ -89,15 +114,15 @@ export class BottomSheet {
         this.#normalExpansionMarker = this.#sheetElm.querySelector("div[data-expansion-marker='2']")
 
         // note: not using pointer events because they get canceled when scrolling an element
-        this.#sheetElm.addEventListener("touchstart", evt => this.#handleTouchStart(evt), { passive: true })
-        this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: true })
-        this.#layoutElm.addEventListener("touchend", () => this.#handleDragStop(), { passive: true })
-        this.#layoutElm.addEventListener("touchcancel", () => this.#handleDragStop(), { passive: true })
+        this.#sheetElm.addEventListener("touchstart", evt => this.#handleTouchStart(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchend", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchcancel", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
 
-        this.#sheetElm.addEventListener("mousedown", evt => this.#handleMouseDown(evt), { passive: true })
-        this.#layoutElm.addEventListener("mousemove", evt => this.#handleMouseMove(evt), { passive: true })
-        this.#layoutElm.addEventListener("mouseup", () => this.#handleDragStop(), { passive: true })
-        this.#layoutElm.addEventListener("mouseleave", () => this.#handleDragStop(), { passive: true })
+        this.#sheetElm.addEventListener("mousedown", evt => this.#handleMouseDown(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("mousemove", evt => this.#handleMouseMove(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("mouseup", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("mouseleave", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
 
         // watch attribute changes (eg. style/class) and dispatch a custom event
         this.#layoutAttributesObserver = new MutationObserver((mutations) => this.#handleLayoutAttributeChanges(mutations))
@@ -114,6 +139,11 @@ export class BottomSheet {
         this.#updateVisible(this.#layoutElm.hasAttribute("data-visible"))
         this.#updateExpansion(Number(this.#layoutElm.getAttribute("data-expansion")))
     }
+
+
+    /** @returns {HTMLElement} */
+    get sheetElement() { return this.#sheetElm }
+
 
     /** @param evt {TouchEvent} */
     #handleTouchStart(evt) {
@@ -175,16 +205,16 @@ export class BottomSheet {
 
             const translate = clientY - this.#dragAnchorY
             if (translate < this.#dragStartMinTranslateY) {
-                this.#sheetElm.style.transform = `translateY(${this.#dragStartMinTranslateY}px)`
+                this.#updateTranslateY(this.#dragStartMinTranslateY)
                 this.#layoutElm.classList.remove(DraggingStyleClass) // enable scroll
             } else if (translate > this.#dragStartMaxTranslateY) {
-                this.#sheetElm.style.transform = `translateY(${this.#dragStartMaxTranslateY}px)`
+                this.#updateTranslateY(this.#dragStartMaxTranslateY)
 
             } else if (translate > 0) {
-                this.#sheetElm.style.transform = `translateY(${translate}px)`
+                this.#updateTranslateY(translate)
 
             } else {
-                this.#sheetElm.style.removeProperty('transform')
+                this.#updateTranslateY(0)
                 this.#layoutElm.classList.remove(DraggingStyleClass) // enable scroll
             }
 
@@ -399,16 +429,24 @@ export class BottomSheet {
 
     #updateTransform(expansion) {
         if (expansion == ExpansionClosed)
-            this.#sheetElm.style.transform = 'translateY(100%)'
+            this.#updateTranslateY(document.documentElement.clientHeight)
 
         else if (expansion == ExpansionMinimized)
-            this.#sheetElm.style.transform = `translateY(${this.#computeSheetTranslateYByMarker(this.#minimizedExpansionMarker)}px)`
+            this.#updateTranslateY(this.#computeSheetTranslateYByMarker(this.#minimizedExpansionMarker))
 
         else if (expansion == ExpansionNormal)
-            this.#sheetElm.style.transform = `translateY(${this.#computeSheetTranslateYByMarker(this.#normalExpansionMarker)}px)`
+            this.#updateTranslateY(this.#computeSheetTranslateYByMarker(this.#normalExpansionMarker))
 
         else if (expansion == ExpansionMaximized)
+            this.#updateTranslateY(0)
+    }
+
+    #updateTranslateY(translateY) {
+        if (translateY == 0)
             this.#sheetElm.style.removeProperty('transform')
+        else
+            this.#sheetElm.style.transform = `translateY(${translateY}px)`
+        this.dispatchEvent(new BottomSheetMoveEvent(translateY))
     }
 
     /** @param expansionMarker {HTMLElement} */
@@ -477,28 +515,16 @@ export class BottomSheet {
     }
 
     dispose() {
-        try {
-            this.#sheetElm?.removeEventListener("touchstart", this.#handleTouchStart)
-            this.#layoutElm?.removeEventListener("touchmove", this.#handleTouchMove)
-            this.#layoutElm?.removeEventListener("touchend", this.#handleDragStop)
-            this.#layoutElm?.removeEventListener("touchcancel", this.#handleDragStop)
+        this.#abortController.abort()
 
-            this.#sheetElm?.removeEventListener("mousedown", this.#handleMouseDown)
-            this.#layoutElm?.removeEventListener("mousemove", this.#handleMouseMove)
-            this.#layoutElm?.removeEventListener("mouseup", this.#handleDragStop)
-            this.#layoutElm?.removeEventListener("mouseleave", this.#handleDragStop)
+        if (this.#layoutAttributesObserver) {
+            this.#layoutAttributesObserver.disconnect()
+            this.#layoutAttributesObserver = null
+        }
 
-            if (this.#layoutAttributesObserver) {
-                this.#layoutAttributesObserver.disconnect()
-                this.#layoutAttributesObserver = null
-            }
-
-            if (this.#layoutResizeObserver) {
-                this.#layoutResizeObserver.disconnect()
-                this.#layoutResizeObserver = null
-            }
-        } catch (e) {
-            console.error("Error during BottomSheet cleanup:", e)
+        if (this.#layoutResizeObserver) {
+            this.#layoutResizeObserver.disconnect()
+            this.#layoutResizeObserver = null
         }
     }
 }
