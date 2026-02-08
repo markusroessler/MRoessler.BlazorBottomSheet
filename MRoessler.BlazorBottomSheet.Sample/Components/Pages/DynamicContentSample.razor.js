@@ -38,22 +38,19 @@ export class DynamicContentSample {
      * @param evt {BottomSheetDragEvent}
      */
     #layoutRevealedContent(evt) {
-        const mainContentTranslateY = this.#computeMainContentTranslateY(evt.translateY)
-        this.#mainContentElm.style.transform = `translateY(${mainContentTranslateY}px)`
-        this.#minExpansionMarker.style.transform = `translateY(${-mainContentTranslateY}px)`
-        this.#normalExpansionMarker.style.transform = `translateY(${-mainContentTranslateY}px)`
-    }
-
-    /**
-     * @param sheetTranslateY {Number}
-     */
-    #computeMainContentTranslateY(sheetTranslateY) {
         const viewportHeight = document.documentElement.clientHeight
         const revealedElmBounds = this.#revealedElm.getBoundingClientRect()
         const rootElmBounds = this.#rootElm.getBoundingClientRect()
         const revealedElmRelativeBottom = revealedElmBounds.bottom - rootElmBounds.top
 
-        return this.#clamp(viewportHeight - sheetTranslateY - revealedElmRelativeBottom, 0, revealedElmBounds.height)
+        const mainContentTranslateYUnbounded = viewportHeight - evt.translateY - revealedElmRelativeBottom
+        const mainContentTranslateY = this.#clamp(mainContentTranslateYUnbounded, 0, revealedElmBounds.height)
+        const revealedElmOpacity = this.#clamp((mainContentTranslateYUnbounded - revealedElmBounds.height) / (viewportHeight / 4), 0.0, 1.0)
+
+        this.#mainContentElm.style.transform = `translateY(${mainContentTranslateY}px)`
+        this.#minExpansionMarker.style.transform = `translateY(${-mainContentTranslateY}px)`
+        this.#normalExpansionMarker.style.transform = `translateY(${-mainContentTranslateY}px)`
+        this.#revealedElm.style.opacity = revealedElmOpacity
     }
 
     #clamp(val, min, max) {
