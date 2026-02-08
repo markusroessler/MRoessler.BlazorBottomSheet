@@ -1,3 +1,5 @@
+export const SheetMoveEventName = "sheet-drag"
+
 /** @type {number} */
 const ExpansionClosed = 0
 
@@ -27,17 +29,23 @@ export function createBottomSheet(layoutElm, razorComp) {
     return new BottomSheet(layoutElm, razorComp)
 }
 
-export class BottomSheetDragEvent extends Event {
+/**
+ * Event that is raised when the sheet is moved
+ */
+export class BottomSheetMoveEvent extends Event {
     /** @type {number} */
-    #translateY
+    #sheetTranslateY
 
-    constructor(translateY) {
-        super("sheet-drag");
-        this.#translateY = translateY
+    constructor(sheetTranslateY) {
+        super(SheetMoveEventName);
+        this.#sheetTranslateY = sheetTranslateY
     }
 
-    get translateY() {
-        return this.#translateY
+    /**
+     * @returns {Number} the translateY transformation in pixels that was applied on the sheet
+     */
+    get sheetTranslateY() {
+        return this.#sheetTranslateY
     }
 }
 
@@ -129,6 +137,12 @@ export class BottomSheet extends EventTarget {
         this.#updateVisible(this.#layoutElm.hasAttribute("data-visible"))
         this.#updateExpansion(Number(this.#layoutElm.getAttribute("data-expansion")))
     }
+
+    /** @returns {HTMLElement} */
+    get minimizedExpansionMarker() { return this.#minimizedExpansionMarker }
+
+    /** @returns {HTMLElement} */
+    get normalExpansionMarker() { return this.#normalExpansionMarker }
 
     /** @param evt {TouchEvent} */
     #handleTouchStart(evt) {
@@ -431,7 +445,7 @@ export class BottomSheet extends EventTarget {
             this.#sheetElm.style.removeProperty('transform')
         else
             this.#sheetElm.style.transform = `translateY(${translateY}px)`
-        this.dispatchEvent(new BottomSheetDragEvent(translateY))
+        this.dispatchEvent(new BottomSheetMoveEvent(translateY))
     }
 
     /** @param expansionMarker {HTMLElement} */

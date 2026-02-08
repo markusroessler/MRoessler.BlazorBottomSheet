@@ -1,4 +1,4 @@
-import { BottomSheet, BottomSheetDragEvent } from "/_content/MRoessler.BlazorBottomSheet/BottomSheet.razor.js"
+import { BottomSheet, BottomSheetMoveEvent, SheetMoveEventName } from "/_content/MRoessler.BlazorBottomSheet/BottomSheet.razor.js"
 
 export function createDynamicContentSample(rootElm, bottomSheet) {
     return new DynamicContentSample(rootElm, bottomSheet)
@@ -7,6 +7,9 @@ export function createDynamicContentSample(rootElm, bottomSheet) {
 export class DynamicContentSample {
     /** @type {HTMLElement} */
     #rootElm
+
+    /** @type {BottomSheet} */
+    #sheet
 
     /** @type {HTMLElement} */
     #revealedElm
@@ -22,20 +25,23 @@ export class DynamicContentSample {
 
 
     /**
-     * @param bottomSheet {BottomSheet}
+     * @param rootElm {HTMLElement}
+     * @param sheet {BottomSheet}
      */
-    constructor(rootElm, bottomSheet) {
+    constructor(rootElm, sheet) {
         this.#rootElm = rootElm
-        this.#revealedElm = this.#rootElm.querySelector("*[data-revealed-content]");
-        this.#mainContentElm = this.#rootElm.querySelector("*[data-main-content]");
-        this.#minExpansionMarker = this.#rootElm.querySelector("*[data-expansion-marker='1']")
-        this.#normalExpansionMarker = this.#rootElm.querySelector("*[data-expansion-marker='2']")
+        this.#sheet = sheet
 
-        bottomSheet.addEventListener('sheet-drag', (evt) => this.#layoutRevealedContent(evt), { passive: true })
+        this.#revealedElm = rootElm.querySelector("*[data-revealed-content]");
+        this.#mainContentElm = rootElm.querySelector("*[data-main-content]");
+        this.#minExpansionMarker = sheet.minimizedExpansionMarker()
+        this.#normalExpansionMarker = sheet.normalExpansionMarker()
+
+        sheet.addEventListener(SheetMoveEventName, (evt) => this.#layoutRevealedContent(evt), { passive: true })
     }
 
     /**
-     * @param evt {BottomSheetDragEvent}
+     * @param evt {BottomSheetMoveEvent}
      */
     #layoutRevealedContent(evt) {
         const viewportHeight = document.documentElement.clientHeight
@@ -43,7 +49,7 @@ export class DynamicContentSample {
         const rootElmBounds = this.#rootElm.getBoundingClientRect()
         const revealedElmRelativeBottom = revealedElmBounds.bottom - rootElmBounds.top
 
-        const mainContentTranslateYUnbounded = viewportHeight - evt.translateY - revealedElmRelativeBottom
+        const mainContentTranslateYUnbounded = viewportHeight - evt.sheetTranslateY - revealedElmRelativeBottom
         const mainContentTranslateY = this.#clamp(mainContentTranslateYUnbounded, 0, revealedElmBounds.height)
         const revealedElmOpacity = this.#clamp((mainContentTranslateYUnbounded - revealedElmBounds.height) / (viewportHeight / 4), 0.0, 1.0)
 
@@ -58,6 +64,6 @@ export class DynamicContentSample {
     }
 
     dispose() {
-        // this.#resizeObserver.disconnect()
+        this.#sheet.removeEventListener(SheetMoveEventName)
     }
 }
