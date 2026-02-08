@@ -92,6 +92,9 @@ export class BottomSheet extends EventTarget {
     /** @type {number} */
     #dragStartMaxTranslateY
 
+    /** @type {boolean} */
+    #isTouchDeviceOnDragStart
+
     /** @type {MutationObserver} */
     #layoutAttributesObserver = null
 
@@ -116,13 +119,13 @@ export class BottomSheet extends EventTarget {
         // note: not using pointer events because they get canceled when scrolling an element
         this.#sheetElm.addEventListener("touchstart", evt => this.#handleTouchStart(evt), { passive: true, signal: this.#abortController.signal })
         this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("touchend", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("touchcancel", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchend", evt => this.#handleTouchEnd(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchcancel", evt => this.#handleTouchEnd(evt), { passive: true, signal: this.#abortController.signal })
 
         this.#sheetElm.addEventListener("mousedown", evt => this.#handleMouseDown(evt), { passive: true, signal: this.#abortController.signal })
         this.#layoutElm.addEventListener("mousemove", evt => this.#handleMouseMove(evt), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("mouseup", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("mouseleave", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("mouseup", evt => this.#handleMouseUp(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("mouseleave", evt => this.#handleMouseUp(evt), { passive: true, signal: this.#abortController.signal })
 
         // watch attribute changes (eg. style/class) and dispatch a custom event
         this.#layoutAttributesObserver = new MutationObserver((mutations) => this.#handleLayoutAttributeChanges(mutations))
@@ -159,9 +162,11 @@ export class BottomSheet extends EventTarget {
 
     /** @param clientY {number} */
     #handleDragStart(clientY) {
-        console.debug(`handlePointerDown - _isDragging: ${this.#isDragging}`)
+        console.debug(`handleDragStart - _isDragging: ${this.#isDragging}`)
         if (this.#isDragging)
             return
+
+        this.#isTouchDeviceOnDragStart = window.matchMedia("(pointer: coarse)").matches;
 
         this.#isDragging = true
         this.#dragStartTouchY = clientY
@@ -175,13 +180,16 @@ export class BottomSheet extends EventTarget {
 
     /** @param evt {TouchEvent} */
     #handleTouchMove(evt) {
-        const firstTouch = evt.touches[0]
-        this.#handleDragMove(evt, firstTouch.clientY)
+        if (this.#isTouchDeviceOnDragStart) {
+            const firstTouch = evt.touches[0]
+            this.#handleDragMove(evt, firstTouch.clientY)
+        }
     }
 
     /** @param evt {MouseEvent} */
     #handleMouseMove(evt) {
-        this.#handleDragMove(evt, evt.clientY)
+        if (!this.#isTouchDeviceOnDragStart)
+            this.#handleDragMove(evt, evt.clientY)
     }
 
     /** 
@@ -226,10 +234,23 @@ export class BottomSheet extends EventTarget {
         }
     }
 
-    async #handleDragStop() {
-        console.debug(`handlePointerUp - _isDragging: ${this.#isDragging}`)
+    /** @param evt {TouchEvent} */
+    #handleTouchEnd(evt) {
+        if (this.#isTouchDeviceOnDragStart)
+            this.#handleDragStop(evt)
+    }
+
+    /** @param evt {MouseEvent} */
+    #handleMouseUp(evt) {
+        if (!this.#isTouchDeviceOnDragStart)
+            this.#handleDragStop(evt)
+    }
+
+    async #handleDragStop(evt) {
+        console.debug(`handleDragStop - evt: ${evt}, _isDragging: ${this.#isDragging}`)
         if (!this.#isDragging)
             return
+
         this.#isDragging = false
         this.#layoutElm.classList.remove(DraggingStyleClass)
 

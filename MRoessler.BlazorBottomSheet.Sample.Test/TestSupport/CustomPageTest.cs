@@ -35,6 +35,14 @@ public abstract class CustomPageTest : PageTest
         await WebAppFactory.DisposeAsync();
     }
 
+    [SetUp]
+    public void Setup()
+    {
+        Page.Console += (_, msg) =>
+        {
+            TestContext.Out.WriteLine($"Browser Log: [{msg.Type}] {msg.Text}");
+        };
+    }
 
     [TearDown]
     public async Task TeardownAsync()
