@@ -24,6 +24,7 @@ public static class LocatorExtensions
             }
         };
         await locator.DispatchEventAsync("touchstart", new { touches, changedTouches = touches, targetTouches = touches });
+        await Task.Delay(50);
 
         for (int i = 1; i <= steps; i++)
         {
