@@ -83,16 +83,17 @@ jobs:
         name: blazor-bottomsheet-ci-linux-coverage-report
         path: TestResults/coverage-report
 
-    # push coverage badges to tag without attaching the commit to a branch (for readme.md)
-    - name: Commit Coverage Badges
+    # push badges to tag without attaching the commit to a branch (for readme.md)
+    - name: Commit Badges
       if: always() && github.ref_name == 'main'
       run: |
         mkdir badges
         mv TestResults/coverage-report/badge_linecoverage.svg badges
+        bash .github/scripts/export-lines-of-code-badge.sh
         git add badges/*
         git commit -m "updated badges"
-        git tag badges 
-        git push --force origin badges
+        git tag build-results 
+        git push --force origin build-results
 
     - name: Upload Test Report
       if: always()
