@@ -14,6 +14,8 @@ export class DynamicContentSample {
     /** @type {HTMLElement} */
     #revealedElm
 
+    #abortController = new AbortController()
+
 
     /**
      * @param rootElm {HTMLElement}
@@ -24,7 +26,7 @@ export class DynamicContentSample {
         this.#sheet = sheet
         this.#revealedElm = rootElm.querySelector(".revealed-content");
 
-        sheet.addEventListener(SheetMoveEventName, (evt) => this.#layoutRevealedContent(evt), { passive: true })
+        sheet.addEventListener(SheetMoveEventName, (evt) => this.#layoutRevealedContent(evt), { passive: true, signal: this.#abortController.signal })
     }
 
     /**
@@ -51,6 +53,6 @@ export class DynamicContentSample {
     }
 
     dispose() {
-        this.#sheet.removeEventListener(SheetMoveEventName)
+        this.#abortController.abort()
     }
 }

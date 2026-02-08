@@ -92,11 +92,13 @@ export class BottomSheet extends EventTarget {
     /** @type {number} */
     #dragStartMaxTranslateY
 
-    /** @type {MutastionObserver} */
+    /** @type {MutationObserver} */
     #layoutAttributesObserver = null
 
     /** @type {ResizeObserver} */
     #layoutResizeObserver = null
+
+    #abortController = new AbortController()
 
 
     /** @param razorComp { DotNetObject } */
@@ -112,15 +114,15 @@ export class BottomSheet extends EventTarget {
         this.#normalExpansionMarker = this.#sheetElm.querySelector("div[data-expansion-marker='2']")
 
         // note: not using pointer events because they get canceled when scrolling an element
-        this.#sheetElm.addEventListener("touchstart", evt => this.#handleTouchStart(evt), { passive: true })
-        this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: true })
-        this.#layoutElm.addEventListener("touchend", () => this.#handleDragStop(), { passive: true })
-        this.#layoutElm.addEventListener("touchcancel", () => this.#handleDragStop(), { passive: true })
+        this.#sheetElm.addEventListener("touchstart", evt => this.#handleTouchStart(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchend", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchcancel", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
 
-        this.#sheetElm.addEventListener("mousedown", evt => this.#handleMouseDown(evt), { passive: true })
-        this.#layoutElm.addEventListener("mousemove", evt => this.#handleMouseMove(evt), { passive: true })
-        this.#layoutElm.addEventListener("mouseup", () => this.#handleDragStop(), { passive: true })
-        this.#layoutElm.addEventListener("mouseleave", () => this.#handleDragStop(), { passive: true })
+        this.#sheetElm.addEventListener("mousedown", evt => this.#handleMouseDown(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("mousemove", evt => this.#handleMouseMove(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("mouseup", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("mouseleave", () => this.#handleDragStop(), { passive: true, signal: this.#abortController.signal })
 
         // watch attribute changes (eg. style/class) and dispatch a custom event
         this.#layoutAttributesObserver = new MutationObserver((mutations) => this.#handleLayoutAttributeChanges(mutations))
@@ -513,28 +515,16 @@ export class BottomSheet extends EventTarget {
     }
 
     dispose() {
-        try {
-            this.#sheetElm?.removeEventListener("touchstart", this.#handleTouchStart)
-            this.#layoutElm?.removeEventListener("touchmove", this.#handleTouchMove)
-            this.#layoutElm?.removeEventListener("touchend", this.#handleDragStop)
-            this.#layoutElm?.removeEventListener("touchcancel", this.#handleDragStop)
+        this.#abortController.abort()
 
-            this.#sheetElm?.removeEventListener("mousedown", this.#handleMouseDown)
-            this.#layoutElm?.removeEventListener("mousemove", this.#handleMouseMove)
-            this.#layoutElm?.removeEventListener("mouseup", this.#handleDragStop)
-            this.#layoutElm?.removeEventListener("mouseleave", this.#handleDragStop)
+        if (this.#layoutAttributesObserver) {
+            this.#layoutAttributesObserver.disconnect()
+            this.#layoutAttributesObserver = null
+        }
 
-            if (this.#layoutAttributesObserver) {
-                this.#layoutAttributesObserver.disconnect()
-                this.#layoutAttributesObserver = null
-            }
-
-            if (this.#layoutResizeObserver) {
-                this.#layoutResizeObserver.disconnect()
-                this.#layoutResizeObserver = null
-            }
-        } catch (e) {
-            console.error("Error during BottomSheet cleanup:", e)
+        if (this.#layoutResizeObserver) {
+            this.#layoutResizeObserver.disconnect()
+            this.#layoutResizeObserver = null
         }
     }
 }
