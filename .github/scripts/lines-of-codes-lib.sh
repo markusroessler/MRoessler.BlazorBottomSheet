@@ -1,7 +1,8 @@
+#!/bin/bash
 
 printAllSourceCodeFiles() {
     allSourceCodeFiles=$(git ls-files | grep -E '\.cs$|\.js$|\.razor$')
-    echo $allSourceCodeFiles
+    echo "$allSourceCodeFiles"
 }
 
 printLibCount() {

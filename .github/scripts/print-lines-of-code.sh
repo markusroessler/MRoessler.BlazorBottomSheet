@@ -3,9 +3,9 @@ scriptDir=$(dirname "$0")
 source "$scriptDir/lines-of-codes-lib.sh"
 
 allSourceCodeFiles=$(printAllSourceCodeFiles)
-appCount=$(printAppCount $allSourceCodeFiles)
-libCount=$(printLibCount $allSourceCodeFiles)
-testCount=$(printTestCount $allSourceCodeFiles)
+appCount=$(printAppCount "$allSourceCodeFiles")
+libCount=$(printLibCount "$allSourceCodeFiles")
+testCount=$(printTestCount "$allSourceCodeFiles")
 totalCount=$(echo "$allSourceCodeFiles" | xargs grep -v '^$' | wc -l)
 
 echo "## Lines of Code"
