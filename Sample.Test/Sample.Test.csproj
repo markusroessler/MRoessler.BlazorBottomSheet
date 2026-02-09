@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
+    <RootNamespace>MRoessler.BlazorBottomSheet.Sample.Test</RootNamespace>
+    <AssemblyName>MRoessler.BlazorBottomSheet.Sample.Test</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

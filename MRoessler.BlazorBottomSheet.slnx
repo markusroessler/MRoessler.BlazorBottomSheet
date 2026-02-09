@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="MRoessler.BlazorBottomSheet/MRoessler.BlazorBottomSheet.csproj" />
-  <Project Path="MRoessler.BlazorBottomSheet.Sample/MRoessler.BlazorBottomSheet.Sample.csproj" />
-  <Project Path="MRoessler.BlazorBottomSheet.Sample.Test/MRoessler.BlazorBottomSheet.Sample.Test.csproj" />
+  <Project Path="Sample.RazorComponents/Sample.RazorComponents.csproj" />
+  <Project Path="Sample.WebApp/Sample.WebApp.csproj" />
+  <Project Path="Sample.Wasm/Sample.Wasm.csproj" />
+  <Project Path="Sample.Test/Sample.Test.csproj" />
 </Solution>

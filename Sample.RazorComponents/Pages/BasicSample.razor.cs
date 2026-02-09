@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MRoessler.BlazorBottomSheet.Sample.Utils;
-using MRoessler.BlazorBottomSheet.Sample.ViewModels;
+using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
+using MRoessler.BlazorBottomSheet.Sample.RazorComponents.ViewModels;
 
-namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
+namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents.Pages;
 
 public sealed partial class BasicSample : ComponentBase, IDisposable
 {

@@ -1,25 +1,21 @@
 using MRoessler.BlazorBottomSheet;
-using MRoessler.BlazorBottomSheet.Sample.Components;
-using MRoessler.BlazorBottomSheet.Sample.Utils;
-using MRoessler.BlazorBottomSheet.Sample.ViewModels;
+using MRoessler.BlazorBottomSheet.Sample.RazorComponents;
+using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Pages;
+using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
+using MRoessler.BlazorBottomSheet.Sample.RazorComponents.ViewModels;
+using MRoessler.BlazorBottomSheet.Sample.WebApp.Components;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
 builder.Services
-    .AddMudServices()
-    .AddBottomSheet();
+    .AddSampleAppServices();
 
 // Add services to the container.
 builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
-
-builder.Services
-    .AddScoped<SynchronizationContextDispatcher>()
-    .AddScoped<BasicSampleViewModel>()
-    .AddSingleton<TestHelper>();
 
 var app = builder.Build();
 
@@ -33,6 +29,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(typeof(BasicSample).Assembly);
 
 app.Run();

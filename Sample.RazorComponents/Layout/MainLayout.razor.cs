@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MudBlazor;
 
-namespace MRoessler.BlazorBottomSheet.Sample.Components.Layout;
+namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents.Layout;
 
 public partial class MainLayout
 {

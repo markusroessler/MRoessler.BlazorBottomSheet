@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MRoessler.BlazorBottomSheet;
 
-namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
+namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents.Pages;
 
 public partial class MultipleSheetsSample
 {

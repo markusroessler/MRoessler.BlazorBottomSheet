@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MRoessler.BlazorBottomSheet.Sample.Utils;
 
-namespace MRoessler.BlazorBottomSheet.Sample.ViewModels;
+namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents.ViewModels;
 
 public sealed class BasicSampleViewModel
 {

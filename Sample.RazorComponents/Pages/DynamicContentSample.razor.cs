@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MRoessler.BlazorBottomSheet;
+using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
 
-namespace MRoessler.BlazorBottomSheet.Sample.Components.Pages;
+namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents.Pages;
 
 public sealed partial class DynamicContentSample : IAsyncDisposable
 {
@@ -30,7 +32,7 @@ public sealed partial class DynamicContentSample : IAsyncDisposable
             await _sheet.WhenRenderedOnce();
             var jsSheetObjRef = sheet.JavaScriptObjRef ?? throw new InvalidOperationException("_sheet?.JavaScriptObjRef is null");
 
-            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./Components/Pages/{nameof(DynamicContentSample)}.razor.js");
+            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/Sample.Lib/Pages/{nameof(DynamicContentSample)}.razor.js");
             _jsObjRef = await _jsModule.InvokeAsync<IJSObjectReference>("createDynamicContentSample", _rootElm, jsSheetObjRef);
         }
     }
