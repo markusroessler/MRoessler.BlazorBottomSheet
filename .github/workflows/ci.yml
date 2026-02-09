@@ -53,7 +53,7 @@ jobs:
         dotnet build -c:Debug -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
     
     - name: Setup Playwright
-      run: pwsh MRoessler.BlazorBottomSheet.Sample.Test/bin/Debug/net10.0/playwright.ps1 install
+      run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
     - name: Test
       if: always()
@@ -102,7 +102,7 @@ jobs:
         name: blazor-bottomsheet-ci-linux-test-report
         path: |
          **/TestResults/*.html
-         MRoessler.BlazorBottomSheet.Sample.Test/**/Screenshots/*.png
+         Sample.Test/**/Screenshots/*.png
 
     - name: Publish Coverage Results
       if: always()

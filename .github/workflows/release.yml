@@ -52,8 +52,8 @@ jobs:
       
       - name: Setup Playwright
         run: |
-          dotnet build MRoessler.BlazorBottomSheet.Sample.Test 
-          pwsh MRoessler.BlazorBottomSheet.Sample.Test/bin/Debug/net10.0/playwright.ps1 install
+          dotnet build Sample.Test 
+          pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
       - name: Test
         if: always()
@@ -70,8 +70,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: blazor-bottomsheet-ci-linux-test-report
-          path: "**/TestResults/*.html"
+          name: blazor-bottomsheet-release-linux-test-report
+          path: |
+            **/TestResults/*.html
+            Sample.Test/**/Screenshots/*.png
 
       - name: Create Tag
         run: |
