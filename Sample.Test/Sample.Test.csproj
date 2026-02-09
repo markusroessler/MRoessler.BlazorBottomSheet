@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../MRoessler.BlazorBottomSheet.Sample/MRoessler.BlazorBottomSheet.Sample.csproj" />
+    <ProjectReference Include="../Sample.WebApp/Sample.WebApp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

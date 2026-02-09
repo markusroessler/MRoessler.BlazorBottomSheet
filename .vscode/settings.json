@@ -1,5 +1,5 @@
 {
     "svg.preview.background": "transparent",
     // csproj RunSettingsFilePath is not yet supported: https://github.com/microsoft/vscode-dotnettools/issues/835 
-    "dotnet.unitTests.runSettingsPath": "MRoessler.BlazorBottomSheet.Sample.Test/runsettings/chromium.runsettings"
+    "dotnet.unitTests.runSettingsPath": "Sample.Test/runsettings/chromium.runsettings"
 }

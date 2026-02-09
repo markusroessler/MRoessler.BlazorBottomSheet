@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
-using MRoessler.BlazorBottomSheet.Sample.Utils;
+using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
 using NUnit.Framework.Interfaces;
 
 namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;

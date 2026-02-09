@@ -12,10 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using Microsoft.Playwright.TestAdapter;
-using MRoessler.BlazorBottomSheet.Sample.Components;
 using MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
-using MRoessler.BlazorBottomSheet.Sample.Utils;
-using MudBlazor.Services;
 using NUnit.Framework.Interfaces;
 
 namespace MRoessler.BlazorBottomSheet.Sample.Test.Tests;
