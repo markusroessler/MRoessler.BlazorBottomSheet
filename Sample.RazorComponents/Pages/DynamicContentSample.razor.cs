@@ -32,7 +32,7 @@ public sealed partial class DynamicContentSample : IAsyncDisposable
             await _sheet.WhenRenderedOnce();
             var jsSheetObjRef = sheet.JavaScriptObjRef ?? throw new InvalidOperationException("_sheet?.JavaScriptObjRef is null");
 
-            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/Sample.Lib/Pages/{nameof(DynamicContentSample)}.razor.js");
+            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet.Sample.RazorComponents/Pages/{nameof(DynamicContentSample)}.razor.js");
             _jsObjRef = await _jsModule.InvokeAsync<IJSObjectReference>("createDynamicContentSample", _rootElm, jsSheetObjRef);
         }
     }
