@@ -21,7 +21,7 @@
         <Configuration>
           <!-- Realms.GeneratedAttribute -->
           <ExcludeByAttribute>GeneratedAttribute</ExcludeByAttribute>
-          <Exclude>[MRoessler.BlazorBottomSheet.Sample]*</Exclude>
+          <Exclude>[*Sample*]*</Exclude>
         </Configuration>
       </DataCollector>
     </DataCollectors>
