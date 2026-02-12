@@ -21,7 +21,20 @@
             "type": "blazorwasm",
             "request": "launch",
             "cwd": "${workspaceFolder}/Sample.Wasm",
-            "browser": "chrome"
-        }
+            "browser": "chrome",
+        },
+        // {
+        //     "name": "Sample.Wasm 2",
+        //     "type": "dotnet",
+        //     "request": "launch",
+        //     "projectPath": "${workspaceFolder}/Sample.Wasm/Sample.Wasm.csproj",
+        // },
+        // {
+        //     "name": "Attach and Debug",
+        //     "type": "blazorwasm",
+        //     "request": "attach",
+        //     "url": "http://localhost:5071",
+        //     "browser": "chrome",
+        // }
     ]
 }
