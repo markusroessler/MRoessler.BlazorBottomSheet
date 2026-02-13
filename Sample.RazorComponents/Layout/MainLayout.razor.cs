@@ -8,6 +8,8 @@ namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents.Layout;
 
 public partial class MainLayout
 {
+    public const string AppBarHeaderName = "AppBarHeader";
+
     private readonly MudTheme _theme;
     private bool _drawerOpen = true;
     private bool _isDarkMode = true;
