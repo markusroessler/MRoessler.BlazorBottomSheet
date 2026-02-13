@@ -13,8 +13,8 @@
 
 
 ## Sample App
-**[Start the Sample App in your browser](https://markusroessler.github.io/MRoessler.BlazorBottomSheet/)** - *see Sample-projects for source code*  
-(!) For the best experience enable device and touch simulation in your browser's debug tools - for example in Firefox:
+**[🔥 Start the Sample App in your browser](https://markusroessler.github.io/MRoessler.BlazorBottomSheet/)** - *see Sample-projects for source code*  
+💡 For the best experience enable device and touch simulation in your browser's debug tools - for example in Firefox:
 ![browser debug tools](https://i.imgur.com/ViNpl4X.png)
 
 
