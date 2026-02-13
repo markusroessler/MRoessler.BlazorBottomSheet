@@ -9,7 +9,6 @@
 
 <img src="https://i.imgur.com/RZPqpeT.png" alt="screenshot-1" height="400">
 
-<iframe src="https://markusroessler.github.io/MRoessler.BlazorBottomSheet/" width="400px" height="600px"></iframe>
 
 ## Getting Started
 - Install [nuget package](https://www.nuget.org/packages/MRoessler.BlazorBottomSheet)
