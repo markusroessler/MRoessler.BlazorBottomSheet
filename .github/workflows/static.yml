@@ -56,6 +56,9 @@ jobs:
         with:
           html_path: ${{ env.PUBLISH_DIR }}/index.html
           base_href: /MRoessler.BlazorBottomSheet/
+
+      - name: Rewrite JS module import paths
+        run: bash .github/scripts/rewrite-js-module-paths.sh
         
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
