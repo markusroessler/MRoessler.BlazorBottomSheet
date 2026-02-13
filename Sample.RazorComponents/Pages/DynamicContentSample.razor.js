@@ -38,10 +38,11 @@ export class DynamicContentSample {
         const sheetElmBounds = this.#sheet.sheetElement.getBoundingClientRect()
         const revealedElmRelativeBottom = revealedElmBounds.bottom - sheetElmBounds.top
 
+        // first reveal by increasing height and then by opacity
+        // mainContent is the element below the revealed element
         const mainContentTranslateYUnbounded = viewportHeight - evt.sheetTranslateY - revealedElmRelativeBottom
         const mainContentTranslateY = this.#clamp(mainContentTranslateYUnbounded, 0, revealedElmBounds.height)
-        const revealedElmOpacity = this.#clamp((mainContentTranslateYUnbounded - revealedElmBounds.height) / (viewportHeight / 4), 0.0, 1.0)
-
+        const revealedElmOpacity = this.#clamp((mainContentTranslateYUnbounded - revealedElmBounds.height) / (viewportHeight / 10), 0.0, 1.0)
 
         this.#rootElm.style.setProperty("--main-content-transform", `translateY(${mainContentTranslateY}px)`)
         this.#rootElm.style.setProperty("--expansion-marker-transform", `translateY(${-mainContentTranslateY}px)`)
