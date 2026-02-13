@@ -1,5 +1,6 @@
 {
     "svg.preview.background": "transparent",
     // csproj RunSettingsFilePath is not yet supported: https://github.com/microsoft/vscode-dotnettools/issues/835 
-    "dotnet.unitTests.runSettingsPath": "Sample.Test/runsettings/chromium.runsettings"
+    "dotnet.unitTests.runSettingsPath": "Sample.Test/runsettings/chromium.runsettings",
+    "liveServer.settings.root": "/Sample.Wasm/bin/Release/net10.0/publish/wwwroot",
 }
