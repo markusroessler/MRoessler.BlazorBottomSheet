@@ -46,5 +46,5 @@ builder.Services.AddBottomSheet();
 </BottomSheet>
 ```
 
-- see `MRoessler.BlazorBottomSheet.Sample` app for more advanced usage examples
+- see sample app for more advanced usage examples
 - see XML Docs for detailed API description
