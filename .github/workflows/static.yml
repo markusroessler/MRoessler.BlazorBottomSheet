@@ -3,30 +3,24 @@ env:
   PUBLISH_DIR: Sample.Wasm/bin/Release/net10.0/publish/wwwroot
 
 on:
-  # Runs on pushes targeting the default branch for the app's folder path
   push:
     paths:
       - Sample.Wasm/**
     branches:
       - main
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -45,7 +39,7 @@ jobs:
           # see https://learn.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly/github-pages?view=aspnetcore-10.0#deployment-notes
           git config --global core.autocrlf true
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
@@ -58,7 +52,7 @@ jobs:
         run: dotnet publish Sample.Wasm -c Release
 
       - name: Rewrite base href
-        uses: SteveSandersonMS/ghaction-rewrite-base-href@5b54862a8831e012d4f1a8b2660894415fdde8ec # v1.1.0
+        uses: SteveSandersonMS/ghaction-rewrite-base-href@4583ede549773dabe1410c42e703d54cf52859ff # v1.1.0
         with:
           html_path: ${{ env.PUBLISH_DIR }}/index.html
           base_href: /MRoessler.BlazorBottomSheet/
