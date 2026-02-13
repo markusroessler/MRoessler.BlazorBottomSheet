@@ -7,7 +7,13 @@
 [![Line Coverage](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/blob/build-results/badges/badge_linecoverage.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/MRoessler.BlazorBottomSheet.svg?style=flat-square&label=NuGet)](https://www.nuget.org/packages/MRoessler.BlazorBottomSheet)
 
-<img src="https://i.imgur.com/RZPqpeT.png" alt="screenshot-1" height="400">
+<img src="https://i.imgur.com/VknaVam.png" alt="light-mode" height="400">
+<img src="https://i.imgur.com/UzvOXS8.png" alt="dark-mode" height="400">
+
+## Sample App
+**[Start the Sample App in your browser](https://markusroessler.github.io/MRoessler.BlazorBottomSheet/)** - *see Sample-projects for source code*  
+(!) For the best experience enable device and touch simulation in your browser's debug tools - for example in Firefox:
+![browser debug tools](https://i.imgur.com/ViNpl4X.png)
 
 
 ## Getting Started
