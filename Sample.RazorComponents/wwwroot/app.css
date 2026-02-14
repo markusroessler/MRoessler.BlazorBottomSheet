@@ -14,5 +14,5 @@
 }
 
 .mud-bottom-sheet-background {
-    background-color: var(--mud-palette-background) !important;
+    background-color: var(--mud-palette-dark-darken) !important;
 }
