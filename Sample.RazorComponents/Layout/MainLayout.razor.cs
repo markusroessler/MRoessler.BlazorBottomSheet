@@ -10,9 +10,10 @@ public partial class MainLayout
 {
     public const string AppBarHeaderName = "AppBarHeader";
 
+    private MudThemeProvider? _themeProvider;
     private readonly MudTheme _theme;
     private bool _drawerOpen = true;
-    private bool _isDarkMode = true;
+    private bool _isDarkMode;
 
     private readonly PaletteLight _lightPalette = new()
     {
@@ -72,6 +73,15 @@ public partial class MainLayout
                 Popover = 1500,
             }
         };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _themeProvider != null)
+        {
+            _isDarkMode = await _themeProvider.GetSystemDarkModeAsync();
+            StateHasChanged();
+        }
     }
 
     private void DrawerToggle()
