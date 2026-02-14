@@ -226,7 +226,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
 
         if (JavaScriptObjRef != null)
         {
-            await JavaScriptObjRef.InvokeVoidAsync("dispose");
+            await JavaScriptObjRef.TryInvokeVoidAsync("dispose");
             await JavaScriptObjRef.TryDisposeAsync();
         }
 
