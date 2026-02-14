@@ -1,4 +1,4 @@
-name: Deploy WASM sample app
+name: Deploy sample WASM app
 env:
   PUBLISH_DIR: Sample.Wasm/bin/Release/net10.0/publish/wwwroot
 
