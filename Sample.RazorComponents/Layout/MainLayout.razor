@@ -14,12 +14,20 @@
             <MudText Typo="Typo.h5" Class="ml-3">
                 <SectionOutlet SectionName="@AppBarHeaderName" />
             </MudText>
+
             <MudSpacer />
-            <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
+            
+            <MudMenu Label="Theme" EndIcon="@_currentThemeIcon" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                <MudMenuItem Label="Auto" Icon="@AutoThemeIcon" OnClick="()=>SetCurrentThemeIcon(AutoThemeIcon)" />
+                <MudMenuItem Label="Light" Icon="@LightThemeIcon" OnClick="()=>SetCurrentThemeIcon(LightThemeIcon)" />
+                <MudMenuItem Label="Dark" Icon="@DarkThemeIcon" OnClick="()=>SetCurrentThemeIcon(DarkThemeIcon)" />
+            </MudMenu>
         </MudAppBar>
+
         <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
             <NavMenu />
         </MudDrawer>
+
         <MudMainContent Class="pt-16 pa-4" Style="height: 100%;">
             @Body
         </MudMainContent>

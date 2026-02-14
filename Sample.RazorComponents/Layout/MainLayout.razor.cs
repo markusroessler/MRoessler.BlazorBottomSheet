@@ -10,11 +10,20 @@ public partial class MainLayout
 {
     public const string AppBarHeaderName = "AppBarHeader";
 
+    private const string AutoThemeIcon = Icons.Material.Filled.AutoMode;
+    private const string LightThemeIcon = Icons.Material.Filled.LightMode;
+    private const string DarkThemeIcon = Icons.Material.Filled.DarkMode;
+
     private MudThemeProvider? _themeProvider;
     private readonly MudTheme _theme;
     private bool _drawerOpen = true;
+
     private bool _isDarkMode = true;
+    private bool _isSystemDarkMode = true;
+
     private bool _isVisible;
+
+    private string _currentThemeIcon = AutoThemeIcon;
 
     private readonly PaletteLight _lightPalette = new()
     {
@@ -55,12 +64,6 @@ public partial class MainLayout
         OverlayLight = "#1e1e2d80",
     };
 
-    public string DarkLightModeButtonIcon => _isDarkMode switch
-    {
-        true => Icons.Material.Rounded.AutoMode,
-        false => Icons.Material.Outlined.DarkMode,
-    };
-
     public MainLayout()
     {
         _theme = new()
@@ -76,23 +79,36 @@ public partial class MainLayout
         };
     }
 
+    private void SetCurrentThemeIcon(string icon)
+    {
+        _currentThemeIcon = icon;
+        if (icon == LightThemeIcon)
+            _isDarkMode = false;
+
+        else if (icon == DarkThemeIcon)
+            _isDarkMode = true;
+
+        else if (_themeProvider != null)
+            _isDarkMode = _isSystemDarkMode;
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && _themeProvider != null)
         {
-            _isDarkMode = await _themeProvider.GetSystemDarkModeAsync();
+            await _themeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChangedAsync);
+            SetCurrentThemeIcon(AutoThemeIcon);
             _isVisible = true;
             StateHasChanged();
         }
     }
 
-    private void DrawerToggle()
+    private Task OnSystemDarkModeChangedAsync(bool isDark)
     {
-        _drawerOpen = !_drawerOpen;
+        _isSystemDarkMode = isDark;
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 
-    private void DarkModeToggle()
-    {
-        _isDarkMode = !_isDarkMode;
-    }
+    private void DrawerToggle() => _drawerOpen = !_drawerOpen;
 }
