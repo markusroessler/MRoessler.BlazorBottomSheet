@@ -13,7 +13,8 @@ public partial class MainLayout
     private MudThemeProvider? _themeProvider;
     private readonly MudTheme _theme;
     private bool _drawerOpen = true;
-    private bool _isDarkMode;
+    private bool _isDarkMode = true;
+    private bool _isVisible;
 
     private readonly PaletteLight _lightPalette = new()
     {
@@ -80,6 +81,7 @@ public partial class MainLayout
         if (firstRender && _themeProvider != null)
         {
             _isDarkMode = await _themeProvider.GetSystemDarkModeAsync();
+            _isVisible = true;
             StateHasChanged();
         }
     }
