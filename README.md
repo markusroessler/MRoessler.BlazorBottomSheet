@@ -21,6 +21,7 @@
 
 ## Sample App
 🚀 **[Start the Sample App in your browser](https://markusroessler.github.io/MRoessler.BlazorBottomSheet/)** 🚀  
+
 💡 For the best experience enable device and touch simulation in your browser's debug tools - Firefox example:
 ![browser debug tools](https://i.imgur.com/ViNpl4X.png)
 *see Sample-projects for source code*  
