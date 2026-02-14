@@ -34,11 +34,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Git Config
-        run: |
-          # see https://learn.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly/github-pages?view=aspnetcore-10.0#deployment-notes
-          git config --global core.autocrlf true
-
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup .NET SDK
