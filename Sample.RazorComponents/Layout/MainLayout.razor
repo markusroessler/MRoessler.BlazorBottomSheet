@@ -5,7 +5,7 @@
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<BottomSheetOutlet ColorScheme="@(_isDarkMode ? BottomSheetColorScheme.Dark : BottomSheetColorScheme.Light)" />
+<BottomSheetOutlet ColorScheme="@GetColorScheme()" />
 
 @if(_isVisible) {
     <MudLayout>

@@ -55,10 +55,16 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     public bool AllowMaximizedExpansion { get; set; }
 
 
+    private const string AutoColorSchemeClass = "auto-color";
     private const string LightColorSchemeClass = "light";
     private const string DarkColorSchemeClass = "dark";
-    private string ColorSchemeStyleClass => OutletState.ColorScheme == BottomSheetColorScheme.Light ? LightColorSchemeClass : DarkColorSchemeClass;
-
+    private string GetColorSchemeStyleClass() => OutletState.ColorScheme switch
+    {
+        BottomSheetColorScheme.Auto => AutoColorSchemeClass,
+        BottomSheetColorScheme.Light => LightColorSchemeClass,
+        BottomSheetColorScheme.Dark => DarkColorSchemeClass,
+        _ => AutoColorSchemeClass,
+    };
 
     private BottomSheetExpansion _expansion;
     /// <summary>
@@ -262,5 +268,11 @@ public enum BottomSheetExpansion
 /// </summary>
 public enum BottomSheetColorScheme
 {
-    Light, Dark
+    /// <summary>
+    /// Applies colors using light-dark css function (see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/light-dark). <br/>
+    /// For this to work you must set <c>color-scheme: light dark;</c> on <c>:root</c>
+    /// </summary>
+    Auto,
+    Light,
+    Dark
 }

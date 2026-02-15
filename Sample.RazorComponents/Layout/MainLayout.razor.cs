@@ -116,5 +116,16 @@ public partial class MainLayout
         return Task.CompletedTask;
     }
 
+    private BottomSheetColorScheme GetColorScheme()
+    {
+        return _currentThemeIcon switch
+        {
+            AutoThemeIcon => BottomSheetColorScheme.Auto,
+            LightThemeIcon => BottomSheetColorScheme.Light,
+            DarkThemeIcon => BottomSheetColorScheme.Dark,
+            _ => throw new NotImplementedException(),
+        };
+    }
+
     private void DrawerToggle() => _drawerOpen = !_drawerOpen;
 }

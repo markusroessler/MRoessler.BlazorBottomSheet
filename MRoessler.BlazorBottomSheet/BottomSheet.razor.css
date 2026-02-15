@@ -6,6 +6,18 @@
     overflow-y: hidden;
     display: grid;
     grid-template-rows: minmax(0, 1fr);
+
+    --sheet-light-background-color: #EEEEEE;
+    --sheet-dark-background-color: #0F0F0F;
+    
+    --sheet-light-border-color: #BDBDBD;
+    --sheet-dark-border-color: #0F0F0F;
+    
+    --overlay-light-background-color: #0F0F0F;
+    --overlay-dark-background-color: #616161;
+    
+    --handle-light-color: #616161;
+    --handle-dark-color: #BDBDBD;
 }
 
 .bottom-sheet-background {
@@ -16,11 +28,15 @@
 }
 
 .bottom-sheet-background.light {
-    background-color: #0F0F0F;
+    background-color: var(--overlay-light-background-color);
 }
 
 .bottom-sheet-background.dark {
-    background-color: #616161;
+    background-color: var(--overlay-dark-background-color);
+}
+
+.bottom-sheet-background.auto-color {
+    background-color: light-dark(var(--overlay-light-background-color), var(--overlay-dark-background-color));
 }
 
 .bottom-sheet-layout.closed .bottom-sheet-background {
@@ -45,13 +61,18 @@
 }
 
 .bottom-sheet.light {
-    border: 2px solid #BDBDBD;
-    background-color: #EEEEEE;
+    border: 2px solid var(--sheet-light-border-color);
+    background-color: var(--sheet-light-background-color);
 }
 
 .bottom-sheet.dark {
-    border: 2px solid #0F0F0F;
-    background-color: #0F0F0F;
+    border: 2px solid var(--sheet-dark-border-color);
+    background-color: var(--sheet-dark-background-color);
+}
+
+.bottom-sheet.auto-color {
+    border: 2px solid light-dark(var(--sheet-light-border-color), var(--sheet-dark-border-color));
+    background-color: light-dark(var(--sheet-light-background-color), var(--sheet-dark-background-color));
 }
 
 .bottom-sheet-layout.dragging .bottom-sheet {
@@ -68,11 +89,15 @@
 }
 
 .bottom-sheet.light .bottom-sheet-handle rect {
-    fill: #616161;
+    fill: var(--handle-light-color);
 }
 
 .bottom-sheet.dark .bottom-sheet-handle rect {
-    fill: #BDBDBD;
+    fill: var(--handle-dark-color);
+}
+
+.bottom-sheet.auto-color .bottom-sheet-handle rect {
+    fill: light-dark(var(--handle-light-color), var(--handle-dark-color));
 }
 
 
