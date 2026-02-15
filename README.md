@@ -9,7 +9,8 @@
 
 |   **Light Theme**  |  **Dark Theme**    |
 | --- | --- |
-|  <img src="https://i.imgur.com/EbHxylH.png" alt="light-mode" height="400">   |   <img src="https://i.imgur.com/mguiU46.png" alt="dark-mode" height="400">  |
+|  <img src="https://i.imgur.com/B8HA400.png" alt="light-mode" height="400">   |   <img src="https://i.imgur.com/8qs2WG6.png" alt="dark-mode" height="400">  |
+
 
 ## Features
 - Dragging is recognized on the complete sheet (not just the drag handle)
