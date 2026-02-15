@@ -82,10 +82,15 @@ public partial class MainLayout
     private void SetCurrentThemeIcon(string icon)
     {
         _currentThemeIcon = icon;
-        if (icon == LightThemeIcon)
+        UpdateIsDarkMode();
+    }
+
+    private void UpdateIsDarkMode()
+    {
+        if (_currentThemeIcon == LightThemeIcon)
             _isDarkMode = false;
 
-        else if (icon == DarkThemeIcon)
+        else if (_currentThemeIcon == DarkThemeIcon)
             _isDarkMode = true;
 
         else if (_themeProvider != null)
@@ -106,6 +111,7 @@ public partial class MainLayout
     private Task OnSystemDarkModeChangedAsync(bool isDark)
     {
         _isSystemDarkMode = isDark;
+        UpdateIsDarkMode();
         StateHasChanged();
         return Task.CompletedTask;
     }

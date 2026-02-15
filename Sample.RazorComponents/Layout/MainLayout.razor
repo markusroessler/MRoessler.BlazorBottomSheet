@@ -1,11 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Components.Sections
 @inherits LayoutComponentBase
 
-<MudThemeProvider @ref="_themeProvider" Theme="@_theme" IsDarkMode="_isDarkMode" />
+<MudThemeProvider @ref="_themeProvider" Theme="@_theme" IsDarkMode="_isDarkMode" ObserveSystemThemeChange=@(_currentThemeIcon == AutoThemeIcon) />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<BottomSheetOutlet />
+<BottomSheetOutlet ColorScheme="@(_isDarkMode ? BottomSheetColorScheme.Dark : BottomSheetColorScheme.Light)" />
 
 @if(_isVisible) {
     <MudLayout>

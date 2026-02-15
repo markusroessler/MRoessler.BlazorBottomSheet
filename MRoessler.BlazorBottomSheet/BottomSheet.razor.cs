@@ -54,6 +54,12 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public bool AllowMaximizedExpansion { get; set; }
 
+
+    private const string LightColorSchemeClass = "light";
+    private const string DarkColorSchemeClass = "dark";
+    private string ColorSchemeStyleClass => OutletState.ColorScheme == BottomSheetColorScheme.Light ? LightColorSchemeClass : DarkColorSchemeClass;
+
+
     private BottomSheetExpansion _expansion;
     /// <summary>
     /// the expansion state to apply
@@ -134,6 +140,13 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     {
         base.OnInitialized();
         OutletState.RegisterSectionContentId(_sectionContentId);
+        OutletState.PropertyChanged += OutletState_PropertyChanged;
+    }
+
+    private void OutletState_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(BottomSheetOutletState.ColorScheme))
+            StateHasChanged();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -222,6 +235,8 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         _whenRenderedOnce?.TrySetCanceled();
 
         OutletState.DeregisterSectionContentId(_sectionContentId);
+        OutletState.PropertyChanged -= OutletState_PropertyChanged;
+
         _thisRef.Dispose();
 
         if (JavaScriptObjRef != null)
@@ -240,4 +255,12 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
 public enum BottomSheetExpansion
 {
     Closed = 0, Minimized = 1, Normal = 2, Maximized = 3
+}
+
+/// <summary>
+/// supported color schemes
+/// </summary>
+public enum BottomSheetColorScheme
+{
+    Light, Dark
 }

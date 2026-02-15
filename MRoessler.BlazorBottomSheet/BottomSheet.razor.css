@@ -12,8 +12,15 @@
     grid-column: 1;
     grid-row: 1;
     width: 100%;
-    background-color: #0F0F0F;
     opacity: 0.5;
+}
+
+.bottom-sheet-background.light {
+    background-color: #0F0F0F;
+}
+
+.bottom-sheet-background.dark {
+    background-color: #616161;
 }
 
 .bottom-sheet-layout.closed .bottom-sheet-background {
@@ -28,8 +35,6 @@
     width: 100%;
     max-width: 500px;
     height: 100%;
-    border: 2px solid #BDBDBD;
-    background-color: #EEEEEE;
     border-radius: 30px 30px 0 0;
     padding: 0 1em;
     display: flex;
@@ -37,6 +42,16 @@
     justify-content: stretch;
     justify-items: stretch;
     transition: transform 0.25s;
+}
+
+.bottom-sheet.light {
+    border: 2px solid #BDBDBD;
+    background-color: #EEEEEE;
+}
+
+.bottom-sheet.dark {
+    border: 2px solid #0F0F0F;
+    background-color: #0F0F0F;
 }
 
 .bottom-sheet-layout.dragging .bottom-sheet {
@@ -52,8 +67,12 @@
     padding: 0.5em 0;
 }
 
-.bottom-sheet-handle rect {
+.bottom-sheet.light .bottom-sheet-handle rect {
     fill: #616161;
+}
+
+.bottom-sheet.dark .bottom-sheet-handle rect {
+    fill: #BDBDBD;
 }
 
 
@@ -63,19 +82,6 @@
 
 .bottom-sheet-layout.closed {
     pointer-events: none;
-}
-
-@media (prefers-color-scheme: dark) {
-    .bottom-sheet {
-        border: 2px solid #0F0F0F;
-        background-color: #0F0F0F;
-    }
-    .bottom-sheet-handle rect {
-        fill: #BDBDBD;
-    }
-    .bottom-sheet-background {
-        background-color: #616161;
-    }
 }
 
 @media (pointer: coarse) { /* only for touch input */
