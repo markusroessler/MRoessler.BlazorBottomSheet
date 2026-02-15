@@ -12,7 +12,7 @@ namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
 public sealed class SynchronizationContextDispatcher
 {
     private SynchronizationContext? _syncContext;
-    private TaskFactory? _taskFactory = Task.Factory;
+    private TaskFactory _taskFactory = Task.Factory;
 
     public void InitFromCurrentSyncContext()
     {

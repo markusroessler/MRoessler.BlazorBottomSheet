@@ -123,7 +123,7 @@ public partial class MainLayout
             AutoThemeIcon => BottomSheetColorScheme.Auto,
             LightThemeIcon => BottomSheetColorScheme.Light,
             DarkThemeIcon => BottomSheetColorScheme.Dark,
-            _ => throw new NotImplementedException(),
+            _ => BottomSheetColorScheme.Auto,
         };
     }
 
