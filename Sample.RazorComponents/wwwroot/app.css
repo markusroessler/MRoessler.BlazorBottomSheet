@@ -2,6 +2,15 @@
     color-scheme: light dark;
 }
 
+html, body {
+    overscroll-behavior-y: none; 
+    overflow-y: hidden;
+}
+
+body {
+    height: 100vh;
+}
+
 .bottom-sheet-background ,
 .bottom-sheet {
     /* note: see MainLayout theme */
