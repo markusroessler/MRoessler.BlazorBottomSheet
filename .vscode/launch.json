@@ -5,16 +5,36 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Sample",
+            "name": "Sample.WebApp",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/MRoessler.BlazorBottomSheet.Sample/MRoessler.BlazorBottomSheet.Sample.csproj",
+            "projectPath": "${workspaceFolder}/Sample.WebApp/Sample.WebApp.csproj",
         },
         {
-            "name": "Sample (Attach)",
+            "name": "Sample.WebApp (Attach)",
             "type": "coreclr",
             "request": "attach",
-            "processName": "MRoessler.BlazorBottomSheet.Sample.exe",
+            "processName": "Sample.WebApp.exe",
         },
+        {
+            "name": "Sample.Wasm",
+            "type": "blazorwasm",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/Sample.Wasm",
+            "browser": "chrome",
+        },
+        // {
+        //     "name": "Sample.Wasm 2",
+        //     "type": "dotnet",
+        //     "request": "launch",
+        //     "projectPath": "${workspaceFolder}/Sample.Wasm/Sample.Wasm.csproj",
+        // },
+        // {
+        //     "name": "Attach and Debug",
+        //     "type": "blazorwasm",
+        //     "request": "attach",
+        //     "url": "http://localhost:5071",
+        //     "browser": "chrome",
+        // }
     ]
 }

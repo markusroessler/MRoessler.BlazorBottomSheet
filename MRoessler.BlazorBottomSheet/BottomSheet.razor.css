@@ -6,14 +6,37 @@
     overflow-y: hidden;
     display: grid;
     grid-template-rows: minmax(0, 1fr);
+
+    --bosh-palette-sheet-background-light: #EEEEEE;
+    --bosh-palette-sheet-background-dark: #0F0F0F;
+    
+    --bosh-palette-sheet-border-light: #BDBDBD;
+    --bosh-palette-sheet-border-dark: #0F0F0F;
+    
+    --bosh-palette-overlay-background-light: #0F0F0F;
+    --bosh-palette-overlay-background-dark: #616161;
+    
+    --bosh-palette-handle-light: #616161;
+    --bosh-palette-handle-dark: #BDBDBD;
 }
 
 .bottom-sheet-background {
     grid-column: 1;
     grid-row: 1;
     width: 100%;
-    background-color: #0F0F0F;
     opacity: 0.5;
+}
+
+.bottom-sheet-background.light {
+    background-color: var(--bosh-palette-overlay-background-light);
+}
+
+.bottom-sheet-background.dark {
+    background-color: var(--bosh-palette-overlay-background-dark);
+}
+
+.bottom-sheet-background.auto-color {
+    background-color: light-dark(var(--bosh-palette-overlay-background-light), var(--bosh-palette-overlay-background-dark));
 }
 
 .bottom-sheet-layout.closed .bottom-sheet-background {
@@ -28,8 +51,6 @@
     width: 100%;
     max-width: 500px;
     height: 100%;
-    border: 2px solid #BDBDBD;
-    background-color: #EEEEEE;
     border-radius: 30px 30px 0 0;
     padding: 0 1em;
     display: flex;
@@ -37,6 +58,21 @@
     justify-content: stretch;
     justify-items: stretch;
     transition: transform 0.25s;
+}
+
+.bottom-sheet.light {
+    border: 2px solid var(--bosh-palette-sheet-border-light);
+    background-color: var(--bosh-palette-sheet-background-light);
+}
+
+.bottom-sheet.dark {
+    border: 2px solid var(--bosh-palette-sheet-border-dark);
+    background-color: var(--bosh-palette-sheet-background-dark);
+}
+
+.bottom-sheet.auto-color {
+    border: 2px solid light-dark(var(--bosh-palette-sheet-border-light), var(--bosh-palette-sheet-border-dark));
+    background-color: light-dark(var(--bosh-palette-sheet-background-light), var(--bosh-palette-sheet-background-dark));
 }
 
 .bottom-sheet-layout.dragging .bottom-sheet {
@@ -52,8 +88,16 @@
     padding: 0.5em 0;
 }
 
-.bottom-sheet-handle rect {
-    fill: #616161;
+.bottom-sheet.light .bottom-sheet-handle rect {
+    fill: var(--bosh-palette-handle-light);
+}
+
+.bottom-sheet.dark .bottom-sheet-handle rect {
+    fill: var(--bosh-palette-handle-dark);
+}
+
+.bottom-sheet.auto-color .bottom-sheet-handle rect {
+    fill: light-dark(var(--bosh-palette-handle-light), var(--bosh-palette-handle-dark));
 }
 
 
@@ -63,19 +107,6 @@
 
 .bottom-sheet-layout.closed {
     pointer-events: none;
-}
-
-@media (prefers-color-scheme: dark) {
-    .bottom-sheet {
-        border: 2px solid #0F0F0F;
-        background-color: #0F0F0F;
-    }
-    .bottom-sheet-handle rect {
-        fill: #BDBDBD;
-    }
-    .bottom-sheet-background {
-        background-color: #616161;
-    }
 }
 
 @media (pointer: coarse) { /* only for touch input */

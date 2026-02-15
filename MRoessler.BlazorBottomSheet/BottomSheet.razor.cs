@@ -54,6 +54,18 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public bool AllowMaximizedExpansion { get; set; }
 
+
+    private const string AutoColorSchemeClass = "auto-color";
+    private const string LightColorSchemeClass = "light";
+    private const string DarkColorSchemeClass = "dark";
+    private string GetColorSchemeStyleClass() => OutletState.ColorScheme switch
+    {
+        BottomSheetColorScheme.Auto => AutoColorSchemeClass,
+        BottomSheetColorScheme.Light => LightColorSchemeClass,
+        BottomSheetColorScheme.Dark => DarkColorSchemeClass,
+        _ => AutoColorSchemeClass,
+    };
+
     private BottomSheetExpansion _expansion;
     /// <summary>
     /// the expansion state to apply
@@ -134,6 +146,13 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     {
         base.OnInitialized();
         OutletState.RegisterSectionContentId(_sectionContentId);
+        OutletState.PropertyChanged += OutletState_PropertyChanged;
+    }
+
+    private void OutletState_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(BottomSheetOutletState.ColorScheme))
+            StateHasChanged();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -222,11 +241,13 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         _whenRenderedOnce?.TrySetCanceled();
 
         OutletState.DeregisterSectionContentId(_sectionContentId);
+        OutletState.PropertyChanged -= OutletState_PropertyChanged;
+
         _thisRef.Dispose();
 
         if (JavaScriptObjRef != null)
         {
-            await JavaScriptObjRef.InvokeVoidAsync("dispose");
+            await JavaScriptObjRef.TryInvokeVoidAsync("dispose");
             await JavaScriptObjRef.TryDisposeAsync();
         }
 
@@ -240,4 +261,18 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
 public enum BottomSheetExpansion
 {
     Closed = 0, Minimized = 1, Normal = 2, Maximized = 3
+}
+
+/// <summary>
+/// supported color schemes
+/// </summary>
+public enum BottomSheetColorScheme
+{
+    /// <summary>
+    /// Applies colors using light-dark css function (see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/light-dark). <br/>
+    /// For this to work you must set <c>color-scheme: light dark;</c> on <c>:root</c>
+    /// </summary>
+    Auto,
+    Light,
+    Dark
 }

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MRoessler.BlazorBottomSheet.Sample.WebApp</RootNamespace>
+    <AssemblyName>MRoessler.BlazorBottomSheet.Sample.WebApp</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Sample.RazorComponents/Sample.RazorComponents.csproj" />
+  </ItemGroup>
+</Project>

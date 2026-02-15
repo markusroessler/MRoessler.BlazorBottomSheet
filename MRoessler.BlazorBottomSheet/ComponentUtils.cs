@@ -21,4 +21,17 @@ internal static class ComponentUtils
             logger?.LogDebug(ex, "can't dispose IJSObjectReference");
         }
     }
+
+    internal static async ValueTask TryInvokeVoidAsync(this IJSObjectReference? objRef, string identifier, object?[]? args = null, ILogger? logger = null)
+    {
+        try
+        {
+            if (objRef != null)
+                await objRef.InvokeVoidAsync(identifier, args);
+        }
+        catch (JSDisconnectedException ex)
+        {
+            logger?.LogDebug(ex, "can't dispose IJSObjectReference");
+        }
+    }
 }

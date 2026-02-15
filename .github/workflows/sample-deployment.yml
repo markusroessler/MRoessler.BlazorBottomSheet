@@ -1,0 +1,68 @@
+name: Deploy sample WebAssembly app
+env:
+  PUBLISH_DIR: Sample.Wasm/bin/Release/net10.0/publish/wwwroot
+
+on:
+  push:
+    paths:
+      - Sample.Wasm/**
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    env:
+      DOTNET_VERSION: 10.0.101
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: "*/*.csproj"
+
+      - name: Publish app
+        run: dotnet publish Sample.Wasm -c Release
+
+      - name: Rewrite base href
+        uses: SteveSandersonMS/ghaction-rewrite-base-href@4583ede549773dabe1410c42e703d54cf52859ff # v1.1.0
+        with:
+          html_path: ${{ env.PUBLISH_DIR }}/index.html
+          base_href: /MRoessler.BlazorBottomSheet/
+
+      - name: Rewrite JS module import paths
+        run: bash .github/scripts/rewrite-js-module-paths.sh
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: ${{ env.PUBLISH_DIR }}
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

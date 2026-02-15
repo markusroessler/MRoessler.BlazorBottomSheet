@@ -1,0 +1,22 @@
+:root {
+    color-scheme: light dark;
+}
+
+.bottom-sheet-background ,
+.bottom-sheet {
+    /* note: see MainLayout theme */
+    z-index: 1400;
+}
+
+.mud-bottom-sheet {
+    background-color: var(--mud-palette-surface) !important;
+    border: 2px solid var(--mud-palette-divider) !important;
+}
+
+.mud-bottom-sheet .bottom-sheet-handle rect {
+    fill: var(--mud-palette-lines-inputs);
+}
+
+.mud-bottom-sheet-background {
+    background-color: var(--mud-palette-dark-darken) !important;
+}

@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DOTNET_VERSION: 10.0.101
+      DOTNET_VERSION: 10.0.101 # TODO update
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
       NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
 
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
     - name: Git Config
       run: |
@@ -53,7 +53,7 @@ jobs:
         dotnet build -c:Debug -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
     
     - name: Setup Playwright
-      run: pwsh MRoessler.BlazorBottomSheet.Sample.Test/bin/Debug/net10.0/playwright.ps1 install
+      run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
     - name: Test
       if: always()
@@ -102,7 +102,7 @@ jobs:
         name: blazor-bottomsheet-ci-linux-test-report
         path: |
          **/TestResults/*.html
-         MRoessler.BlazorBottomSheet.Sample.Test/**/Screenshots/*.png
+         Sample.Test/**/Screenshots/*.png
 
     - name: Publish Coverage Results
       if: always()
