@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DOTNET_VERSION: 10.0.101 # TODO update
+      DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
       NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
 
