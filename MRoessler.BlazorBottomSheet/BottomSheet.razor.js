@@ -101,6 +101,9 @@ export class BottomSheet extends EventTarget {
     /** @type {number} */
     #sheetTranslateY
 
+    /** @type {boolean} */
+    #sheetTranslateYUpdatePending = false
+
     /** @type {MutationObserver} */
     #layoutAttributesObserver = null
 
@@ -482,13 +485,21 @@ export class BottomSheet extends EventTarget {
     #updateTranslateY(translateY) {
         this.#logDebug(`updateTranslateY: ${translateY}`)
         this.#sheetTranslateY = translateY
-
-        if (translateY == 0)
-            this.#sheetElm.style.removeProperty('transform')
-        else
-            this.#sheetElm.style.transform = `translateY(${translateY}px)`
-
         this.dispatchEvent(new BottomSheetMoveEvent(translateY))
+
+        if (this.#sheetTranslateYUpdatePending) {
+            this.#logDebug("updateTranslateY - sheetTranslateYUpdatePending: true")
+            return
+        }
+        this.#sheetTranslateYUpdatePending = true
+
+        window.requestAnimationFrame(_ => {
+            if (this.#sheetTranslateY == 0)
+                this.#sheetElm.style.removeProperty('transform')
+            else
+                this.#sheetElm.style.transform = `translateY(${this.#sheetTranslateY}px)`
+            this.#sheetTranslateYUpdatePending = false
+        })
     }
 
     /** @param expansionMarker {HTMLElement} */
