@@ -39,7 +39,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     public bool IsModal { get; set; }
 
     /// <summary>
-    /// close the sheet when the background overlay is clicked?
+    /// whether to close the sheet when the background overlay is clicked
     /// </summary>
     [Parameter]
     public bool CloseOnBackgroundClick { get; set; }
