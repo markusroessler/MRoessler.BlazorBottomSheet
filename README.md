@@ -15,7 +15,7 @@
 ## Features
 - Dragging is recognized on the complete sheet (not just the drag handle)
 - Dynamically toggles between scrolling and dragging when touching scrollable areas
-- Optimized for touch input *(mouse works too but not as fluent as touch input)*
+- Optimized for touch input *(mouse works too but not as smooth)*
 - Supports Server and WebAssembly render modes 
 - Customizable via CSS/JS
 - No dependencies beside `Microsoft.AspNetCore.Components.Web`

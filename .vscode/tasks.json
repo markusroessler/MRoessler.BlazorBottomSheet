@@ -2,7 +2,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "watch Sample",
+			"label": "watch Sample.WebApp",
 			"type": "process",
 			"command": "dotnet",
 			"args": [
@@ -19,6 +19,26 @@
 				"clear": true,
 			}
 		},
+
+		{
+			"label": "watch Sample.Wasm",
+			"type": "process",
+			"command": "dotnet",
+			"args": [
+				"watch",
+				"--project", "${workspaceFolder}/Sample.Wasm",
+			],
+			"problemMatcher": "$msCompile",
+			"runOptions": {"instanceLimit": 1},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"clear": true,
+			}
+		},
+
 		{
 			"label": "build Sample.WebApp",
 			"type": "process",

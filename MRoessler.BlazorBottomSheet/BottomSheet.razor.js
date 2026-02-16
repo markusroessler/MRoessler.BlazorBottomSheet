@@ -69,13 +69,22 @@ export class BottomSheet extends EventTarget {
     #isDragging
 
     /** @type {number} */
-    #dragStartTouchY
+    #touchYOnDragStart
+
+    /** @type {number} */
+    #minTranslateYOnDragStart
+
+    /** @type {number} */
+    #maxTranslateYOnDragStart
+
+    /** @type {boolean} */
+    #isTouchDeviceOnDragStart
 
     /** @type {number} */
     #dragLastTouchY
 
     /** @type {number} */
-    #dragStartSheetY
+    #sheetYOnDragStart
 
     /** @type {number} */
     #dragAnchorY
@@ -86,14 +95,14 @@ export class BottomSheet extends EventTarget {
     /** @type {number} */
     #dragSpeed
 
-    /** @type {number} */
-    #dragStartMinTranslateY
+    /** @type {HTMLElement} */
+    #scrollableTouchTarget
 
     /** @type {number} */
-    #dragStartMaxTranslateY
+    #sheetTranslateY
 
     /** @type {boolean} */
-    #isTouchDeviceOnDragStart
+    #sheetTranslateYUpdatePending = false
 
     /** @type {MutationObserver} */
     #layoutAttributesObserver = null
@@ -118,7 +127,7 @@ export class BottomSheet extends EventTarget {
 
         // note: not using pointer events because they get canceled when scrolling an element
         this.#sheetElm.addEventListener("touchstart", evt => this.#handleTouchStart(evt), { passive: true, signal: this.#abortController.signal })
-        this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: true, signal: this.#abortController.signal })
+        this.#layoutElm.addEventListener("touchmove", evt => this.#handleTouchMove(evt), { passive: false, signal: this.#abortController.signal })
         this.#layoutElm.addEventListener("touchend", evt => this.#handleTouchEnd(evt), { passive: true, signal: this.#abortController.signal })
         this.#layoutElm.addEventListener("touchcancel", evt => this.#handleTouchEnd(evt), { passive: true, signal: this.#abortController.signal })
 
@@ -143,6 +152,9 @@ export class BottomSheet extends EventTarget {
         this.#updateExpansion(Number(this.#layoutElm.getAttribute("data-expansion")))
     }
 
+    #logDebug(msg) {
+        // console.debug(msg)
+    }
 
     /** @returns {HTMLElement} */
     get sheetElement() { return this.#sheetElm }
@@ -151,31 +163,32 @@ export class BottomSheet extends EventTarget {
     /** @param evt {TouchEvent} */
     #handleTouchStart(evt) {
         let firstTouch = evt.touches[0]
-        this.#handleDragStart(firstTouch.clientY)
+        this.#handleDragStart(evt, firstTouch.clientY)
     }
 
     /** @param evt {MouseEvent} */
     #handleMouseDown(evt) {
         if (!this.#hasSelectableText(evt.target)) /* let user select text */
-            this.#handleDragStart(evt.clientY)
+            this.#handleDragStart(evt, evt.clientY)
     }
 
     /** @param clientY {number} */
-    #handleDragStart(clientY) {
-        console.debug(`handleDragStart - _isDragging: ${this.#isDragging}`)
+    #handleDragStart(evt, clientY) {
+        this.#logDebug(`handleDragStart - _isDragging: ${this.#isDragging}`)
         if (this.#isDragging)
             return
 
         this.#isTouchDeviceOnDragStart = window.matchMedia("(pointer: coarse)").matches;
+        this.#scrollableTouchTarget = this.#findScrollable(evt)
 
         this.#isDragging = true
-        this.#dragStartTouchY = clientY
+        this.#touchYOnDragStart = clientY
         this.#dragAnchorY = this.#computeDragAnchor(clientY)
-        this.#dragStartSheetY = this.#sheetElm.getBoundingClientRect().y
+        this.#sheetYOnDragStart = this.#sheetElm.getBoundingClientRect().y
 
         const allowExpansions = this.#getAllowedExpansions()
-        this.#dragStartMinTranslateY = this.#computeSheetTranslateYByExpansion(allowExpansions.at(-1))
-        this.#dragStartMaxTranslateY = this.#computeSheetTranslateYByExpansion(allowExpansions.at(0))
+        this.#minTranslateYOnDragStart = this.#computeSheetTranslateYByExpansion(allowExpansions.at(-1))
+        this.#maxTranslateYOnDragStart = this.#computeSheetTranslateYByExpansion(allowExpansions.at(0))
     }
 
     /** @param evt {TouchEvent} */
@@ -197,41 +210,47 @@ export class BottomSheet extends EventTarget {
      * @param clientY {number} 
      **/
     #handleDragMove(event, clientY) {
-        // console.debug(`handlePointerMove - _isDragging: ${_isDragging}`)
+        this.#logDebug(`handleDragMove - _isDragging: ${this.#isDragging}`)
         if (!this.#isDragging)
             return
-
-        const dragDeltaY = clientY - this.#dragStartTouchY
 
         this.#dragSpeed = (clientY - this.#dragLastTouchY) / (Date.now() - this.#dragLastTime) * 1000
         this.#dragLastTouchY = clientY
         this.#dragLastTime = Date.now()
-        console.debug(`handlePointerMove - _dragSpeed: ${this.#dragSpeed}`)
 
-        if (this.#shouldDragSheet(event, dragDeltaY)) {
+        const dragDeltaY = clientY - this.#touchYOnDragStart
+        const translateY = clientY - this.#dragAnchorY
+        const shouldDragSheet = this.#shouldDragSheet(event, dragDeltaY)
+
+        if (shouldDragSheet) {
             this.#layoutElm.classList.add(DraggingStyleClass)
+            if (event.cancelable)
+                event.preventDefault()
 
-            const translate = clientY - this.#dragAnchorY
-            if (translate < this.#dragStartMinTranslateY) {
-                this.#updateTranslateY(this.#dragStartMinTranslateY)
-                this.#layoutElm.classList.remove(DraggingStyleClass) // enable scroll
-            } else if (translate > this.#dragStartMaxTranslateY) {
-                this.#updateTranslateY(this.#dragStartMaxTranslateY)
+            if (translateY < this.#minTranslateYOnDragStart) {
+                this.#updateTranslateY(this.#minTranslateYOnDragStart)
 
-            } else if (translate > 0) {
-                this.#updateTranslateY(translate)
+            } else if (translateY > this.#maxTranslateYOnDragStart) {
+                this.#updateTranslateY(this.#maxTranslateYOnDragStart)
+
+            } else if (translateY > 0) {
+                this.#updateTranslateY(translateY)
 
             } else {
                 this.#updateTranslateY(0)
-                this.#layoutElm.classList.remove(DraggingStyleClass) // enable scroll
             }
-
         } else {
-            // console.debug(`handlePointerMove - shouldHandlePointerEvent returned false`)
-            this.#dragStartTouchY = clientY
-            this.#dragAnchorY = this.#computeDragAnchor(clientY)
-            this.#layoutElm.classList.remove(DraggingStyleClass)
+            this.#touchYOnDragStart = clientY
         }
+
+        let unhandledTranslateY = 0
+        if (this.#layoutElm.classList.contains(DraggingStyleClass)) {
+            unhandledTranslateY = translateY - this.#sheetTranslateY
+            if (this.#scrollableTouchTarget)
+                this.#scrollableTouchTarget.scrollTop = unhandledTranslateY * -1
+        }
+
+        this.#logDebug(`handleDragMove - _dragSpeed: ${this.#dragSpeed}, shouldDragSheet: ${shouldDragSheet}, unhandledTranslateY: ${unhandledTranslateY}`)
     }
 
     /** @param evt {TouchEvent} */
@@ -247,7 +266,7 @@ export class BottomSheet extends EventTarget {
     }
 
     async #handleDragStop(evt) {
-        console.debug(`handleDragStop - evt: ${evt}, _isDragging: ${this.#isDragging}`)
+        this.#logDebug(`handleDragStop - evt: ${evt}, _isDragging: ${this.#isDragging}`)
         if (!this.#isDragging)
             return
 
@@ -264,7 +283,7 @@ export class BottomSheet extends EventTarget {
         newExpansion = this.#coerceExpansion(newExpansion)
         await this.#updateExpansion(newExpansion)
 
-        console.info(
+        this.#logDebug(
             `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, fastDragDirection: ${fastDragDirection})`)
     }
 
@@ -287,7 +306,7 @@ export class BottomSheet extends EventTarget {
 
     #computeFastDragDirection() {
         const sheetPosY = this.#sheetElm.getBoundingClientRect().y
-        if (Math.abs(this.#dragStartSheetY - sheetPosY) < FastDragMinDistance)
+        if (Math.abs(this.#sheetYOnDragStart - sheetPosY) < FastDragMinDistance)
             return 0
 
         if (this.#dragSpeed > FastDragMinSpeed)
@@ -312,12 +331,13 @@ export class BottomSheet extends EventTarget {
         if (evt instanceof MouseEvent)
             return true
 
-        const scrollable = this.#findScrollable(evt)
-        if (!scrollable)
+        if (!this.#scrollableTouchTarget)
             return true
 
-        const scrollTop = Math.round(scrollable.scrollTop)
-        return !(dragDeltaY > 0 && scrollTop > 0 || dragDeltaY < 0 && !this.#sheetElm.style.transform)
+        this.#logDebug(`shouldDragSheet - dragDeltaY: ${dragDeltaY}, #sheetElm.style.transform: ${this.#sheetElm.style.transform}`)
+
+        const scrollTop = Math.round(this.#scrollableTouchTarget.scrollTop)
+        return !(dragDeltaY >= 0 && scrollTop > 0 || dragDeltaY <= 0 && this.#sheetTranslateY <= this.#minTranslateYOnDragStart)
     }
 
     /** 
@@ -342,9 +362,9 @@ export class BottomSheet extends EventTarget {
 
     #computeDragMoveDirection() {
         const sheetPosY = this.#sheetElm.getBoundingClientRect().y
-        if (sheetPosY > this.#dragStartSheetY + DragInDirectionMinDistance)
+        if (sheetPosY > this.#sheetYOnDragStart + DragInDirectionMinDistance)
             return -1
-        else if (sheetPosY < this.#dragStartSheetY - DragInDirectionMinDistance)
+        else if (sheetPosY < this.#sheetYOnDragStart - DragInDirectionMinDistance)
             return 1
         else
             return 0
@@ -463,11 +483,23 @@ export class BottomSheet extends EventTarget {
     }
 
     #updateTranslateY(translateY) {
-        if (translateY == 0)
-            this.#sheetElm.style.removeProperty('transform')
-        else
-            this.#sheetElm.style.transform = `translateY(${translateY}px)`
+        this.#logDebug(`updateTranslateY: ${translateY}`)
+        this.#sheetTranslateY = translateY
         this.dispatchEvent(new BottomSheetMoveEvent(translateY))
+
+        if (this.#sheetTranslateYUpdatePending) {
+            this.#logDebug("updateTranslateY - sheetTranslateYUpdatePending: true")
+            return
+        }
+        this.#sheetTranslateYUpdatePending = true
+
+        window.requestAnimationFrame(_ => {
+            if (this.#sheetTranslateY == 0)
+                this.#sheetElm.style.removeProperty('transform')
+            else
+                this.#sheetElm.style.transform = `translateY(${this.#sheetTranslateY}px)`
+            this.#sheetTranslateYUpdatePending = false
+        })
     }
 
     /** @param expansionMarker {HTMLElement} */

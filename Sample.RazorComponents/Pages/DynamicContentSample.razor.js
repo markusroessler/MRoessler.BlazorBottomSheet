@@ -16,6 +16,8 @@ export class DynamicContentSample {
 
     #abortController = new AbortController()
 
+    #animationFramePending = false
+
 
     /**
      * @param rootElm {HTMLElement}
@@ -33,20 +35,28 @@ export class DynamicContentSample {
      * @param evt {BottomSheetMoveEvent}
      */
     #layoutRevealedContent(evt) {
-        const viewportHeight = document.documentElement.clientHeight
-        const revealedElmBounds = this.#revealedElm.getBoundingClientRect()
-        const sheetElmBounds = this.#sheet.sheetElement.getBoundingClientRect()
-        const revealedElmRelativeBottom = revealedElmBounds.bottom - sheetElmBounds.top
+        if (this.#animationFramePending)
+            return;
+        this.#animationFramePending = true
 
-        // first reveal by increasing height and then by opacity
-        // mainContent is the element below the revealed element
-        const mainContentTranslateYUnbounded = viewportHeight - evt.sheetTranslateY - revealedElmRelativeBottom
-        const mainContentTranslateY = this.#clamp(mainContentTranslateYUnbounded, 0, revealedElmBounds.height)
-        const revealedElmOpacity = this.#clamp((mainContentTranslateYUnbounded - revealedElmBounds.height) / (viewportHeight / 10), 0.0, 1.0)
+        window.requestAnimationFrame(_ => {
+            const viewportHeight = document.documentElement.clientHeight
+            const revealedElmBounds = this.#revealedElm.getBoundingClientRect()
+            const sheetElmBounds = this.#sheet.sheetElement.getBoundingClientRect()
+            const revealedElmRelativeBottom = revealedElmBounds.bottom - sheetElmBounds.top
 
-        this.#rootElm.style.setProperty("--main-content-transform", `translateY(${mainContentTranslateY}px)`)
-        this.#rootElm.style.setProperty("--expansion-marker-transform", `translateY(${-mainContentTranslateY}px)`)
-        this.#rootElm.style.setProperty("--revealed-content-opacity", revealedElmOpacity)
+            // first reveal by increasing height and then by opacity
+            // mainContent is the element below the revealed element
+            const mainContentTranslateYUnbounded = viewportHeight - evt.sheetTranslateY - revealedElmRelativeBottom
+            const mainContentTranslateY = this.#clamp(mainContentTranslateYUnbounded, 0, revealedElmBounds.height)
+            const revealedElmOpacity = this.#clamp((mainContentTranslateYUnbounded - revealedElmBounds.height) / (viewportHeight / 10), 0.0, 1.0)
+
+            this.#rootElm.style.setProperty("--main-content-transform", `translateY(${mainContentTranslateY}px)`)
+            this.#rootElm.style.setProperty("--expansion-marker-transform", `translateY(${-mainContentTranslateY}px)`)
+            this.#rootElm.style.setProperty("--revealed-content-opacity", revealedElmOpacity)
+
+            this.#animationFramePending = false
+        })
     }
 
     #clamp(val, min, max) {

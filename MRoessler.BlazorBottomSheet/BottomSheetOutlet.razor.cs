@@ -10,9 +10,10 @@ namespace MRoessler.BlazorBottomSheet;
 /// Outputs the contents of <see cref="BottomSheet"/>s. 
 /// Place this in your MainLayout.
 /// </summary>
-public partial class BottomSheetOutlet : ComponentBase
+public partial class BottomSheetOutlet : ComponentBase, IAsyncDisposable
 {
     internal const string ContentSectionName = "BottomSheetContent";
+    private bool _disposed;
 
     [Inject]
     private BottomSheetOutletState State { get; set; } = default!;
@@ -27,7 +28,6 @@ public partial class BottomSheetOutlet : ComponentBase
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        // TODO remove listeners in Dispose method
         State.OnSectionContentIdAdded += State_OnSectionContentIdAdded;
         State.OnSectionContentIdRemoved += State_OnSectionContentIdRemoved;
     }
@@ -41,4 +41,21 @@ public partial class BottomSheetOutlet : ComponentBase
     private void State_OnSectionContentIdRemoved(Guid guid) => StateHasChanged();
 
     private void State_OnSectionContentIdAdded(Guid guid) => StateHasChanged();
+
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore().ConfigureAwait(false);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        if (_disposed)
+            return;
+
+        State.OnSectionContentIdAdded -= State_OnSectionContentIdAdded;
+        State.OnSectionContentIdRemoved -= State_OnSectionContentIdRemoved;
+
+        _disposed = true;
+    }
 }

@@ -27,7 +27,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     env:
-      DOTNET_VERSION: 10.0.101
+      DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
       NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
 

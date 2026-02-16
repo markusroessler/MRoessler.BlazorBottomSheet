@@ -38,7 +38,9 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public bool IsModal { get; set; }
 
-    // TODO rename to AutoClose?
+    /// <summary>
+    /// whether to close the sheet when the background overlay is clicked
+    /// </summary>
     [Parameter]
     public bool CloseOnBackgroundClick { get; set; }
 
