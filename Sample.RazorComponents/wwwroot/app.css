@@ -3,8 +3,8 @@
 }
 
 html, body {
-    overscroll-behavior-y: none; 
-    overflow-y: hidden;
+    overscroll-behavior-y: none; /* block pull to refresh (all browsers) */
+    overflow-y: hidden; /* block scrolling (Chrome Android) */
 }
 
 body {
