@@ -223,22 +223,28 @@ export class BottomSheet extends EventTarget {
         const shouldDragSheet = this.#shouldDragSheet(event, dragDeltaY)
 
         if (shouldDragSheet) {
-            this.#layoutElm.classList.add(DraggingStyleClass)
-            if (event.cancelable)
-                event.preventDefault()
+            if (event.cancelable || this.#layoutElm.classList.contains(DraggingStyleClass)) {
+                if (event.cancelable)
+                    event.preventDefault()
+                this.#layoutElm.classList.add(DraggingStyleClass)
 
-            if (translateY < this.#minTranslateYOnDragStart) {
-                this.#updateTranslateY(this.#minTranslateYOnDragStart)
+                if (translateY < this.#minTranslateYOnDragStart) {
+                    this.#updateTranslateY(this.#minTranslateYOnDragStart)
 
-            } else if (translateY > this.#maxTranslateYOnDragStart) {
-                this.#updateTranslateY(this.#maxTranslateYOnDragStart)
+                } else if (translateY > this.#maxTranslateYOnDragStart) {
+                    this.#updateTranslateY(this.#maxTranslateYOnDragStart)
 
-            } else if (translateY > 0) {
-                this.#updateTranslateY(translateY)
+                } else if (translateY > 0) {
+                    this.#updateTranslateY(translateY)
 
+                } else {
+                    this.#updateTranslateY(0)
+                }
             } else {
-                this.#updateTranslateY(0)
+                // Chrome Android: cancel the drag when the TouchEvent can't be canceled - the browser is already scrolling and this leads to laggy drag animation otherwise
+                this.#handleDragStop(event)
             }
+
         } else {
             this.#touchYOnDragStart = clientY
         }
