@@ -249,14 +249,18 @@ export class BottomSheet extends EventTarget {
             this.#touchYOnDragStart = clientY
         }
 
-        let unhandledTranslateY = 0
-        if (this.#layoutElm.classList.contains(DraggingStyleClass)) {
-            unhandledTranslateY = translateY - this.#sheetTranslateY
-            if (this.#scrollableTouchTarget)
+        if (this.#scrollableTouchTarget) {
+            let unhandledTranslateY = translateY - this.#sheetTranslateY
+            if (this.#layoutElm.classList.contains(DraggingStyleClass)) {
+                // scroll if we can't drag any further
                 this.#scrollableTouchTarget.scrollTop = unhandledTranslateY * -1
+            } else {
+                // move the drag anchor to prevent the sheet from "jumping" when scrollTop=0 is reached
+                this.#dragAnchorY += unhandledTranslateY
+            }
         }
 
-        this.#logDebug(`handleDragMove - _dragSpeed: ${this.#dragSpeed}, shouldDragSheet: ${shouldDragSheet}, unhandledTranslateY: ${unhandledTranslateY}`)
+        this.#logDebug(`handleDragMove - _dragSpeed: ${this.#dragSpeed}, shouldDragSheet: ${shouldDragSheet}`)
     }
 
     /** @param evt {TouchEvent} */
