@@ -223,19 +223,8 @@ export class BottomSheet extends EventTarget {
                 if (event.cancelable)
                     event.preventDefault()
                 this.#layoutElm.classList.add(DraggingStyleClass)
-
-                if (translateY < this.#minTranslateYOnDragStart) {
-                    this.#updateTranslateY(this.#minTranslateYOnDragStart)
-
-                } else if (translateY > this.#maxTranslateYOnDragStart) {
-                    this.#updateTranslateY(this.#maxTranslateYOnDragStart)
-
-                } else if (translateY > 0) {
-                    this.#updateTranslateY(translateY)
-
-                } else {
-                    this.#updateTranslateY(0)
-                }
+                const clampedTranslateY = this.#clamp(translateY, this.#minTranslateYOnDragStart, this.#maxTranslateYOnDragStart)
+                this.#updateTranslateY(clampedTranslateY)
             } else {
                 // Chrome Android: cancel the drag when the TouchEvent can't be canceled - the browser is already scrolling and this leads to laggy drag animation otherwise
                 this.#handleDragStop(event)
@@ -249,6 +238,10 @@ export class BottomSheet extends EventTarget {
         }
 
         this.#logDebug(`handleDragMove - _dragSpeed: ${this.#dragSpeed}, shouldDragSheet: ${shouldDragSheet}`)
+    }
+
+    #clamp(val, min, max) {
+        return Math.max(Math.min(val, max), min)
     }
 
     /** @param evt {TouchEvent} */
