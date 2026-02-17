@@ -86,7 +86,7 @@ export class BottomSheet extends EventTarget {
     /** @type {number} */
     #sheetYOnDragStart
 
-    /** @type {number} */
+    /** @type {number} drag pos relative to the sheet */
     #dragAnchorY
 
     /** @type {number} */
@@ -152,8 +152,10 @@ export class BottomSheet extends EventTarget {
         this.#updateExpansion(Number(this.#layoutElm.getAttribute("data-expansion")))
     }
 
+    /** @param msg {String} */
     #logDebug(msg) {
-        // console.debug(msg)
+        // if (msg.startsWith('handleDragMove'))
+        //     console.debug(msg)
     }
 
     /** @returns {HTMLElement} */
@@ -210,7 +212,7 @@ export class BottomSheet extends EventTarget {
      * @param clientY {number} 
      **/
     #handleDragMove(event, clientY) {
-        this.#logDebug(`handleDragMove - _isDragging: ${this.#isDragging}`)
+        this.#logDebug(`handleDragMove - _isDragging: ${this.#isDragging}, this.#dragAnchorY: ${this.#dragAnchorY}`)
         if (!this.#isDragging)
             return
 
@@ -244,8 +246,8 @@ export class BottomSheet extends EventTarget {
                 // Chrome Android: cancel the drag when the TouchEvent can't be canceled - the browser is already scrolling and this leads to laggy drag animation otherwise
                 this.#handleDragStop(event)
             }
-
         } else {
+            // we did not move the sheet - so reset the start pos
             this.#touchYOnDragStart = clientY
         }
 
