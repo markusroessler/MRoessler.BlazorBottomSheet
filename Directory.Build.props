@@ -1,7 +1,5 @@
 <Project>
     <PropertyGroup>
-      <!-- see https://github.com/NuGet/NuGet.Client/blob/dev/src/NuGet.Core/NuGet.LibraryModel/LibraryIncludeFlagUtils.cs#L19 -->
-      <DefaultPrivateAssets>contentfiles;analyzers;build</DefaultPrivateAssets>
       <TimetrackingTargetFramework>net10.0</TimetrackingTargetFramework>
     </PropertyGroup>
 
