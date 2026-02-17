@@ -69,9 +69,6 @@ export class BottomSheet extends EventTarget {
     #isDragging
 
     /** @type {number} */
-    #touchYOnDragStart
-
-    /** @type {number} */
     #minTranslateYOnDragStart
 
     /** @type {number} */
@@ -85,9 +82,6 @@ export class BottomSheet extends EventTarget {
 
     /** @type {number} */
     #sheetYOnDragStart
-
-    /** @type {number} */
-    #dragAnchorY
 
     /** @type {number} */
     #dragLastTime
@@ -152,8 +146,10 @@ export class BottomSheet extends EventTarget {
         this.#updateExpansion(Number(this.#layoutElm.getAttribute("data-expansion")))
     }
 
+    /** @param msg {String} */
     #logDebug(msg) {
-        // console.debug(msg)
+        // if (msg.startsWith('handleDragMove'))
+        //     console.debug(msg)
     }
 
     /** @returns {HTMLElement} */
@@ -182,9 +178,8 @@ export class BottomSheet extends EventTarget {
         this.#scrollableTouchTarget = this.#findScrollable(evt)
 
         this.#isDragging = true
-        this.#touchYOnDragStart = clientY
-        this.#dragAnchorY = this.#computeDragAnchor(clientY)
         this.#sheetYOnDragStart = this.#sheetElm.getBoundingClientRect().y
+        this.#dragLastTouchY = clientY
 
         const allowExpansions = this.#getAllowedExpansions()
         this.#minTranslateYOnDragStart = this.#computeSheetTranslateYByExpansion(allowExpansions.at(-1))
@@ -214,43 +209,39 @@ export class BottomSheet extends EventTarget {
         if (!this.#isDragging)
             return
 
-        this.#dragSpeed = (clientY - this.#dragLastTouchY) / (Date.now() - this.#dragLastTime) * 1000
+        const dragDeltaY = clientY - this.#dragLastTouchY
+        this.#dragSpeed = dragDeltaY / (Date.now() - this.#dragLastTime) * 1000
         this.#dragLastTouchY = clientY
         this.#dragLastTime = Date.now()
 
-        const dragDeltaY = clientY - this.#touchYOnDragStart
-        const translateY = clientY - this.#dragAnchorY
+        const oldSheetTranslateY = this.#sheetTranslateY
+        const translateY = this.#sheetTranslateY + dragDeltaY
         const shouldDragSheet = this.#shouldDragSheet(event, dragDeltaY)
 
         if (shouldDragSheet) {
-            this.#layoutElm.classList.add(DraggingStyleClass)
-            if (event.cancelable)
-                event.preventDefault()
-
-            if (translateY < this.#minTranslateYOnDragStart) {
-                this.#updateTranslateY(this.#minTranslateYOnDragStart)
-
-            } else if (translateY > this.#maxTranslateYOnDragStart) {
-                this.#updateTranslateY(this.#maxTranslateYOnDragStart)
-
-            } else if (translateY > 0) {
-                this.#updateTranslateY(translateY)
-
+            if (event.cancelable || this.#layoutElm.classList.contains(DraggingStyleClass)) {
+                if (event.cancelable)
+                    event.preventDefault()
+                this.#layoutElm.classList.add(DraggingStyleClass)
+                const clampedTranslateY = this.#clamp(translateY, this.#minTranslateYOnDragStart, this.#maxTranslateYOnDragStart)
+                this.#updateTranslateY(clampedTranslateY)
             } else {
-                this.#updateTranslateY(0)
+                // Chrome Android: cancel the drag when the TouchEvent can't be canceled - the browser is already scrolling and this leads to laggy drag animation otherwise
+                this.#handleDragStop(event)
             }
-        } else {
-            this.#touchYOnDragStart = clientY
         }
 
-        let unhandledTranslateY = 0
-        if (this.#layoutElm.classList.contains(DraggingStyleClass)) {
-            unhandledTranslateY = translateY - this.#sheetTranslateY
-            if (this.#scrollableTouchTarget)
-                this.#scrollableTouchTarget.scrollTop = unhandledTranslateY * -1
+        // scroll if we can't drag any further
+        if (this.#layoutElm.classList.contains(DraggingStyleClass) && this.#scrollableTouchTarget) {
+            let unhandledDragDelta = dragDeltaY - (this.#sheetTranslateY - oldSheetTranslateY)
+            this.#scrollableTouchTarget.scrollTop -= unhandledDragDelta
         }
 
-        this.#logDebug(`handleDragMove - _dragSpeed: ${this.#dragSpeed}, shouldDragSheet: ${shouldDragSheet}, unhandledTranslateY: ${unhandledTranslateY}`)
+        this.#logDebug(`handleDragMove - _dragSpeed: ${this.#dragSpeed}, shouldDragSheet: ${shouldDragSheet}`)
+    }
+
+    #clamp(val, min, max) {
+        return Math.max(Math.min(val, max), min)
     }
 
     /** @param evt {TouchEvent} */
@@ -315,11 +306,6 @@ export class BottomSheet extends EventTarget {
             return 1
         else
             return 0
-    }
-
-    /** @param clientY {number} */
-    #computeDragAnchor(clientY) {
-        return clientY - this.#sheetElm.getBoundingClientRect().y
     }
 
     /** 

@@ -44,6 +44,14 @@ builder.Services.AddBottomSheet();
 <BottomSheetOutlet />
 ```
 
+- Add to your `app.css` to block the browser's default scrolling behavior
+```css
+html, body {
+    overscroll-behavior-y: none; /* block pull to refresh (all browsers) */
+    overflow-y: hidden; /* block scrolling (Chrome Android) */
+}
+```
+
 - Add BottomSheet to your Razor Component
 ```xml
 <BottomSheet>

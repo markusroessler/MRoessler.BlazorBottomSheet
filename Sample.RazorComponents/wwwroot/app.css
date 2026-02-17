@@ -3,8 +3,8 @@
 }
 
 html, body {
-    overscroll-behavior-y: none; 
-    overflow-y: hidden;
+    overscroll-behavior-y: none; /* block pull to refresh (all browsers) */
+    overflow-y: hidden; /* block scrolling (Chrome Android) */
 }
 
 body {
@@ -24,8 +24,4 @@ body {
 
 .mud-bottom-sheet .bottom-sheet-handle rect {
     fill: var(--mud-palette-lines-inputs);
-}
-
-.mud-bottom-sheet-background {
-    background-color: var(--mud-palette-dark-darken) !important;
 }

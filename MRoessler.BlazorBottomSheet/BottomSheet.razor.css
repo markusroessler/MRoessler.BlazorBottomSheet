@@ -14,7 +14,7 @@
     --bosh-palette-sheet-border-dark: #0F0F0F;
     
     --bosh-palette-overlay-background-light: #0F0F0F;
-    --bosh-palette-overlay-background-dark: #616161;
+    --bosh-palette-overlay-background-dark: #424242;
     
     --bosh-palette-handle-light: #616161;
     --bosh-palette-handle-dark: #BDBDBD;
@@ -25,6 +25,7 @@
     grid-row: 1;
     width: 100%;
     opacity: 0.5;
+    transition: opacity 0.25s;
 }
 
 .bottom-sheet-background.light {
@@ -40,7 +41,8 @@
 }
 
 .bottom-sheet-layout.closed .bottom-sheet-background {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .bottom-sheet {
