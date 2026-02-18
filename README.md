@@ -3,8 +3,8 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![build](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
-[![Line of Code](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/blob/build-results/badges/badge_lines_of_code.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
-[![Line Coverage](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/blob/build-results/badges/badge_linecoverage.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
+[![Line of Code](https://raw.githubusercontent.com/markusroessler/MRoessler.BlazorBottomSheet/build-results/badges/badge_lines_of_code.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
+[![Line Coverage](https://raw.githubusercontent.com/markusroessler/MRoessler.BlazorBottomSheet/build-results/badges/badge_linecoverage.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/MRoessler.BlazorBottomSheet.svg?style=flat-square&label=NuGet)](https://www.nuget.org/packages/MRoessler.BlazorBottomSheet)
 
 |   **Light Theme**  |  **Dark Theme**    |
