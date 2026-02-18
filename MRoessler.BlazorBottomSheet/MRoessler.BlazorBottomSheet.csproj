@@ -12,6 +12,8 @@
     <PackageDescription>.NET Blazor BottomSheet implementation for mobile apps</PackageDescription>
     <RepositoryUrl>https://github.com/markusroessler/MRoessler.BlazorBottomSheet</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>Copyright (c) 2026 Markus Rößler</Copyright>
+    <PackageTags>Blazor, Razor Components</PackageTags>
   </PropertyGroup>
   
   <!-- symbol/source config -->
