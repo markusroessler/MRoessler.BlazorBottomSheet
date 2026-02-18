@@ -11,6 +11,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageDescription>.NET Blazor BottomSheet implementation for mobile apps</PackageDescription>
     <RepositoryUrl>https://github.com/markusroessler/MRoessler.BlazorBottomSheet</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   
   <!-- symbol/source config -->
