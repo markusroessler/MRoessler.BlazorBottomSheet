@@ -9,7 +9,8 @@
 
 |   **Light Theme**  |  **Dark Theme**    |
 | --- | --- |
-|  <img src="https://i.imgur.com/B8HA400.png" alt="light-mode" height="400">   |   <img src="https://i.imgur.com/8qs2WG6.png" alt="dark-mode" height="400">  |
+| [![light-mode](https://i.imgur.com/B8HA400m.png)](https://i.imgur.com/B8HA400.png) | [![dark-mode](https://i.imgur.com/8qs2WG6m.png)](https://i.imgur.com/8qs2WG6.png)   |
+
 
 
 ## Features
