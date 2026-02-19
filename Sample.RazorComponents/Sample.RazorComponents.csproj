@@ -26,4 +26,8 @@
     <ProjectReference Include="../MRoessler.BlazorBottomSheet/MRoessler.BlazorBottomSheet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="jsconfig.json" />
+  </ItemGroup>
+
 </Project>
