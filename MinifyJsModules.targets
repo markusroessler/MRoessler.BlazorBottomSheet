@@ -1,3 +1,4 @@
+<!-- implementation template: https://github.com/dotnet/sdk/blob/e90c4413024970eca97d05122243737aa207af11/src/StaticWebAssetsSdk/Targets/Microsoft.NET.Sdk.StaticWebAssets.JSModules.targets#L428 -->
 <Project>
   <PropertyGroup>
     <GenerateComputedBuildStaticWebAssetsDependsOn>$(GenerateComputedBuildStaticWebAssetsDependsOn);MinifyJsModules</GenerateComputedBuildStaticWebAssetsDependsOn>
@@ -10,13 +11,13 @@
     <PropertyGroup>
       <_MinifyOutputDir>$(IntermediateOutputPath)bundled</_MinifyOutputDir>
     </PropertyGroup>
-    <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" />
+    <!-- <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" /> -->
 
     <Exec Command="npx esbuild @(_WebAssetMinifyInput, ' ') --minify --sourcemap --out-extension:.js=.min.js --outbase=. --outdir=&quot;$(_MinifyOutputDir)&quot;" />
     <ItemGroup>
       <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)\**" />
     </ItemGroup>
-    <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" />
+    <!-- <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" /> -->
 
     <DefineStaticWebAssets CandidateAssets="@(_WebAssetMinifyOutput)"
         SourceId="$(PackageId)"
