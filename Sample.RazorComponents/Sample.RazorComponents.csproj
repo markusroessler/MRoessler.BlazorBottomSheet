@@ -30,4 +30,5 @@
     <Content Remove="jsconfig.json" />
   </ItemGroup>
 
+  <Import Project="../MinifyJsModules.targets" />
 </Project>
