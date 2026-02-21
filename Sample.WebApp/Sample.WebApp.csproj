@@ -21,9 +21,14 @@
   </PropertyGroup>
   
   <Target Name="CustomGenerateComputedBuildStaticWebAssets">
-    <Message Importance="high" Text="CustomGenerateComputedBuildStaticWebAssets!" />
+    <ItemGroup>
+      <StaticWebAssetToCompress Include="@(StaticWebAsset)" Condition="$([System.String]::Copy('%(Identity)').EndsWith('razor.js'))" />
+    </ItemGroup>
 
-    <Exec Command="terser foobar.js -o $(IntermediateOutputPath)bundled/foobar.min.js --module --compress --mangle --source-map &quot;url='foobar.js.map'&quot;" />
+    <Message Importance="high" Text="CustomGenerateComputedBuildStaticWebAssets!" />
+    <Message Importance="high" Text="%(StaticWebAssetToCompress.Identity)" />
+
+    <Exec Command="terser foobar.js @(StaticWebAssetToCompress, ' ') -o $(IntermediateOutputPath)bundled/foobar.min.js --module --compress --mangle --source-map &quot;url='foobar.js.map'&quot;" />
 
     <DefineStaticWebAssets CandidateAssets="$(IntermediateOutputPath)bundled\foobar.min.js"
                           SourceId="$(PackageId)"
