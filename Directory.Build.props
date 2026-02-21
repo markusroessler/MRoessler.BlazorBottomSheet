@@ -1,7 +1,6 @@
 <Project>
     <PropertyGroup>
       <TimetrackingTargetFramework>net10.0</TimetrackingTargetFramework>
-      <SampleRazorComponentsAssemblyName>MRoessler.BlazorBottomSheet.Sample.RazorComponents</SampleRazorComponentsAssemblyName>
     </PropertyGroup>
 
     <ItemGroup Condition="$(ProjectName.EndsWith('Playground')) == false">

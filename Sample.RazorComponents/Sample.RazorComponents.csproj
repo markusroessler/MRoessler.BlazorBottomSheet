@@ -4,8 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>$(SampleRazorComponentsAssemblyName)</RootNamespace>
-    <AssemblyName>$(SampleRazorComponentsAssemblyName)</AssemblyName>
+    <RootNamespace>MRoessler.BlazorBottomSheet.Sample.RazorComponents</RootNamespace>
+    <AssemblyName>MRoessler.BlazorBottomSheet.Sample.RazorComponents</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
