@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-  
+
   <!-- package info -->
   <PropertyGroup>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -15,7 +15,7 @@
     <Copyright>Copyright (c) 2026 Markus Rößler</Copyright>
     <PackageTags>Blazor, Razor Components</PackageTags>
   </PropertyGroup>
-  
+
   <!-- symbol/source config -->
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../README.md" Pack="true" PackagePath="/"/>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,4 +39,47 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <GenerateComputedBuildStaticWebAssetsDependsOn>$(GenerateComputedBuildStaticWebAssetsDependsOn);MinifyJsModules</GenerateComputedBuildStaticWebAssetsDependsOn>
+  </PropertyGroup>
+
+  <Target Name="MinifyJsModules">
+    <ItemGroup>
+      <_WebAssetMinifyInput Include="*.razor.js" />
+    </ItemGroup>
+    <PropertyGroup>
+      <_MinifyOutputDir>$(IntermediateOutputPath)bundled</_MinifyOutputDir>
+    </PropertyGroup>
+    <!-- <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" /> -->
+
+    <Exec Command="npx esbuild @(_WebAssetMinifyInput, ' ') --minify --sourcemap --out-extension:.js=.min.js --outdir=&quot;$(_MinifyOutputDir)&quot;" />
+    <ItemGroup>
+      <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)\**"/>
+    </ItemGroup>
+    <!-- <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" /> -->
+
+    <DefineStaticWebAssets CandidateAssets="@(_WebAssetMinifyOutput)"
+          SourceId="$(PackageId)"
+          SourceType="Computed"
+          ContentRoot="$(_MinifyOutputDir)"
+          BasePath="_content/$(PackageId)"
+          AssetKind="All"
+          AssetMode="All"
+          AssetRole="Primary"
+          AssetMergeSource="$(StaticWebAssetMergeTarget)">
+      <Output TaskParameter="Assets" ItemName="_MyBundleStaticWebAsset" />
+    </DefineStaticWebAssets>
+
+    <DefineStaticWebAssetEndpoints CandidateAssets="@(_MyBundleStaticWebAsset)"
+          ExistingEndpoints="@(StaticWebAssetEndpoint)"
+          ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
+      <Output TaskParameter="Endpoints" ItemName="_MyBundleStaticWebAssetEndpoint" />
+    </DefineStaticWebAssetEndpoints>
+
+    <ItemGroup>
+      <StaticWebAsset Include="@(_MyBundleStaticWebAsset)" />
+      <StaticWebAssetEndpoint Include="@(_MyBundleStaticWebAssetEndpoint)" />
+    </ItemGroup>
+  </Target>
 </Project>

@@ -15,49 +15,4 @@
   <ItemGroup>
     <Content Remove="jsconfig.json" />
   </ItemGroup>
-
-   <PropertyGroup>
-    <GenerateComputedBuildStaticWebAssetsDependsOn>$(GenerateComputedBuildStaticWebAssetsDependsOn);CustomGenerateComputedBuildStaticWebAssets</GenerateComputedBuildStaticWebAssetsDependsOn>
-  </PropertyGroup>
-  
-  <Target Name="CustomGenerateComputedBuildStaticWebAssets">
-    <ItemGroup>
-      <_WebAssetMinifyInput Include="@(StaticWebAsset)" Condition="$([System.String]::Copy('%(Identity)').EndsWith('razor.js'))" />
-    </ItemGroup>
-    
-    <PropertyGroup>
-      <_MinifyOutputDir>$(IntermediateOutputPath)bundled</_MinifyOutputDir>
-    </PropertyGroup>
-    
-    <Message Importance="high" Text="CustomGenerateComputedBuildStaticWebAssets!" />
-    <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" />
-    
-    <Exec Command="npx esbuild @(_WebAssetMinifyInput, ' ') --minify --sourcemap --out-extension:.js=.min.js --outdir=&quot;$(_MinifyOutputDir)&quot;" />
-    <Exec Command="mv $(_MinifyOutputDir)/Sample.RazorComponents $(_MinifyOutputDir)/$(SampleRazorComponentsAssemblyName)" />
-
-    <ItemGroup>
-      <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)\**"/>
-    </ItemGroup>
-    <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" />
-
-    <DefineStaticWebAssets CandidateAssets="@(_WebAssetMinifyOutput)"
-                          SourceId="$(PackageId)"
-                          SourceType="Package"
-                          ContentRoot="$(_MinifyOutputDir)"
-                          BasePath="_content"
-                          AssetKind="All"
-                          AssetMode="CurrentProject"
-                          AssetRole="Primary">
-      <Output TaskParameter="Assets" ItemName="_MyBundleStaticWebAsset" />
-    </DefineStaticWebAssets>
-
-     <DefineStaticWebAssetEndpoints CandidateAssets="@(_MyBundleStaticWebAsset)" ExistingEndpoints="@(StaticWebAssetEndpoint)" ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
-      <Output TaskParameter="Endpoints" ItemName="_MyBundleStaticWebAssetEndpoint" />
-    </DefineStaticWebAssetEndpoints>
-
-    <ItemGroup>
-      <StaticWebAsset Include="@(_MyBundleStaticWebAsset)" />
-      <StaticWebAssetEndpoint Include="@(_MyBundleStaticWebAssetEndpoint)" />
-    </ItemGroup>
-  </Target>
 </Project>
