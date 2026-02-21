@@ -32,9 +32,9 @@
     <Message Importance="high" Text="CustomGenerateComputedBuildStaticWebAssets!" />
     <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" />
     
-    <!-- <MakeDir Directories="$(_MinifyOutputDir)" /> -->
-    <Exec Command="npx esbuild @(_WebAssetMinifyInput, ' ') --sourcemap --out-extension:.js=.min.js --outdir=&quot;$(_MinifyOutputDir)&quot;" />
-    
+    <Exec Command="npx esbuild @(_WebAssetMinifyInput, ' ') --minify --sourcemap --out-extension:.js=.min.js --outdir=&quot;$(_MinifyOutputDir)&quot;" />
+    <Exec Command="mv $(_MinifyOutputDir)/Sample.RazorComponents $(_MinifyOutputDir)/$(SampleRazorComponentsAssemblyName)" />
+
     <ItemGroup>
       <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)\**"/>
     </ItemGroup>
