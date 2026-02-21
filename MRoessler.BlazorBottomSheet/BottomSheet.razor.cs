@@ -193,7 +193,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
-            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor.js");
+            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor.min.js");
             JavaScriptObjRef = await _jsModule.InvokeAsync<IJSObjectReference>("createBottomSheet", _layoutElm, _thisRef);
             _whenRenderedOnce?.SetResult();
         }

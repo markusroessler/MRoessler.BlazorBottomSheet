@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-  
+
   <!-- package info -->
   <PropertyGroup>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -15,7 +15,7 @@
     <Copyright>Copyright (c) 2026 Markus Rößler</Copyright>
     <PackageTags>Blazor, Razor Components</PackageTags>
   </PropertyGroup>
-  
+
   <!-- symbol/source config -->
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../README.md" Pack="true" PackagePath="/"/>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,4 +39,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
   </ItemGroup>
+
+  <Import Project="../MinifyJsModules.targets" />
 </Project>

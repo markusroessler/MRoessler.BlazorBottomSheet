@@ -11,4 +11,8 @@
   <ItemGroup>
     <ProjectReference Include="../Sample.RazorComponents/Sample.RazorComponents.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="jsconfig.json" />
+  </ItemGroup>
 </Project>

@@ -26,4 +26,9 @@
     <ProjectReference Include="../MRoessler.BlazorBottomSheet/MRoessler.BlazorBottomSheet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="jsconfig.json" />
+  </ItemGroup>
+
+  <Import Project="../MinifyJsModules.targets" />
 </Project>
