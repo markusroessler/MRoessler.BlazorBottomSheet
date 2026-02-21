@@ -22,28 +22,36 @@
   
   <Target Name="CustomGenerateComputedBuildStaticWebAssets">
     <ItemGroup>
-      <StaticWebAssetToCompress Include="@(StaticWebAsset)" Condition="$([System.String]::Copy('%(Identity)').EndsWith('razor.js'))" />
+      <_WebAssetMinifyInput Include="@(StaticWebAsset)" Condition="$([System.String]::Copy('%(Identity)').EndsWith('razor.js'))" />
     </ItemGroup>
-
+    
+    <PropertyGroup>
+      <_MinifyOutputDir>$(IntermediateOutputPath)bundled</_MinifyOutputDir>
+    </PropertyGroup>
+    
     <Message Importance="high" Text="CustomGenerateComputedBuildStaticWebAssets!" />
-    <Message Importance="high" Text="%(StaticWebAssetToCompress.Identity)" />
+    <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" />
+    
+    <!-- <MakeDir Directories="$(_MinifyOutputDir)" /> -->
+    <Exec Command="npx esbuild @(_WebAssetMinifyInput, ' ') --sourcemap --out-extension:.js=.min.js --outdir=&quot;$(_MinifyOutputDir)&quot;" />
+    
+    <ItemGroup>
+      <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)\**"/>
+    </ItemGroup>
+    <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" />
 
-    <Exec Command="terser foobar.js @(StaticWebAssetToCompress, ' ') -o $(IntermediateOutputPath)bundled/foobar.min.js --module --compress --mangle --source-map &quot;url='foobar.js.map'&quot;" />
-
-    <DefineStaticWebAssets CandidateAssets="$(IntermediateOutputPath)bundled\foobar.min.js"
+    <DefineStaticWebAssets CandidateAssets="@(_WebAssetMinifyOutput)"
                           SourceId="$(PackageId)"
-                          SourceType="Computed"
-                          ContentRoot="$(IntermediateOutputPath)bundled\"
-                          BasePath="$(StaticWebAssetBasePath)"
-                          AssetKind="Publish"
+                          SourceType="Package"
+                          ContentRoot="$(_MinifyOutputDir)"
+                          BasePath="_content"
+                          AssetKind="All"
                           AssetMode="CurrentProject"
                           AssetRole="Primary">
       <Output TaskParameter="Assets" ItemName="_MyBundleStaticWebAsset" />
     </DefineStaticWebAssets>
 
-     <DefineStaticWebAssetEndpoints CandidateAssets="@(_MyBundleStaticWebAsset)"
-                                  ExistingEndpoints="@(StaticWebAssetEndpoint)"
-                                  ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
+     <DefineStaticWebAssetEndpoints CandidateAssets="@(_MyBundleStaticWebAsset)" ExistingEndpoints="@(StaticWebAssetEndpoint)" ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
       <Output TaskParameter="Endpoints" ItemName="_MyBundleStaticWebAssetEndpoint" />
     </DefineStaticWebAssetEndpoints>
 
