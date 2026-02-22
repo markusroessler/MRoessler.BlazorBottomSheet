@@ -69,4 +69,4 @@ html, body {
 - See sample apps for more advanced usage examples
     - [Sample.WebApp](Sample.WebApp)
     - [Sample.Wasm](Sample.Wasm)
-- [API documentation](doc/api/MRoessler.BlazorBottomSheet.md)
+- [API documentation](docs/api/MRoessler.BlazorBottomSheet.md)
