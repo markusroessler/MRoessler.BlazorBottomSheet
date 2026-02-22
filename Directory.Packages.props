@@ -22,5 +22,8 @@
     <!-- DotnetAnalyzerConfig packages -->
     <PackageVersion Include="MRoessler.DotnetAnalyzerConfig" Version="1.5.0" />
     <PackageVersion Include="MRoessler.DotnetAnalyzerConfig.Test" Version="1.3.0" />
+
+    <!-- Other dev packages -->
+    <PackageVersion Include="DefaultDocumentation" Version="1.2.3" />
   </ItemGroup>
 </Project>

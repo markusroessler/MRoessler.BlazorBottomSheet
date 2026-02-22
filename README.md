@@ -26,7 +26,12 @@
 
 💡 For the best experience enable device and touch simulation in your browser's debug tools - Firefox example:
 ![browser debug tools](https://i.imgur.com/ViNpl4X.png)
-*see Sample-projects for source code*  
+
+#### Source Code
+- [Sample.WebApp](Sample.WebApp)
+- [Sample.Wasm](Sample.Wasm)
+- [Sample.RazorComponents](Sample.RazorComponents) 
+    - contains components used by both apps
 
 ## Getting Started
 - Install [nuget package](https://www.nuget.org/packages/MRoessler.BlazorBottomSheet)
@@ -66,5 +71,7 @@ html, body {
 </BottomSheet>
 ```
 
-- See sample app for more advanced usage examples
-- See XML Docs for detailed API description
+
+## API documentation 
+- [.NET API](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/wiki/MRoessler.BlazorBottomSheet)
+- [JavaScript API](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/wiki/BottomSheet.razor.js)

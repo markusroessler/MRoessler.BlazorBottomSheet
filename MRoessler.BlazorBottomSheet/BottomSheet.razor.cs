@@ -29,30 +29,46 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public RenderFragment? Handle { get; set; }
 
+    /// <summary>
+    /// Whether this sheet should generally be visible (Default: true). <br/>
+    /// Note: this is separate from <see cref="Expansion"/>
+    /// </summary>
     [Parameter]
     public bool IsVisible { get; set; } = true;
 
     /// <summary>
-    /// whether to prevent interaction with the overlayed content
+    /// Whether to prevent interaction with the overlayed content (Default: false)
     /// </summary>
     [Parameter]
     public bool IsModal { get; set; }
 
     /// <summary>
-    /// whether to close the sheet when the background overlay is clicked
+    /// Whether to close the sheet when the background overlay is clicked (Default: false)
     /// </summary>
     [Parameter]
     public bool CloseOnBackgroundClick { get; set; }
 
+    /// <summary>
+    /// Whether to allow the user to close the sheet by dragging it (Default: true)
+    /// </summary>
     [Parameter]
     public bool AllowClosedExpansion { get; set; } = true;
 
+    /// <summary>
+    /// Whether to allow the user to minimize the sheet by dragging it (Default: false)
+    /// </summary>
     [Parameter]
     public bool AllowMinimizedExpansion { get; set; }
 
+    /// <summary>
+    /// Whether to allow the user to expand the sheet by dragging it (Default: true)
+    /// </summary>
     [Parameter]
     public bool AllowNormalExpansion { get; set; } = true;
 
+    /// <summary>
+    /// Whether to allow the user to maximize the sheet by dragging it (Default: false)
+    /// </summary>
     [Parameter]
     public bool AllowMaximizedExpansion { get; set; }
 
@@ -70,7 +86,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
 
     private BottomSheetExpansion _expansion;
     /// <summary>
-    /// the expansion state to apply
+    /// the expansion state to apply (Default: <see cref="BottomSheetExpansion.Closed"/>)
     /// </summary>
     [Parameter]
     public BottomSheetExpansion Expansion { get; set; }
@@ -88,7 +104,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     public EventCallback<bool> IsOpenChanged { get; set; }
 
     /// <summary>
-    /// <see cref="Expansion"/> to be applied when <see cref="IsOpen"/> is set to true
+    /// <see cref="Expansion"/> to be applied when <see cref="IsOpen"/> is set to true (Default: <see cref="BottomSheetExpansion.Normal"/>)
     /// </summary>
     [Parameter]
     public BottomSheetExpansion DefaultExpansion { get; set; } = BottomSheetExpansion.Normal;
@@ -110,6 +126,10 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     [Parameter]
     public string BackgroundClass { get; set; } = "";
 
+    /// <summary>
+    /// Additional HTML attributes to render 
+    /// (see <see href="https://learn.microsoft.com/en-us/aspnet/core/blazor/components/splat-attributes-and-arbitrary-parameters?view=aspnetcore-10.0">ASP.NET Core Blazor attribute splatting</see>)
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     [SuppressMessage("Usage", "CA2227:Collection properties should be read only...", Justification = "...but not Blazor Parameters")]
     public IDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -120,7 +140,7 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     private IJSObjectReference? _jsModule;
 
     /// <summary>
-    /// Reference to the javascript object.
+    /// Reference to the JavaScript BottomSheet object.
     /// You may use this to add event listeners.
     /// </summary>
     public IJSObjectReference? JavaScriptObjRef { get; private set; }
@@ -179,8 +199,8 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Use this to wait for the sheet render at least once.
-    /// <see cref="JavaScriptObjRef"/> should be set after the first render.
+    /// Use this to wait for the sheet render at least once. <br/>
+    /// Note: <see cref="JavaScriptObjRef"/> is initialized after the first render.
     /// </summary>
     public Task WhenRenderedOnce()
     {
@@ -235,6 +255,10 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
+
+    /// <summary>
+    /// Can be overriden in sub-classes to dispose resources.
+    /// </summary>
     protected virtual async ValueTask DisposeAsyncCore()
     {
         if (_disposed)
@@ -260,13 +284,16 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     }
 }
 
+/// <summary>
+/// The supported expansion states
+/// </summary>
 public enum BottomSheetExpansion
 {
     Closed = 0, Minimized = 1, Normal = 2, Maximized = 3
 }
 
 /// <summary>
-/// supported color schemes
+/// The supported color schemes
 /// </summary>
 public enum BottomSheetColorScheme
 {

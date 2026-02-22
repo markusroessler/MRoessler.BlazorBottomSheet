@@ -35,10 +35,11 @@ jobs:
     - name: Remove setup-dotnet problem matcher
       run: echo "::remove-matcher owner=csc::"
     
-    - name: Install nyc
-      run: npm install -g nyc 
+    - name: Install npm packages
+      run: npm install -g nyc
 
     - name: Instrument js files for code coverage
+      if: always()
       run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
 
     - name: Restore
@@ -51,8 +52,12 @@ jobs:
       id: build
       run: |
         dotnet build -c:Debug -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
+
+    # - name: Check for uncommitted changes
+    #   run: git diff --exit-code
     
     - name: Setup Playwright
+      if: always()
       run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
     - name: Test
