@@ -66,5 +66,7 @@ html, body {
 </BottomSheet>
 ```
 
-- See sample app for more advanced usage examples
-- See [API documentation](doc/api/MRoessler.BlazorBottomSheet.md) for detailed API details 
+- See sample apps for more advanced usage examples
+    - [Sample.WebApp](Sample.WebApp)
+    - [Sample.Wasm](Sample.Wasm)
+- [API documentation](doc/api/MRoessler.BlazorBottomSheet.md)
