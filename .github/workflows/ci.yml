@@ -57,9 +57,11 @@ jobs:
         fi
 
     - name: Instrument js files for code coverage
+      if: always()
       run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
     
     - name: Setup Playwright
+      if: always()
       run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
 
     - name: Test
