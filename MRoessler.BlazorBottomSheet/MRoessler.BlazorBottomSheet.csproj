@@ -23,7 +23,7 @@
     <EmbedAllSources>true</EmbedAllSources>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DefaultDocumentationFolder>../docs/api</DefaultDocumentationFolder>
+    <DefaultDocumentationFolder>../docs/api/dotnet</DefaultDocumentationFolder>
     <DefaultDocumentationGeneratedAccessModifiers>Api</DefaultDocumentationGeneratedAccessModifiers>
     <DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
 
@@ -43,6 +43,14 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
     <PackageReference Include="DefaultDocumentation" PrivateAssets="all"/>
   </ItemGroup>
+
+  <ItemGroup>
+    <JsModuleFiles Include="BottomSheet.razor.js"/>
+    <JsDocMdFiles Include="../docs/api/js/BottomSheet.md" />
+  </ItemGroup>
+  <Target Name="GenerateJsDoc" BeforeTargets="Build" Inputs="@(JsModuleFiles)" Outputs="@(JsDocMdFiles)">
+    <Exec Command="npx jsdoc2md BottomSheet.razor.js > ../docs/api/js/BottomSheet.md" />
+  </Target>
 
   <Import Project="../MinifyJsModules.targets" />
 </Project>

@@ -1,15 +1,16 @@
+/** @type {String} the name of the move event */
 export const SheetMoveEventName = "sheet-drag"
 
-/** @type {number} */
+/** @private @type {number} */
 const ExpansionClosed = 0
 
-/** @type {number} */
+/** @private @type {number} */
 const ExpansionMinimized = 1
 
-/** @type {number} */
+/** @private @type {number} */
 const ExpansionNormal = 2
 
-/** @type {number} */
+/** @private @type {number} */
 const ExpansionMaximized = 3
 
 const HiddenStyleClass = "hidden"
@@ -24,13 +25,17 @@ const FastDragMinSpeed = 1000
 const FastDragMinDistance = 100
 
 
-/** @param razorComp { DotNetObject } */
+/**
+ * INTERNAL API
+ * @param razorComp { DotNetObject } 
+ */
 export function createBottomSheet(layoutElm, razorComp) {
     return new BottomSheet(layoutElm, razorComp)
 }
 
 /**
  * Event that is raised when the sheet is moved
+ * @name BottomSheetMoveEvent
  */
 export class BottomSheetMoveEvent extends Event {
     /** @type {number} */
@@ -49,6 +54,12 @@ export class BottomSheetMoveEvent extends Event {
     }
 }
 
+
+/**
+ * The BottomSheet handler.
+ * You may use this to listen for BottomSheetMoveEvents
+ * @name BottomSheet
+ */
 export class BottomSheet extends EventTarget {
     /** @type {HTMLElement} */
     #layoutElm
@@ -152,7 +163,7 @@ export class BottomSheet extends EventTarget {
         //     console.debug(msg)
     }
 
-    /** @returns {HTMLElement} */
+    /** @returns {HTMLElement} the sheet element */
     get sheetElement() { return this.#sheetElm }
 
 
@@ -553,6 +564,9 @@ export class BottomSheet extends EventTarget {
         this.#updateExpansion(this.#getCurrentExpansion())
     }
 
+    /**
+     * INTERNAL API
+     */
     dispose() {
         this.#abortController.abort()
 
