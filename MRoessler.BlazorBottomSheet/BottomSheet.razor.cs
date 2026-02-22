@@ -119,8 +119,6 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     private readonly DotNetObjectReference<BottomSheet> _thisRef;
     private IJSObjectReference? _jsModule;
 
-    public string Foobar { get; set; }
-
     /// <summary>
     /// Reference to the javascript object.
     /// You may use this to add event listeners.
