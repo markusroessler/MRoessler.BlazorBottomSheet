@@ -28,6 +28,9 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
           cache-dependency-path: "*/*.csproj"
+      
+      - name: Install npm packages
+        run: npm install -g jsdoc-to-markdown 
 
       - name: Generate docs
         run: |
