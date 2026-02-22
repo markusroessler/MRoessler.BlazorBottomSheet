@@ -73,5 +73,5 @@ html, body {
 
 
 ## API documentation 
-- [.NET API](docs/api/dotnet/MRoessler.BlazorBottomSheet.md)
-- [JavaScript API](docs/api/js/BottomSheet.md)
+- [.NET API](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/wiki/MRoessler.BlazorBottomSheet)
+- [JavaScript API](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/wiki/BottomSheet.razor.js)
