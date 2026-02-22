@@ -23,6 +23,9 @@
     <EmbedAllSources>true</EmbedAllSources>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- <DefaultDocumentationFolder>../api-doc</DefaultDocumentationFolder> -->
+    <DefaultDocumentationGeneratedAccessModifiers>Api</DefaultDocumentationGeneratedAccessModifiers>
+    <DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
 
     <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
     <NoWarn>1591</NoWarn>
@@ -38,6 +41,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+    <PackageReference Include="DefaultDocumentation" PrivateAssets="all"/>
   </ItemGroup>
 
   <Import Project="../MinifyJsModules.targets" />
