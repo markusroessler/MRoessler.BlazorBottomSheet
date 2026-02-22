@@ -10,17 +10,20 @@ namespace MRoessler.BlazorBottomSheet;
 public abstract class ExpansionMarker : ComponentBase
 {
     /// <summary>
-    /// style class to apply on the marker
+    /// Style class to apply on the marker
     /// </summary>
     [Parameter]
     public string Class { get; set; } = "";
 
     /// <summary>
-    /// styles to apply on the marker
+    /// Styles to apply on the marker
     /// </summary>
     [Parameter]
     public string Style { get; set; } = "";
 
+    /// <summary>
+    /// Additional HTML attributes to render (see https://learn.microsoft.com/en-us/aspnet/core/blazor/components/splat-attributes-and-arbitrary-parameters?view=aspnetcore-10.0#arbitrary-attributes)
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     [SuppressMessage("Usage", "CA2227:Collection properties should be read only...", Justification = "...but not Blazor Parameters")]
     public IDictionary<string, object>? AdditionalAttributes { get; set; }

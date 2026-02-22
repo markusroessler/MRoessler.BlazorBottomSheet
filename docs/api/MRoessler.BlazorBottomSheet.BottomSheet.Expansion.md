@@ -2,7 +2,7 @@
 
 ## BottomSheet\.Expansion Property
 
-the expansion state to apply
+the expansion state to apply \(Default: [Closed](MRoessler.BlazorBottomSheet.BottomSheetExpansion.md#MRoessler.BlazorBottomSheet.BottomSheetExpansion.Closed 'MRoessler\.BlazorBottomSheet\.BottomSheetExpansion\.Closed')\)
 
 ```csharp
 public MRoessler.BlazorBottomSheet.BottomSheetExpansion Expansion { get; set; }

@@ -2,7 +2,7 @@
 
 ## BottomSheet\.CloseOnBackgroundClick Property
 
-whether to close the sheet when the background overlay is clicked
+Whether to close the sheet when the background overlay is clicked \(Default: false\)
 
 ```csharp
 public bool CloseOnBackgroundClick { get; set; }

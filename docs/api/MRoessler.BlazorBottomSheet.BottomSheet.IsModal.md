@@ -2,7 +2,7 @@
 
 ## BottomSheet\.IsModal Property
 
-whether to prevent interaction with the overlayed content
+Whether to prevent interaction with the overlayed content \(Default: false\)
 
 ```csharp
 public bool IsModal { get; set; }

@@ -2,7 +2,7 @@
 
 ## ExpansionMarker\.Class Property
 
-style class to apply on the marker
+Style class to apply on the marker
 
 ```csharp
 public string Class { get; set; }

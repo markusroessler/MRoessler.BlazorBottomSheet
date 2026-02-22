@@ -2,6 +2,8 @@
 
 ## BottomSheet\.AllowMaximizedExpansion Property
 
+Whether to allow the user to maximize the sheet by dragging it \(Default: false\)
+
 ```csharp
 public bool AllowMaximizedExpansion { get; set; }
 ```

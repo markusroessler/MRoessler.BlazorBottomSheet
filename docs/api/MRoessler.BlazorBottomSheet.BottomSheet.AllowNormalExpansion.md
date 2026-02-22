@@ -2,6 +2,8 @@
 
 ## BottomSheet\.AllowNormalExpansion Property
 
+Whether to allow the user to expand the sheet by dragging it \(Default: true\)
+
 ```csharp
 public bool AllowNormalExpansion { get; set; }
 ```

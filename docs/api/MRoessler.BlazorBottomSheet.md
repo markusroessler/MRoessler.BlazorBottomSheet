@@ -11,5 +11,5 @@
 
 | Enums | |
 | :--- | :--- |
-| [BottomSheetColorScheme](MRoessler.BlazorBottomSheet.BottomSheetColorScheme.md 'MRoessler\.BlazorBottomSheet\.BottomSheetColorScheme') | supported color schemes |
-| [BottomSheetExpansion](MRoessler.BlazorBottomSheet.BottomSheetExpansion.md 'MRoessler\.BlazorBottomSheet\.BottomSheetExpansion') | |
+| [BottomSheetColorScheme](MRoessler.BlazorBottomSheet.BottomSheetColorScheme.md 'MRoessler\.BlazorBottomSheet\.BottomSheetColorScheme') | The supported color schemes |
+| [BottomSheetExpansion](MRoessler.BlazorBottomSheet.BottomSheetExpansion.md 'MRoessler\.BlazorBottomSheet\.BottomSheetExpansion') | The supported expansion states |

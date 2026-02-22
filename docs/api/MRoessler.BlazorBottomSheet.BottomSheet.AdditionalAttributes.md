@@ -2,6 +2,8 @@
 
 ## BottomSheet\.AdditionalAttributes Property
 
+Additional HTML attributes to render \(see https://learn\.microsoft\.com/en\-us/aspnet/core/blazor/components/splat\-attributes\-and\-arbitrary\-parameters?view=aspnetcore\-10\.0\#arbitrary\-attributes\)
+
 ```csharp
 public System.Collections.Generic.IDictionary<string,object>? AdditionalAttributes { get; set; }
 ```

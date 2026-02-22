@@ -2,6 +2,9 @@
 
 ## BottomSheet\.IsVisible Property
 
+Whether this sheet should generally be visible \(Default: true\)\. <br/>
+Note: this is separate from [Expansion](MRoessler.BlazorBottomSheet.BottomSheet.Expansion.md 'MRoessler\.BlazorBottomSheet\.BottomSheet\.Expansion')
+
 ```csharp
 public bool IsVisible { get; set; }
 ```

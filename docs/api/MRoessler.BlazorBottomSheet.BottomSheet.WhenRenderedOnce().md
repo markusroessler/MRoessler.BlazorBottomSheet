@@ -2,8 +2,8 @@
 
 ## BottomSheet\.WhenRenderedOnce\(\) Method
 
-Use this to wait for the sheet render at least once\.
-[JavaScriptObjRef](MRoessler.BlazorBottomSheet.BottomSheet.JavaScriptObjRef.md 'MRoessler\.BlazorBottomSheet\.BottomSheet\.JavaScriptObjRef') should be set after the first render\.
+Use this to wait for the sheet render at least once\. <br/>
+Note: [JavaScriptObjRef](MRoessler.BlazorBottomSheet.BottomSheet.JavaScriptObjRef.md 'MRoessler\.BlazorBottomSheet\.BottomSheet\.JavaScriptObjRef') is initialized after the first render\.
 
 ```csharp
 public System.Threading.Tasks.Task WhenRenderedOnce();

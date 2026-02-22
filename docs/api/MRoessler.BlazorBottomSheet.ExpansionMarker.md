@@ -14,6 +14,6 @@ Derived
 
 | Properties | |
 | :--- | :--- |
-| [AdditionalAttributes](MRoessler.BlazorBottomSheet.ExpansionMarker.AdditionalAttributes.md 'MRoessler\.BlazorBottomSheet\.ExpansionMarker\.AdditionalAttributes') | |
-| [Class](MRoessler.BlazorBottomSheet.ExpansionMarker.Class.md 'MRoessler\.BlazorBottomSheet\.ExpansionMarker\.Class') | style class to apply on the marker |
-| [Style](MRoessler.BlazorBottomSheet.ExpansionMarker.Style.md 'MRoessler\.BlazorBottomSheet\.ExpansionMarker\.Style') | styles to apply on the marker |
+| [AdditionalAttributes](MRoessler.BlazorBottomSheet.ExpansionMarker.AdditionalAttributes.md 'MRoessler\.BlazorBottomSheet\.ExpansionMarker\.AdditionalAttributes') | Additional HTML attributes to render \(see https://learn\.microsoft\.com/en\-us/aspnet/core/blazor/components/splat\-attributes\-and\-arbitrary\-parameters?view=aspnetcore\-10\.0\#arbitrary\-attributes\) |
+| [Class](MRoessler.BlazorBottomSheet.ExpansionMarker.Class.md 'MRoessler\.BlazorBottomSheet\.ExpansionMarker\.Class') | Style class to apply on the marker |
+| [Style](MRoessler.BlazorBottomSheet.ExpansionMarker.Style.md 'MRoessler\.BlazorBottomSheet\.ExpansionMarker\.Style') | Styles to apply on the marker |

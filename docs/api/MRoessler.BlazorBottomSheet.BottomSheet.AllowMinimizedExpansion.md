@@ -2,6 +2,8 @@
 
 ## BottomSheet\.AllowMinimizedExpansion Property
 
+Whether to allow the user to minimize the sheet by dragging it \(Default: false\)
+
 ```csharp
 public bool AllowMinimizedExpansion { get; set; }
 ```

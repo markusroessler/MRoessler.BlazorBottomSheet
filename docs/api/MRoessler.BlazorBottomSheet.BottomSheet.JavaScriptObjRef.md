@@ -2,7 +2,7 @@
 
 ## BottomSheet\.JavaScriptObjRef Property
 
-Reference to the javascript object\.
+Reference to the JavaScript BottomSheet object\.
 You may use this to add event listeners\.
 
 ```csharp

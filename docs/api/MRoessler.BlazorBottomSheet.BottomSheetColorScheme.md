@@ -2,7 +2,7 @@
 
 ## BottomSheetColorScheme Enum
 
-supported color schemes
+The supported color schemes
 
 ```csharp
 public enum BottomSheetColorScheme

@@ -2,6 +2,8 @@
 
 ## BottomSheet\.AllowClosedExpansion Property
 
+Whether to allow the user to close the sheet by dragging it \(Default: true\)
+
 ```csharp
 public bool AllowClosedExpansion { get; set; }
 ```

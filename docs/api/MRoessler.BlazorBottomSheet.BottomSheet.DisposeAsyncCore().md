@@ -2,6 +2,8 @@
 
 ## BottomSheet\.DisposeAsyncCore\(\) Method
 
+Can be overriden in sub\-classes to dispose resources\.
+
 ```csharp
 protected virtual System.Threading.Tasks.ValueTask DisposeAsyncCore();
 ```

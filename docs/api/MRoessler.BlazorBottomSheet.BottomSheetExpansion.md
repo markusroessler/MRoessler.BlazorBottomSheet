@@ -2,6 +2,8 @@
 
 ## BottomSheetExpansion Enum
 
+The supported expansion states
+
 ```csharp
 public enum BottomSheetExpansion
 ```
