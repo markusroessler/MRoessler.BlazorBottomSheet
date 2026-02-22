@@ -4,11 +4,8 @@ env:
 
 on:
   push:
-    paths:
-      - Sample.Wasm/**
     branches:
       - main
-
   workflow_dispatch:
 
 permissions:
