@@ -1,0 +1,36 @@
+name: Publish API docs to wiki
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-wiki
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish-wiki:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: "*/*.csproj"
+
+      - name: Generate docs
+        run: |
+          dotnet build MRoessler.BlazorBottomSheet -p:BtShGenerateMdDocs=true 
+
+      - uses: Andrew-Chen-Wang/github-wiki-action@v4
