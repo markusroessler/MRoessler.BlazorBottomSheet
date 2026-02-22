@@ -50,11 +50,7 @@ jobs:
         dotnet build -c:Debug -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
 
     - name: Check for uncommitted changes
-      run: |
-        if ! git diff --exit-code; then
-          echo "Uncommitted changes detected!"
-          exit 1
-        fi
+      run: git diff --exit-code
 
     - name: Instrument js files for code coverage
       if: always()
