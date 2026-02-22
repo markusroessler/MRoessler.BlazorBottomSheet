@@ -22,7 +22,8 @@ public abstract class ExpansionMarker : ComponentBase
     public string Style { get; set; } = "";
 
     /// <summary>
-    /// Additional HTML attributes to render (see https://learn.microsoft.com/en-us/aspnet/core/blazor/components/splat-attributes-and-arbitrary-parameters?view=aspnetcore-10.0#arbitrary-attributes)
+    /// Additional HTML attributes to render 
+    /// (see <see href="https://learn.microsoft.com/en-us/aspnet/core/blazor/components/splat-attributes-and-arbitrary-parameters?view=aspnetcore-10.0">ASP.NET Core Blazor attribute splatting</see>)
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     [SuppressMessage("Usage", "CA2227:Collection properties should be read only...", Justification = "...but not Blazor Parameters")]

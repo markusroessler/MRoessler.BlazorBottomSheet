@@ -14,7 +14,7 @@ Implements [System\.IAsyncDisposable](https://learn.microsoft.com/en-us/dotnet/a
 
 | Properties | |
 | :--- | :--- |
-| [AdditionalAttributes](MRoessler.BlazorBottomSheet.BottomSheet.AdditionalAttributes.md 'MRoessler\.BlazorBottomSheet\.BottomSheet\.AdditionalAttributes') | Additional HTML attributes to render \(see https://learn\.microsoft\.com/en\-us/aspnet/core/blazor/components/splat\-attributes\-and\-arbitrary\-parameters?view=aspnetcore\-10\.0\#arbitrary\-attributes\) |
+| [AdditionalAttributes](MRoessler.BlazorBottomSheet.BottomSheet.AdditionalAttributes.md 'MRoessler\.BlazorBottomSheet\.BottomSheet\.AdditionalAttributes') | Additional HTML attributes to render  \(see [ASP\.NET Core Blazor attribute splatting](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/splat-attributes-and-arbitrary-parameters?view=aspnetcore-10.0 'https://learn\.microsoft\.com/en\-us/aspnet/core/blazor/components/splat\-attributes\-and\-arbitrary\-parameters?view=aspnetcore\-10\.0')\) |
 | [AllowClosedExpansion](MRoessler.BlazorBottomSheet.BottomSheet.AllowClosedExpansion.md 'MRoessler\.BlazorBottomSheet\.BottomSheet\.AllowClosedExpansion') | Whether to allow the user to close the sheet by dragging it \(Default: true\) |
 | [AllowMaximizedExpansion](MRoessler.BlazorBottomSheet.BottomSheet.AllowMaximizedExpansion.md 'MRoessler\.BlazorBottomSheet\.BottomSheet\.AllowMaximizedExpansion') | Whether to allow the user to maximize the sheet by dragging it \(Default: false\) |
 | [AllowMinimizedExpansion](MRoessler.BlazorBottomSheet.BottomSheet.AllowMinimizedExpansion.md 'MRoessler\.BlazorBottomSheet\.BottomSheet\.AllowMinimizedExpansion') | Whether to allow the user to minimize the sheet by dragging it \(Default: false\) |
