@@ -67,4 +67,4 @@ html, body {
 ```
 
 - See sample app for more advanced usage examples
-- See [XML Docs](api-doc/MRoessler.BlazorBottomSheet.md) for detailed API description 
+- See [API documentation](doc/api/MRoessler.BlazorBottomSheet.md) for detailed API details 

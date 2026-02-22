@@ -23,7 +23,7 @@
     <EmbedAllSources>true</EmbedAllSources>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <!-- <DefaultDocumentationFolder>../api-doc</DefaultDocumentationFolder> -->
+    <DefaultDocumentationFolder>../doc/api</DefaultDocumentationFolder>
     <DefaultDocumentationGeneratedAccessModifiers>Api</DefaultDocumentationGeneratedAccessModifiers>
     <DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
 
