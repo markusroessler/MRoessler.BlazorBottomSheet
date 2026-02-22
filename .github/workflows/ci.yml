@@ -38,9 +38,6 @@ jobs:
     - name: Install nyc
       run: npm install -g nyc 
 
-    - name: Instrument js files for code coverage
-      run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
-
     - name: Restore
       run: dotnet restore
 
@@ -58,6 +55,9 @@ jobs:
           echo "Uncommitted changes detected!"
           exit 1
         fi
+
+    - name: Instrument js files for code coverage
+      run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
     
     - name: Setup Playwright
       run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
