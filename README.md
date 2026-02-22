@@ -3,13 +3,14 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![build](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
-[![Line of Code](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/blob/build-results/badges/badge_lines_of_code.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
-[![Line Coverage](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/blob/build-results/badges/badge_linecoverage.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
+[![Line of Code](https://raw.githubusercontent.com/markusroessler/MRoessler.BlazorBottomSheet/build-results/badges/badge_lines_of_code.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
+[![Line Coverage](https://raw.githubusercontent.com/markusroessler/MRoessler.BlazorBottomSheet/build-results/badges/badge_linecoverage.svg)](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/MRoessler.BlazorBottomSheet.svg?style=flat-square&label=NuGet)](https://www.nuget.org/packages/MRoessler.BlazorBottomSheet)
 
 |   **Light Theme**  |  **Dark Theme**    |
 | --- | --- |
-|  <img src="https://i.imgur.com/B8HA400.png" alt="light-mode" height="400">   |   <img src="https://i.imgur.com/8qs2WG6.png" alt="dark-mode" height="400">  |
+| [![light-mode](https://i.imgur.com/B8HA400m.png)](https://i.imgur.com/B8HA400.png) | [![dark-mode](https://i.imgur.com/8qs2WG6m.png)](https://i.imgur.com/8qs2WG6.png)   |
+
 
 
 ## Features
@@ -25,7 +26,12 @@
 
 💡 For the best experience enable device and touch simulation in your browser's debug tools - Firefox example:
 ![browser debug tools](https://i.imgur.com/ViNpl4X.png)
-*see Sample-projects for source code*  
+
+#### Source Code
+- [Sample.WebApp](Sample.WebApp)
+- [Sample.Wasm](Sample.Wasm)
+- [Sample.RazorComponents](Sample.RazorComponents) 
+    - contains components used by both apps
 
 ## Getting Started
 - Install [nuget package](https://www.nuget.org/packages/MRoessler.BlazorBottomSheet)
@@ -65,5 +71,7 @@ html, body {
 </BottomSheet>
 ```
 
-- See sample app for more advanced usage examples
-- See XML Docs for detailed API description
+
+## API documentation 
+- [.NET API](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/wiki/MRoessler.BlazorBottomSheet)
+- [JavaScript API](https://github.com/markusroessler/MRoessler.BlazorBottomSheet/wiki/BottomSheet.razor.js)

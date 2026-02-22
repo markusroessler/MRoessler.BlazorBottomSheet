@@ -5,14 +5,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-  
+
   <!-- package info -->
   <PropertyGroup>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageDescription>.NET Blazor BottomSheet implementation for mobile apps</PackageDescription>
     <RepositoryUrl>https://github.com/markusroessler/MRoessler.BlazorBottomSheet</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>Copyright (c) 2026 Markus Rößler</Copyright>
+    <PackageTags>Blazor, Razor Components</PackageTags>
   </PropertyGroup>
-  
+
   <!-- symbol/source config -->
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -20,13 +23,17 @@
     <EmbedAllSources>true</EmbedAllSources>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DefaultDocumentationFolder>../docs/api/dotnet</DefaultDocumentationFolder>
+    <DefaultDocumentationGeneratedAccessModifiers>Api</DefaultDocumentationGeneratedAccessModifiers>
+    <DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
+    <BtShGenerateMdDocs>false</BtShGenerateMdDocs>
 
     <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../README.md" Pack="true" PackagePath="/"/>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,5 +42,25 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+    <PackageReference Include="DefaultDocumentation" PrivateAssets="all"/>
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="DefaultDocumentation.json" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="$(BtShGenerateMdDocs) == 'false'">
+    <DisableDefaultDocumentation>true</DisableDefaultDocumentation>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(BtShGenerateMdDocs) == 'true'">
+    <JsModuleFiles Include="BottomSheet.razor.js"/>
+    <JsDocMdFiles Include="../docs/api/js/BottomSheet.md" />
+  </ItemGroup>
+  <Target Name="GenerateJsDocs" BeforeTargets="Build" Condition="$(BtShGenerateMdDocs) == 'true'" Inputs="@(JsModuleFiles)" Outputs="@(JsDocMdFiles)">
+    <MakeDir Directories="../docs/api/js" />
+    <Exec Command="npx jsdoc2md BottomSheet.razor.js > ../docs/api/js/BottomSheet.razor.js.md" />
+  </Target>
+
+  <Import Project="../MinifyJsModules.targets" />
 </Project>
