@@ -45,11 +45,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="DefaultDocumentation.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <JsModuleFiles Include="BottomSheet.razor.js"/>
     <JsDocMdFiles Include="../docs/api/js/BottomSheet.md" />
   </ItemGroup>
   <Target Name="GenerateJsDoc" BeforeTargets="Build" Inputs="@(JsModuleFiles)" Outputs="@(JsDocMdFiles)">
-    <Exec Command="npx jsdoc2md BottomSheet.razor.js > ../docs/api/js/BottomSheet.md" />
+    <Exec Command="npx jsdoc2md BottomSheet.razor.js > ../docs/api/js/BottomSheet.razor.js.md" />
   </Target>
 
   <Import Project="../MinifyJsModules.targets" />
