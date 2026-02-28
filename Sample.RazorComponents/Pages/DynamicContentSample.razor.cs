@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MRoessler.BlazorBottomSheet;
 using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
+using static MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils.ComponentUtils;
 
 namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents.Pages;
 
@@ -17,6 +18,9 @@ public sealed partial class DynamicContentSample : IAsyncDisposable
 
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Inject]
+    private BottomSheetServicesConfiguration ServicesConfig { get; set; } = default!;
 
     private BottomSheet? _sheet;
     private IJSObjectReference? _jsModule;
@@ -32,7 +36,8 @@ public sealed partial class DynamicContentSample : IAsyncDisposable
             await _sheet.WhenRenderedOnce();
             var jsSheetObjRef = sheet.JavaScriptObjRef ?? throw new InvalidOperationException("_sheet?.JavaScriptObjRef is null");
 
-            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet.Sample.RazorComponents/Pages/{nameof(DynamicContentSample)}.razor.min.js");
+            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import",
+                $"./_content/MRoessler.BlazorBottomSheet.Sample.RazorComponents/Pages/{nameof(DynamicContentSample)}.razor{GetJsFileNameInfix(ServicesConfig.UseMinifiedJavaScripts)}.js");
             _jsObjRef = await _jsModule.InvokeAsync<IJSObjectReference>("createDynamicContentSample", _rootElm, jsSheetObjRef);
         }
     }

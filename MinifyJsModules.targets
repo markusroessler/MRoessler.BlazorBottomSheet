@@ -10,11 +10,12 @@
       <_FingerprintPattern Include="ComponentsMinJsModule" Pattern="*.razor.min.js"/>
     </ItemGroup>
     <PropertyGroup>
-      <_MinifyOutputDir>$(IntermediateOutputPath)bundled</_MinifyOutputDir>
+      <_MinifyOutputDir>$(IntermediateOutputPath)minified</_MinifyOutputDir>
     </PropertyGroup>
     <!-- <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" /> -->
 
-    <Exec Command="npx esbuild @(_WebAssetMinifyInput, ' ') --minify --sourcemap --out-extension:.js=.min.js --outbase=. --outdir=&quot;$(_MinifyOutputDir)&quot;" />
+    <Exec Command="pwsh $(MSBuildThisFileDirectory)/MinifyJsModules.ps1 &quot;@(_WebAssetMinifyInput, ' ')&quot; $(_MinifyOutputDir)" />
+
     <ItemGroup>
       <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)\**" />
     </ItemGroup>

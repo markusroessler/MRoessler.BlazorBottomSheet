@@ -8,8 +8,16 @@ namespace MRoessler.BlazorBottomSheet;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddBottomSheet(this IServiceCollection services)
+    /// <summary>
+    /// Adds the BottomSheet services
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+    /// <param name="config">Optional configuration</param>
+    /// <returns>A reference to this instance after the operation has completed.</returns>
+    public static IServiceCollection AddBottomSheet(this IServiceCollection services, BottomSheetServicesConfiguration? config = null)
     {
-        return services.AddScoped<BottomSheetOutletState>();
+        return services
+            .AddSingleton(config ?? new())
+            .AddScoped<BottomSheetOutletState>();
     }
 }

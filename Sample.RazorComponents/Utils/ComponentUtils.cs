@@ -21,4 +21,7 @@ public static class ComponentUtils
             logger?.LogDebug(ex, "can't dispose IJSObjectReference");
         }
     }
+
+
+    public static string GetJsFileNameInfix(bool useMinifiedJavaScripts) => useMinifiedJavaScripts ? ".min" : "";
 }

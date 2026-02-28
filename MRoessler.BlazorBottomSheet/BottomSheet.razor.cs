@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Sections;
 using Microsoft.JSInterop;
+using static MRoessler.BlazorBottomSheet.ComponentUtils;
 
 namespace MRoessler.BlazorBottomSheet;
 
@@ -136,6 +137,9 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
 
     private readonly Guid _sectionContentId = Guid.NewGuid();
 
+    [Inject]
+    private BottomSheetServicesConfiguration ServicesConfig { get; set; } = default!;
+
     private readonly DotNetObjectReference<BottomSheet> _thisRef;
     private IJSObjectReference? _jsModule;
 
@@ -213,7 +217,8 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
-            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor.min.js");
+            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import",
+                $"./_content/MRoessler.BlazorBottomSheet/{nameof(BottomSheet)}.razor{GetJsFileNameInfix(ServicesConfig.UseMinifiedJavaScripts)}.js");
             JavaScriptObjRef = await _jsModule.InvokeAsync<IJSObjectReference>("createBottomSheet", _layoutElm, _thisRef);
             _whenRenderedOnce?.SetResult();
         }
