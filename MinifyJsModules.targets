@@ -7,6 +7,7 @@
   <Target Name="MinifyJsModules">
     <ItemGroup>
       <_WebAssetMinifyInput Include="**/*.razor.js" Exclude="**/bin/**;**/obj/**" />
+      <_FingerprintPattern Include="ComponentsMinJsModule" Pattern="*.razor.min.js"/>
     </ItemGroup>
     <PropertyGroup>
       <_MinifyOutputDir>$(IntermediateOutputPath)bundled</_MinifyOutputDir>
@@ -27,19 +28,50 @@
         AssetKind="All"
         AssetMode="All"
         AssetRole="Primary"
-        AssetMergeSource="$(StaticWebAssetMergeTarget)">
-      <Output TaskParameter="Assets" ItemName="_MyBundleStaticWebAsset" />
+        AssetMergeSource="$(StaticWebAssetMergeTarget)"
+        FingerprintCandidates="$(StaticWebAssetsFingerprintContent)"
+        FingerprintPatterns="@(_FingerprintPattern)">
+      <Output TaskParameter="Assets" ItemName="_MinifiedStaticWebAsset" />
     </DefineStaticWebAssets>
 
-    <DefineStaticWebAssetEndpoints CandidateAssets="@(_MyBundleStaticWebAsset)"
+    <DefineStaticWebAssetEndpoints CandidateAssets="@(_MinifiedStaticWebAsset)"
         ExistingEndpoints="@(StaticWebAssetEndpoint)"
-        ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
-      <Output TaskParameter="Endpoints" ItemName="_MyBundleStaticWebAssetEndpoint" />
+        ContentTypeMappings="@(StaticWebAssetContentTypeMapping)"
+        >
+      <Output TaskParameter="Endpoints" ItemName="_MinifiedStaticWebAssetEndpoint" />
     </DefineStaticWebAssetEndpoints>
 
     <ItemGroup>
-      <StaticWebAsset Include="@(_MyBundleStaticWebAsset)" />
-      <StaticWebAssetEndpoint Include="@(_MyBundleStaticWebAssetEndpoint)" />
+      <StaticWebAsset Include="@(_MinifiedStaticWebAsset)" />
+      <StaticWebAssetEndpoint Include="@(_MinifiedStaticWebAssetEndpoint)" />
+      
+      <!-- Append a property 'script-type' so that we include the file on the import map -->
+      <!-- <_AddPropertyToInitializers Include="Append">
+          <UpdateTarget>Property</UpdateTarget>
+          <Name>script-type</Name>
+          <Value>module</Value>
+      </_AddPropertyToInitializers> -->
+
+       <!-- Append a property 'dependency-group' so that we can link and preload the file without using the name -->
+      <!-- <_AddPropertyToInitializers Include="Append">
+        <UpdateTarget>Property</UpdateTarget>
+        <Name>dependency-group</Name>
+        <Value>js-initializer</Value>
+      </_AddPropertyToInitializers> -->
     </ItemGroup>
+
+    <!-- <UpdateStaticWebAssetEndpoints
+        Condition="'@(_AddPropertyToInitializers)' != ''"
+        EndpointsToUpdate="@(_MinifiedStaticWebAssetEndpoint)"
+        AllEndpoints="@(StaticWebAssetEndpoint)"
+        Operations="@(_AddPropertyToInitializers)"
+      >
+        <Output TaskParameter="UpdatedEndpoints" ItemName="_FilteredMyBundleStaticWebAssetEndpointWithProperty" />
+    </UpdateStaticWebAssetEndpoints>
+
+    <ItemGroup>
+      <StaticWebAssetEndpoint Remove="@(_FilteredMyBundleStaticWebAssetEndpointWithProperty)" />
+      <StaticWebAssetEndpoint Include="@(_FilteredMyBundleStaticWebAssetEndpointWithProperty)" />
+    </ItemGroup> -->
   </Target>
 </Project>
