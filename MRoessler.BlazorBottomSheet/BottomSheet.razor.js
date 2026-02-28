@@ -19,6 +19,7 @@ const MinimizedStyleClass = "minimized"
 const NormalStyleClass = "normal"
 const MaximizedStyleClass = "maximized"
 const DraggingStyleClass = "dragging"
+const FullHeightStyleClass = 'full-height'
 const DragInDirectionMinDistance = 50
 const NearestSnapPointLeeway = 100
 const FastDragMinSpeed = 1000
@@ -491,10 +492,13 @@ export class BottomSheet extends EventTarget {
         this.#sheetTranslateYUpdatePending = true
 
         window.requestAnimationFrame(_ => {
-            if (this.#sheetTranslateY == 0)
+            if (this.#sheetTranslateY == 0) {
                 this.#sheetElm.style.removeProperty('transform')
-            else
+                this.#layoutElm.classList.add(FullHeightStyleClass)
+            } else {
                 this.#sheetElm.style.transform = `translateY(${this.#sheetTranslateY}px)`
+                this.#layoutElm.classList.remove(FullHeightStyleClass)
+            }
             this.#sheetTranslateYUpdatePending = false
         })
     }

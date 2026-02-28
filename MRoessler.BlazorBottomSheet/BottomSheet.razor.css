@@ -59,7 +59,7 @@
     flex-direction: column;
     justify-content: stretch;
     justify-items: stretch;
-    transition: transform 0.25s;
+    transition: transform 0.25s, border-radius 0.25s;
 }
 
 .bottom-sheet.light {
@@ -78,7 +78,7 @@
 }
 
 .bottom-sheet-layout.dragging .bottom-sheet {
-    transition: none;
+    transition: border-radius 0.25s; /* remove transform transition */
 }
 
 .bottom-sheet-body {
@@ -109,6 +109,10 @@
 
 .bottom-sheet-layout.closed {
     pointer-events: none;
+}
+
+.bottom-sheet-layout.full-height .bottom-sheet {
+    border-radius: 0;
 }
 
 @media (pointer: coarse) { /* only for touch input */
