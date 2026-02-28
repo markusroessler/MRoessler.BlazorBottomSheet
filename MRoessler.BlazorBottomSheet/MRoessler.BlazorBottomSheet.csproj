@@ -26,7 +26,7 @@
     <DefaultDocumentationFolder>../docs/api/dotnet</DefaultDocumentationFolder>
     <DefaultDocumentationGeneratedAccessModifiers>Api</DefaultDocumentationGeneratedAccessModifiers>
     <DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
-    <BtShGenerateMdDocs>false</BtShGenerateMdDocs>
+    <BoShGenerateMdDocs>false</BoShGenerateMdDocs>
 
     <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
     <NoWarn>1591</NoWarn>
@@ -49,15 +49,15 @@
     <Content Remove="DefaultDocumentation.json" />
   </ItemGroup>
 
-  <PropertyGroup Condition="$(BtShGenerateMdDocs) == 'false'">
+  <PropertyGroup Condition="$(BoShGenerateMdDocs) == 'false'">
     <DisableDefaultDocumentation>true</DisableDefaultDocumentation>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(BtShGenerateMdDocs) == 'true'">
+  <ItemGroup Condition="$(BoShGenerateMdDocs) == 'true'">
     <JsModuleFiles Include="BottomSheet.razor.js"/>
     <JsDocMdFiles Include="../docs/api/js/BottomSheet.md" />
   </ItemGroup>
-  <Target Name="GenerateJsDocs" BeforeTargets="Build" Condition="$(BtShGenerateMdDocs) == 'true'" Inputs="@(JsModuleFiles)" Outputs="@(JsDocMdFiles)">
+  <Target Name="GenerateJsDocs" BeforeTargets="Build" Condition="$(BoShGenerateMdDocs) == 'true'" Inputs="@(JsModuleFiles)" Outputs="@(JsDocMdFiles)">
     <MakeDir Directories="../docs/api/js" />
     <Exec Command="npx jsdoc2md BottomSheet.razor.js > ../docs/api/js/BottomSheet.razor.js.md" />
   </Target>

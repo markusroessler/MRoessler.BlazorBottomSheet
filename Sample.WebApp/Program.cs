@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
 builder.Services
-    .AddSampleAppServices();
+    .AddSampleAppServices(builder.Configuration);
 
 // Add services to the container.
 builder.Services

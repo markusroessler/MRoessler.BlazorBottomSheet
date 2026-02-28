@@ -1,4 +1,4 @@
-import { BottomSheet, BottomSheetMoveEvent, SheetMoveEventName } from "/_content/MRoessler.BlazorBottomSheet/BottomSheet.razor.min.js"
+import { BottomSheet, BottomSheetMoveEvent, SheetMoveEventName } from "/_content/MRoessler.BlazorBottomSheet/BottomSheet.razor.js"
 
 export function createDynamicContentSample(rootElm, bottomSheet) {
     return new DynamicContentSample(rootElm, bottomSheet)

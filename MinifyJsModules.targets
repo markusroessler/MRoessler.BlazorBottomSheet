@@ -7,13 +7,15 @@
   <Target Name="MinifyJsModules">
     <ItemGroup>
       <_WebAssetMinifyInput Include="**/*.razor.js" Exclude="**/bin/**;**/obj/**" />
+      <_FingerprintPattern Include="ComponentsMinJsModule" Pattern="*.razor.min.js"/>
     </ItemGroup>
     <PropertyGroup>
-      <_MinifyOutputDir>$(IntermediateOutputPath)bundled</_MinifyOutputDir>
+      <_MinifyOutputDir>$(IntermediateOutputPath)minified</_MinifyOutputDir>
     </PropertyGroup>
     <!-- <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" /> -->
 
-    <Exec Command="npx esbuild @(_WebAssetMinifyInput, ' ') --minify --sourcemap --out-extension:.js=.min.js --outbase=. --outdir=&quot;$(_MinifyOutputDir)&quot;" />
+    <Exec Command="pwsh $(MSBuildThisFileDirectory)/MinifyJsModules.ps1 &quot;@(_WebAssetMinifyInput, ' ')&quot; $(_MinifyOutputDir)" />
+
     <ItemGroup>
       <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)\**" />
     </ItemGroup>
@@ -27,19 +29,21 @@
         AssetKind="All"
         AssetMode="All"
         AssetRole="Primary"
-        AssetMergeSource="$(StaticWebAssetMergeTarget)">
-      <Output TaskParameter="Assets" ItemName="_MyBundleStaticWebAsset" />
+        AssetMergeSource="$(StaticWebAssetMergeTarget)"
+        FingerprintCandidates="$(StaticWebAssetsFingerprintContent)"
+        FingerprintPatterns="@(_FingerprintPattern)">
+      <Output TaskParameter="Assets" ItemName="_MinifiedStaticWebAsset" />
     </DefineStaticWebAssets>
 
-    <DefineStaticWebAssetEndpoints CandidateAssets="@(_MyBundleStaticWebAsset)"
+    <DefineStaticWebAssetEndpoints CandidateAssets="@(_MinifiedStaticWebAsset)"
         ExistingEndpoints="@(StaticWebAssetEndpoint)"
         ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
-      <Output TaskParameter="Endpoints" ItemName="_MyBundleStaticWebAssetEndpoint" />
+      <Output TaskParameter="Endpoints" ItemName="_MinifiedStaticWebAssetEndpoint" />
     </DefineStaticWebAssetEndpoints>
 
     <ItemGroup>
-      <StaticWebAsset Include="@(_MyBundleStaticWebAsset)" />
-      <StaticWebAssetEndpoint Include="@(_MyBundleStaticWebAssetEndpoint)" />
+      <StaticWebAsset Include="@(_MinifiedStaticWebAsset)" />
+      <StaticWebAssetEndpoint Include="@(_MinifiedStaticWebAssetEndpoint)" />
     </ItemGroup>
   </Target>
 </Project>

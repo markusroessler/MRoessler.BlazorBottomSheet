@@ -8,6 +8,7 @@
 			"args": [
 				"watch",
 				"--project", "${workspaceFolder}/Sample.WebApp",
+				"--SampleApp:UseMinifiedJavaScripts=false"
 			],
 			"problemMatcher": "$msCompile",
 			"runOptions": {"instanceLimit": 1},
@@ -19,7 +20,7 @@
 				"clear": true,
 			}
 		},
-
+		
 		{
 			"label": "watch Sample.Wasm",
 			"type": "process",
@@ -27,6 +28,7 @@
 			"args": [
 				"watch",
 				"--project", "${workspaceFolder}/Sample.Wasm",
+				"--SampleApp:UseMinifiedJavaScripts=false"
 			],
 			"problemMatcher": "$msCompile",
 			"runOptions": {"instanceLimit": 1},
