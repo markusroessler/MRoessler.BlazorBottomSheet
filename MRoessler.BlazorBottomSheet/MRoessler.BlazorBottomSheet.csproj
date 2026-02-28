@@ -26,6 +26,7 @@
     <DefaultDocumentationFolder>../docs/api/dotnet</DefaultDocumentationFolder>
     <DefaultDocumentationGeneratedAccessModifiers>Api</DefaultDocumentationGeneratedAccessModifiers>
     <DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
+    <!-- TODO replace abbreviation BtSh with Bosh -->
     <BtShGenerateMdDocs>false</BtShGenerateMdDocs>
 
     <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
