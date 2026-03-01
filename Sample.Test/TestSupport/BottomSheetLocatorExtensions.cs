@@ -6,6 +6,7 @@ using Microsoft.Playwright;
 
 namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
+// TODO refactor to static methods like MainLayoutLocators (ILocator extensions could lead to conflicts)
 public static class BottomSheetLocatorExtensions
 {
     public static ILocator BottomSheet(this ILocator parentLocator) => parentLocator.GetByTestId("bottom-sheet");

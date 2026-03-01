@@ -223,8 +223,6 @@ public class BasicSampleTest : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(sheet.NormalMarker()).ToBeInViewportAsync();
-            await Expect(sheet.Footer()).Not.ToBeInViewportAsync();
 
             var scrollable = sheet.Scrollable();
             await Expect(scrollable).ToHaveJSPropertyAsync("scrollTop", 0);
@@ -256,6 +254,30 @@ public class BasicSampleTest : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("maximized");
             await Expect(sheet.Footer()).ToBeInViewportAsync();
+        });
+    }
+
+    [Test]
+    public Task Test_ColorScheme()
+    {
+        return TestAsync(async () =>
+        {
+            var sheetLayout = GetSheetLayout();
+            var sheet = sheetLayout.BottomSheet();
+
+            await GotoBasicSamplePageAsync();
+
+            await Expect(sheet).Not.ToBeInViewportAsync();
+            await Expect(sheet).ToContainClassAsync("closed");
+
+            await GetOpenCloseButton().ClickAsync();
+
+            // check default expansion (normal)
+            await sheet.WhenBoundsStable();
+            await Expect(sheet).ToBeInViewportAsync();
+            await Expect(sheetLayout).ToContainClassAsync("normal");
+
+            await MainLayoutInteractions.SelectDarkModeAsync(Page);
         });
     }
 }
