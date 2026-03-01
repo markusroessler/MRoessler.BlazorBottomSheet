@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+    <RunConfiguration>
+        <EnvironmentVariables>
+            <BROWSER>firefox</BROWSER>
+            <DEVICE_NAME>Desktop Firefox</DEVICE_NAME> <!-- "options.isMobile is not supported in Firefox" -->
+        </EnvironmentVariables>
+    </RunConfiguration>
+
+    <Playwright>
+        <BrowserName>firefox</BrowserName>
+        <LaunchOptions>
+            <!-- <Headless>false</Headless> -->
+            <!-- <SlowMo>200</SlowMo> -->
+        </LaunchOptions>
+    </Playwright>
+</RunSettings>
