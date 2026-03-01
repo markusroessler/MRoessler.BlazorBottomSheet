@@ -7,8 +7,8 @@ permissions:
 
 
 jobs:
-  base:
-    name: Base CI Build
+  build:
+    name: Build + Chromium Tests
     runs-on: ubuntu-latest
 
     env:
