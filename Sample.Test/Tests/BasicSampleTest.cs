@@ -233,7 +233,7 @@ public class BasicSampleTest : CustomPageTest
             const int Overscroll = 100;
             var sheetBounds = await sheet.BoundingBoxAsync();
             var (lastTouchX, lastTouchY) = await scrollable.TouchStartAsync();
-            (lastTouchX, lastTouchY) = await scrollable.TouchMoveAsync(lastTouchX, lastTouchY, 0, (int)-sheetBounds.Y - Overscroll, stepDelayMs: SlowDragStepDelayMs);
+            (lastTouchX, lastTouchY) = await scrollable.TouchMoveAsync(lastTouchX, lastTouchY, 0, (double)-sheetBounds.Y - Overscroll, stepDelayMs: SlowDragStepDelayMs);
             await sheet.WhenBoundsStable();
             await sheet.AssertClientYAsync(0);
             var scrollTop = await scrollable.AssertScrollTopInRangeAsync(Overscroll - 1, Overscroll);
