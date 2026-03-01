@@ -36,7 +36,7 @@
 
             <MudText Typo="Typo.h6">Body <MudText Typo="Typo.subtitle2" Inline>(visible when expansion >= Normal)</MudText></MudText>
 
-            <MudButton OnClick="()=>_expansion=BottomSheetExpansion.Closed" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Large" Class="py-4 mb-5">Close Bottomsheet</MudButton>
+            <MudButton OnClick="()=>_expansion=BottomSheetExpansion.Closed" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Large" Class="py-4 mb-5" data-testid="close-sheet-button">Close Bottomsheet</MudButton>
             <MudSelect @bind-Value="_expansion" Label="Expansion" OuterClass="custom-select">
                 @foreach (var expansion in Enum.GetValues<BottomSheetExpansion>())
                 {

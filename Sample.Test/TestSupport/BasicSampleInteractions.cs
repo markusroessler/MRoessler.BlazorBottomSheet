@@ -8,7 +8,7 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
 public static class BasicSampleInteractions
 {
-    public static async void SetMudBlazorStylingChipSelectionAsync(IPage page, bool select)
+    public static async Task ToggleMudBlazorStylingChipSelectionAsync(IPage page, bool select)
     {
         var chip = BasicSampleLocators.MudBlazorStylingChip(page);
         var cssClass = await chip.GetAttributeAsync("class");

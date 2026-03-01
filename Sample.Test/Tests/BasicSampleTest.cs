@@ -264,20 +264,32 @@ public class BasicSampleTest : CustomPageTest
         {
             var sheetLayout = GetSheetLayout();
             var sheet = sheetLayout.BottomSheet();
+            var handleRect = BottomSheetLocators.HandleRect(sheet);
+            var backgroundOverlay = BottomSheetLocators.BackgroundOverlay(sheetLayout);
 
             await GotoBasicSamplePageAsync();
 
             await Expect(sheet).Not.ToBeInViewportAsync();
             await Expect(sheet).ToContainClassAsync("closed");
 
+            await BasicSampleInteractions.ToggleMudBlazorStylingChipSelectionAsync(Page, false);
+            await MainLayoutInteractions.SelectLightModeAsync(Page);
+
             await GetOpenCloseButton().ClickAsync();
 
-            // check default expansion (normal)
             await sheet.WhenBoundsStable();
             await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
+            await Expect(sheet).ToHaveCSSAsync("background-color", "rgb(238, 238, 238)");
+            await Expect(handleRect).ToHaveCSSAsync("fill", "rgb(97, 97, 97)");
+            await Expect(backgroundOverlay).ToHaveCSSAsync("background-color", "rgb(15, 15, 15)");
 
+            await BasicSampleLocators.CloseSheetButton(sheet).ClickAsync();
             await MainLayoutInteractions.SelectDarkModeAsync(Page);
+            await GetOpenCloseButton().ClickAsync();
+            await Expect(sheet).ToHaveCSSAsync("background-color", "rgb(15, 15, 15)");
+            await Expect(handleRect).ToHaveCSSAsync("fill", "rgb(189, 189, 189)");
+            await Expect(backgroundOverlay).ToHaveCSSAsync("background-color", "rgb(66, 66, 66)");
         });
     }
 }
