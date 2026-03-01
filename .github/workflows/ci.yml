@@ -134,7 +134,7 @@ jobs:
 
 
   publish-coverage:
-    name: Publish coverage results
+    name: Publish coverage
     runs-on: ubuntu-latest
     needs: test
     if: always()
