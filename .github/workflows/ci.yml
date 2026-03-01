@@ -51,8 +51,7 @@ jobs:
     
     - name: Build
       id: build
-      run: |
-        dotnet build -c:Debug -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
+      run: dotnet build -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
 
     # - name: Check for uncommitted changes
     #   run: git diff --exit-code
@@ -141,12 +140,15 @@ jobs:
         cache: true
         cache-dependency-path: "*/*.csproj"
 
+    - name: Restore
+      run: dotnet restore
+
     - name: Restore tools
       run: dotnet tool restore
-
+    
     - name: Build
       id: build
-      run: dotnet build
+      run: dotnet build -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
 
     - name: Setup Playwright
       if: always()
