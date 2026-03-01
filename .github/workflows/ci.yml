@@ -5,17 +5,15 @@ permissions:
   contents: write
   packages: read
 
+env:
+  DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
 
 jobs:
   build:
-    name: Build + Chromium Tests
+    name: Build
     runs-on: ubuntu-latest
-    if: false
-
-    env:
-      DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
-      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-      NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
 
     steps:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -36,6 +34,48 @@ jobs:
     - name: Remove setup-dotnet problem matcher
       run: echo "::remove-matcher owner=csc::"
     
+    - name: Restore
+      run: dotnet restore
+
+    - name: Restore tools
+      run: dotnet tool restore
+    
+    - name: Build
+      id: build
+      run: dotnet build -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
+
+    - name: Collect Build Results
+      id: collect-build-results
+      if: always()
+      run: dotnet export-dotnet-results-for-github --export-step-summary true --github-server-url ${{ github.server_url }} --github-repo ${{ github.repository }} --github-ref-name ${{ github.ref_name }} --culture "de-DE"
+
+    - name: Publish Lines of Code
+      if: always()
+      run: |
+        bash .github/scripts/print-lines-of-code.sh >> $GITHUB_STEP_SUMMARY
+
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        browser: [chromium, webkit]
+
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        cache: true
+        cache-dependency-path: "*/*.csproj"
+
+    - name: Remove setup-dotnet problem matcher
+      run: echo "::remove-matcher owner=csc::"
+
     - name: Install npm packages
       run: npm install -g nyc
 
@@ -51,125 +91,107 @@ jobs:
     
     - name: Build
       id: build
-      run: dotnet build -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
+      run: dotnet build  -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
 
-    # - name: Check for uncommitted changes
-    #   run: git diff --exit-code
-    
     - name: Setup Playwright
       if: always()
-      run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
+      run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install --with-deps ${{ matrix.browser }}
 
     - name: Test
       if: always()
       run: |
         dotnet test -c:Debug -f:net10.0 --no-build --filter TestCategory!~sample --logger:html \
-        --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci.runsettings
-
+        --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci-${{ matrix.browser }}.runsettings
+      
     - name: Convert js coverage results
       run: |
         git restore MRoessler.BlazorBottomSheet
         nyc report --reporter=cobertura --report-dir js-coverage-report
       if: always()
 
-    - name: Collect Build Results
+    - name: Collect build results
       id: collect-build-results
       if: always()
       run: dotnet export-dotnet-results-for-github --export-step-summary true --github-server-url ${{ github.server_url }} --github-repo ${{ github.repository }} --github-ref-name ${{ github.ref_name }} --culture "de-DE"
 
-    - name: Generate Coverage Report
-      if: always()
-      run: dotnet reportgenerator
-    
-    - name: Upload Coverage Report
+    - name: Upload test report
       if: always()
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
-        name: blazor-bottomsheet-ci-linux-coverage-report
-        path: TestResults/coverage-report
-
-    # push badges to tag without attaching the commit to a branch (for readme.md)
-    - name: Commit Badges
-      if: always() && github.ref_name == 'main'
-      run: |
-        mkdir badges
-        mv TestResults/coverage-report/badge_linecoverage.svg badges
-        bash .github/scripts/export-lines-of-code-badge.sh
-        git add badges/*
-        git commit -m "updated badges"
-        git tag build-results 
-        git push --force origin build-results
-
-    - name: Upload Test Report
-      if: always()
-      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-      with:
-        name: blazor-bottomsheet-ci-linux-test-report
+        name: blazor-bottomsheet-ci-${{ matrix.browser }}-test-report
         path: |
          **/TestResults/*.html
          Sample.Test/**/Screenshots/*.png
-
-    - name: Publish Coverage Results
+        
+    - name: Upload coverage results
       if: always()
-      run: | 
-        echo "## Coverage Results" >> $GITHUB_STEP_SUMMARY
-        cat TestResults/coverage-report/SummaryGithub.md | sed -e 's/# Summary//g' >> $GITHUB_STEP_SUMMARY
-    
-    - name: Publish Lines of Code
-      if: always()
-      run: |
-        bash .github/scripts/print-lines-of-code.sh >> $GITHUB_STEP_SUMMARY
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: blazor-bottomsheet-ci-${{ matrix.browser }}-test-coverage-results
+        path: |
+         **/TestResults/*/coverage.cobertura.xml
+         js-coverage-report/cobertura-coverage.xml
 
 
-  test-webkit:
-    name: Webkit Tests
+  publish-coverage:
+    name: Publish coverage results
     runs-on: ubuntu-latest
-
-    env:
-      DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
-      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-      NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
+    needs: test
+    if: always()
 
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+     
+      - name: Git Config
+        run: |
+          # see https://api.github.com/users/github-actions%5Bbot%5D
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-        cache: true
-        cache-dependency-path: "*/*.csproj"
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: "*/*.csproj"
 
-    - name: Restore
-      run: dotnet restore
+      - name: Restore tools
+        run: dotnet tool restore
 
-    - name: Restore tools
-      run: dotnet tool restore
-    
-    - name: Build
-      id: build
-      run: dotnet build -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
+      - name: Download coverage results (chromium)
+        uses: actions/download-artifact@v3
+        with:
+          name: blazor-bottomsheet-ci-chromium-test-coverage-results
+          path: coverage-results
 
-    - name: Setup Playwright
-      if: always()
-      run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install --with-deps webkit
+      - name: Download coverage results (webkit)
+        uses: actions/download-artifact@v3
+        with:
+          name: blazor-bottomsheet-ci-webkit-test-coverage-results
+          path: coverage-results
 
-    - name: Test
-      if: always()
-      run: |
-        dotnet test -c:Debug -f:net10.0 --no-build --filter TestCategory!~sample --logger:html \
-        --logger:"trx;LogFileName=TestResults/TestResults.trx" --settings Sample.Test/runsettings/webkit.runsettings
+      - name: Generate Coverage Report
+        run: dotnet reportgenerator
+      
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: blazor-bottomsheet-ci-linux-coverage-report
+          path: TestResults/coverage-report
 
-    - name: Collect Build Results
-      id: collect-build-results
-      if: always()
-      run: dotnet export-dotnet-results-for-github --export-step-summary true --github-server-url ${{ github.server_url }} --github-repo ${{ github.repository }} --github-ref-name ${{ github.ref_name }} --culture "de-DE"
+      # push badges to tag without attaching the commit to a branch (for readme.md)
+      - name: Commit Badges
+        if: github.ref_name == 'main'
+        run: |
+          mkdir badges
+          mv TestResults/coverage-report/badge_linecoverage.svg badges
+          bash .github/scripts/export-lines-of-code-badge.sh
+          git add badges/*
+          git commit -m "updated badges"
+          git tag build-results 
+          git push --force origin build-results
 
-    - name: Upload Test Report
-      if: always()
-      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-      with:
-        name: blazor-bottomsheet-ci-webkit-test-report
-        path: |
-         **/TestResults/*.html
-         Sample.Test/**/Screenshots/*.png
+      - name: Publish Coverage Results
+        run: | 
+          echo "## Coverage Results" >> $GITHUB_STEP_SUMMARY
+          cat TestResults/coverage-report/SummaryGithub.md | sed -e 's/# Summary//g' >> $GITHUB_STEP_SUMMARY
