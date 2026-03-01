@@ -121,6 +121,7 @@ jobs:
       run: |
         bash .github/scripts/print-lines-of-code.sh >> $GITHUB_STEP_SUMMARY
 
+
   test-webkit:
     name: Webkit Tests
     runs-on: ubuntu-latest
@@ -149,7 +150,7 @@ jobs:
 
     - name: Setup Playwright
       if: always()
-      run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
+      run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install --with-deps webkit
 
     - name: Test
       if: always()
