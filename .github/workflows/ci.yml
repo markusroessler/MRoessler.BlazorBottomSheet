@@ -7,8 +7,8 @@ permissions:
 
 
 jobs:
-  dotnet-linux:
-    name: .NET (Linux)
+  base:
+    name: Base CI Build
     runs-on: ubuntu-latest
 
     env:
@@ -119,3 +119,49 @@ jobs:
       if: always()
       run: |
         bash .github/scripts/print-lines-of-code.sh >> $GITHUB_STEP_SUMMARY
+
+  test-webkit:
+    name: Webkit Tests
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
+
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        cache: true
+        cache-dependency-path: "*/*.csproj"
+
+    - name: Restore tools
+      run: dotnet tool restore
+
+    - name: Setup Playwright
+      if: always()
+      run: pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
+
+    - name: Test
+      if: always()
+      run: |
+        dotnet test -c:Debug -f:net10.0 --filter TestCategory!~sample --logger:html \
+        --logger:"trx;LogFileName=TestResults/TestResults.trx" --settings Sample.Test/runsettings/webkit.runsettings
+
+    - name: Collect Build Results
+      id: collect-build-results
+      if: always()
+      run: dotnet export-dotnet-results-for-github --export-step-summary true --github-server-url ${{ github.server_url }} --github-repo ${{ github.repository }} --github-ref-name ${{ github.ref_name }} --culture "de-DE"
+
+    - name: Upload Test Report
+      if: always()
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: blazor-bottomsheet-ci-webkit-test-report
+        path: |
+         **/TestResults/*.html
+         Sample.Test/**/Screenshots/*.png
