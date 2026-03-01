@@ -203,4 +203,59 @@ public class BasicSampleTest : CustomPageTest
             await Expect(sheet).ToContainClassAsync("closed");
         });
     }
+
+    [Test]
+    public Task Test_ScrollableDrag()
+    {
+        return TestAsync(async () =>
+        {
+            var sheetLayout = GetSheetLayout();
+            var sheet = sheetLayout.BottomSheet();
+
+            await GotoBasicSamplePageAsync();
+
+            await Expect(sheet).Not.ToBeInViewportAsync();
+            await Expect(sheet).ToContainClassAsync("closed");
+
+            await GetOpenCloseButton().ClickAsync();
+
+            // check default expansion (normal)
+            await sheet.WhenBoundsStable();
+            await Expect(sheet).ToBeInViewportAsync();
+            await Expect(sheetLayout).ToContainClassAsync("normal");
+            await Expect(sheet.NormalMarker()).ToBeInViewportAsync();
+            await Expect(sheet.Footer()).Not.ToBeInViewportAsync();
+
+            var scrollable = sheet.Scrollable();
+            await Expect(scrollable).ToHaveJSPropertyAsync("scrollTop", 0);
+
+            // drag up to maximized expansion with overscroll
+            const int Overscroll = 100;
+            var sheetBounds = await sheet.BoundingBoxAsync();
+            var (lastTouchX, lastTouchY) = await scrollable.TouchStartAsync();
+            (lastTouchX, lastTouchY) = await scrollable.TouchMoveAsync(lastTouchX, lastTouchY, 0, (int)-sheetBounds.Y - Overscroll, stepDelayMs: SlowDragStepDelayMs);
+            await sheet.WhenBoundsStable();
+            await sheet.AssertClientYAsync(0);
+            var scrollTop = await scrollable.AssertScrollTopInRangeAsync(Overscroll - 1, Overscroll);
+
+            // scroll down
+            (lastTouchX, lastTouchY) = await scrollable.TouchMoveAsync(lastTouchX, lastTouchY, 0, scrollTop, stepDelayMs: SlowDragStepDelayMs);
+            await sheet.WhenBoundsStable();
+            await sheet.AssertClientYAsync(0);
+            await scrollable.AssertScrollTopInRangeAsync(0, 1);
+
+            // drag down a bit (but stay near maximized)
+            const int DragDownDistance = 100;
+            (lastTouchX, lastTouchY) = await scrollable.TouchMoveAsync(lastTouchX, lastTouchY, DragDownDistance, scrollTop, stepDelayMs: SlowDragStepDelayMs);
+            await sheet.WhenBoundsStable();
+            await sheet.AssertClientYInRangeAsync(DragDownDistance - 1, DragDownDistance);
+            await scrollable.AssertScrollTopAsync(0);
+
+            // end the drag and check expansion state
+            await scrollable.TouchEndAsync();
+            await sheet.WhenBoundsStable();
+            await Expect(sheetLayout).ToContainClassAsync("maximized");
+            await Expect(sheet.Footer()).ToBeInViewportAsync();
+        });
+    }
 }

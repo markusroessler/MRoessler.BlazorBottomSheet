@@ -9,4 +9,6 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 public static class BasicSampleLocatorExensions
 {
     public static ILocator Footer(this ILocator parentLocator) => parentLocator.GetByTestId("footer");
+
+    public static ILocator Scrollable(this ILocator parentLocator) => parentLocator.GetByTestId("scrollable");
 }
