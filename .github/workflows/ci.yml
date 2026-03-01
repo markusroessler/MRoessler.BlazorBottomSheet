@@ -116,7 +116,7 @@ jobs:
 
     - name: Upload test report
       if: always()
-      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
       with:
         name: blazor-bottomsheet-ci-${{ matrix.browser }}-test-report
         path: |
@@ -125,7 +125,7 @@ jobs:
         
     - name: Upload coverage results
       if: always()
-      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
       with:
         name: blazor-bottomsheet-ci-${{ matrix.browser }}-test-coverage-results
         path: |
@@ -159,13 +159,13 @@ jobs:
         run: dotnet tool restore
 
       - name: Download coverage results (chromium)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: blazor-bottomsheet-ci-chromium-test-coverage-results
           path: coverage-results
 
       - name: Download coverage results (webkit)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: blazor-bottomsheet-ci-webkit-test-coverage-results
           path: coverage-results
@@ -174,7 +174,7 @@ jobs:
         run: dotnet reportgenerator
       
       - name: Upload Coverage Report
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: blazor-bottomsheet-ci-linux-coverage-report
           path: TestResults/coverage-report
