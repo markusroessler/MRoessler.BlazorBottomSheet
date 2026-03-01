@@ -22,7 +22,7 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.Tests;
 public class BasicSampleTest : CustomPageTest
 {
     const int SlowDragStepDelayMs = 100;
-    const int FastDragStepDelayMs = 10;
+    const int FastDragStepDelayMs = 20;
 
     private Task<IResponse> GotoBasicSamplePageAsync() => Page.GotoAsync(WebAppFactory.ClientOptions.BaseAddress.ToString());
 
