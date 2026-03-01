@@ -14,7 +14,7 @@
             <MudChip Value="@AllowMaximizeOption" />
             <MudChip Value="@IsModalOption" />
             <MudChip Value="@CloseOnBackgroundClickOption" />
-            <MudChip Value="@ApplyMudBlazorStylingOption" />
+            <MudChip Value="@ApplyMudBlazorStylingOption" data-testid="mud-blazor-styling-chip" />
         </MudChipSet>
 
         <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button">Open/Close BottomSheet</MudButton>
@@ -36,7 +36,7 @@
 
             <MudText Typo="Typo.h6">Body <MudText Typo="Typo.subtitle2" Inline>(visible when expansion >= Normal)</MudText></MudText>
 
-            <MudButton OnClick="()=>_expansion=BottomSheetExpansion.Closed" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Large" Class="py-4 mb-5">Close Bottomsheet</MudButton>
+            <MudButton OnClick="()=>_expansion=BottomSheetExpansion.Closed" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Large" Class="py-4 mb-5" data-testid="close-sheet-button">Close Bottomsheet</MudButton>
             <MudSelect @bind-Value="_expansion" Label="Expansion" OuterClass="custom-select">
                 @foreach (var expansion in Enum.GetValues<BottomSheetExpansion>())
                 {
@@ -48,7 +48,7 @@
             <MudText Typo="Typo.h6" Class="mt-5">Scrollable area</MudText>
             <NormalExpansionMarker style="transform: translateY(10em);" />
 
-            <div style="overflow-y: scroll; min-height: 20em;">
+            <div style="overflow-y: scroll; min-height: 20em;" data-testid="scrollable">
                 @for(int i = 1; i <= 3; i++) {
                     <text>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at ipsum vel nisi viverra tristique. Fusce non imperdiet ipsum, vitae mollis tortor. Proin vulputate odio eget sapien scelerisque, sit amet dapibus mauris pulvinar. Phasellus quis leo vitae purus pellentesque commodo nec quis justo. Nullam sagittis pulvinar ligula, eu viverra diam iaculis eu. Praesent congue nisi a aliquam volutpat. Morbi suscipit pulvinar nulla, id consequat quam porta vitae. Sed sed ipsum in sapien luctus euismod. Donec eu risus ut libero lobortis interdum.
