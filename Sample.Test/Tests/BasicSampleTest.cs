@@ -258,7 +258,7 @@ public class BasicSampleTest : CustomPageTest
     }
 
     [Test]
-    public Task Test_ColorScheme()
+    public Task Test_ColorScheme_Manual()
     {
         return TestAsync(async () =>
         {
@@ -277,19 +277,42 @@ public class BasicSampleTest : CustomPageTest
 
             await GetOpenCloseButton().ClickAsync();
 
-            await sheet.WhenBoundsStable();
-            await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(sheet).ToHaveCSSAsync("background-color", "rgb(238, 238, 238)");
-            await Expect(handleRect).ToHaveCSSAsync("fill", "rgb(97, 97, 97)");
-            await Expect(backgroundOverlay).ToHaveCSSAsync("background-color", "rgb(15, 15, 15)");
+            await BasicSampleAssertions.ExpectLightColorSchemeAsync(sheetLayout);
 
             await BasicSampleLocators.CloseSheetButton(sheet).ClickAsync();
             await MainLayoutInteractions.SelectDarkModeAsync(Page);
             await GetOpenCloseButton().ClickAsync();
-            await Expect(sheet).ToHaveCSSAsync("background-color", "rgb(15, 15, 15)");
-            await Expect(handleRect).ToHaveCSSAsync("fill", "rgb(189, 189, 189)");
-            await Expect(backgroundOverlay).ToHaveCSSAsync("background-color", "rgb(66, 66, 66)");
+            await BasicSampleAssertions.ExpectDarkColorSchemeAsync(sheetLayout);
+        });
+    }
+
+    [Test]
+    public Task Test_ColorScheme_SystemTheme()
+    {
+        return TestAsync(async () =>
+        {
+            var sheetLayout = GetSheetLayout();
+            var sheet = sheetLayout.BottomSheet();
+            var handleRect = BottomSheetLocators.HandleRect(sheet);
+            var backgroundOverlay = BottomSheetLocators.BackgroundOverlay(sheetLayout);
+
+            await GotoBasicSamplePageAsync();
+
+            await Expect(sheet).Not.ToBeInViewportAsync();
+            await Expect(sheet).ToContainClassAsync("closed");
+
+            await BasicSampleInteractions.ToggleMudBlazorStylingChipSelectionAsync(Page, false);
+            await MainLayoutInteractions.SelectAutoModeAsync(Page);
+
+            await GetOpenCloseButton().ClickAsync();
+            await Expect(sheetLayout).ToContainClassAsync("normal");
+
+            await Page.EmulateMediaAsync(new() { ColorScheme = ColorScheme.Light });
+            await BasicSampleAssertions.ExpectLightColorSchemeAsync(sheetLayout);
+
+            await Page.EmulateMediaAsync(new() { ColorScheme = ColorScheme.Dark });
+            await BasicSampleAssertions.ExpectDarkColorSchemeAsync(sheetLayout);
         });
     }
 }

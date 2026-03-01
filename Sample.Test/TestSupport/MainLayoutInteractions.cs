@@ -8,6 +8,12 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
 public static class MainLayoutInteractions
 {
+    public static async Task SelectAutoModeAsync(IPage page)
+    {
+        await MainLayoutLocators.ThemeMenu(page).ClickAsync();
+        await MainLayoutLocators.AutoThemeMenuItem(page).ClickAsync();
+    }
+
     public static async Task SelectLightModeAsync(IPage page)
     {
         await MainLayoutLocators.ThemeMenu(page).ClickAsync();

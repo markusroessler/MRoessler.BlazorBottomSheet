@@ -11,4 +11,6 @@ public static class BottomSheetLocators
     public static ILocator HandleRect(ILocator parent) => parent.GetByTestId("bottom-sheet-handle-rect");
 
     public static ILocator BackgroundOverlay(ILocator parentLocator) => parentLocator.GetByTestId("bottom-sheet-background");
+
+    public static ILocator Sheet(ILocator parent) => parent.GetByTestId("bottom-sheet");
 }
