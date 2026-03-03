@@ -132,13 +132,29 @@ public class BasicSampleTest_Common : CustomPageTest
             var samplePageInstanceIdElm = await Page.GetByTestId("sample-instance-id").ElementHandleAsync();
             var samplePageInstanceId = Guid.Parse(await samplePageInstanceIdElm.TextContentAsync());
 
-            // verify that all listeners have been removed
-            var sheetRef = new WeakReference(TestHelper.ActiveBasicSamplePages[samplePageInstanceId].BottomSheet);
+            var samplePage = TestHelper.ActiveBasicSamplePages[samplePageInstanceId];
+            var syncContextDispatcher = samplePage.SyncContextDispatcher;
+
+            var sheetWeakRef = new WeakReference<BottomSheet>(samplePage.BottomSheet);
             TestHelper.ActiveBasicSamplePages.Remove(samplePageInstanceId, out _);
+
+            {
+                // manual dispose to test js dispose method
+                if (sheetWeakRef.TryGetTarget(out var sheetStrongRef))
+                    await syncContextDispatcher.InvokeAsync(() => sheetStrongRef.DisposeAsync().AsTask());
+
+                // release sheet references 
+                samplePage = null;
+                syncContextDispatcher = null;
+            }
+
+            // reload and try gc the sheet instance
             await Page.ReloadAsync();
             await Task.Delay(500);
             GC.Collect();
-            Assert.That(sheetRef.IsAlive, Is.False);
+
+            // verify that all listeners have been removed
+            Assert.That(sheetWeakRef.TryGetTarget(out _), Is.False);
         });
     }
 }
