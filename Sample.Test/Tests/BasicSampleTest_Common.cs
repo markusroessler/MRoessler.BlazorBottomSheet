@@ -115,4 +115,30 @@ public class BasicSampleTest_Common : CustomPageTest
             await BasicSampleAssertions.ExpectDarkColorSchemeAsync(sheetLayout);
         });
     }
+
+    [Test]
+    public Task Test_Dispose()
+    {
+        return TestAsync(async () =>
+        {
+            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
+
+            await GotoBasicSamplePageAsync();
+
+            await Expect(sheet).Not.ToBeInViewportAsync();
+            await Expect(sheet).ToContainClassAsync("closed");
+
+            var samplePageInstanceIdElm = await Page.GetByTestId("sample-instance-id").ElementHandleAsync();
+            var samplePageInstanceId = Guid.Parse(await samplePageInstanceIdElm.TextContentAsync());
+
+            // verify that all listeners have been removed
+            var sheetRef = new WeakReference(TestHelper.ActiveBasicSamplePages[samplePageInstanceId].BottomSheet);
+            TestHelper.ActiveBasicSamplePages.Remove(samplePageInstanceId, out _);
+            await Page.ReloadAsync();
+            await Task.Delay(500);
+            GC.Collect();
+            Assert.That(sheetRef.IsAlive, Is.False);
+        });
+    }
 }
