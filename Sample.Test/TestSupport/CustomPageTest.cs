@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +31,11 @@ public abstract class CustomPageTest : PageTest
         WebAppFactory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
+                builder.UseKestrel(options =>
+                {
+                    options.Listen(IPAddress.Parse("127.0.0.1"), 0);
+                });
+
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddLogging(loggingBuilder =>
