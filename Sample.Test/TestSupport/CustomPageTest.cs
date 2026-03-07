@@ -58,9 +58,11 @@ public abstract class CustomPageTest : PageTest
     [SetUp]
     public void Setup()
     {
+        var logger = WebAppFactory.Services.GetRequiredService<ILogger<CustomPageTest>>();
         Page.Console += (_, msg) =>
         {
-            TestContext.Out.WriteLine($"Browser Log: [{msg.Type}] {msg.Text}");
+            logger.LogInformation("JS: [{MsgType}] {MsgText} ({MsgLocation})",
+             msg.Type, msg.Text, new Uri(msg.Location).Segments.Last());
         };
     }
 
