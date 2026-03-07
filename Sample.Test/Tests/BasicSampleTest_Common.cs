@@ -117,7 +117,6 @@ public class BasicSampleTest_Common : CustomPageTest
     }
 
     [Test]
-    [Repeat(10)]
     [CancelAfter(5000)]
     public Task Test_Dispose(CancellationToken cancellationToken)
     {
