@@ -62,7 +62,7 @@ public abstract class CustomPageTest : PageTest
         Page.Console += (_, msg) =>
         {
             logger.LogInformation("JS: [{MsgType}] {MsgText} ({MsgLocation})",
-             msg.Type, msg.Text, new Uri(msg.Location).Segments.Last());
+                msg.Type, msg.Text, msg.Location.Split("/").LastOrDefault("").Split(":").FirstOrDefault());
         };
     }
 
