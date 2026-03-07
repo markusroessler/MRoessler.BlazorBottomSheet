@@ -160,8 +160,8 @@ export class BottomSheet extends EventTarget {
 
     /** @param msg {String} */
     #logDebug(msg) {
-        // if (msg.startsWith('handleDragMove'))
-        //     console.debug(msg)
+        // if (msg.startsWith('dispose'))
+        console.debug(msg)
     }
 
     /** @returns {HTMLElement} the sheet element */
@@ -572,6 +572,8 @@ export class BottomSheet extends EventTarget {
      * INTERNAL API
      */
     dispose() {
+        this.#logDebug("dispose")
+
         this.#abortController.abort()
 
         if (this.#layoutAttributesObserver) {

@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
@@ -21,9 +25,25 @@ public abstract class CustomPageTest : PageTest
     protected TestHelper TestHelper { get; private set; }
 
     [OneTimeSetUp]
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
     public void OneTimeSetup()
     {
-        WebAppFactory = new WebApplicationFactory<Program>();
+        WebAppFactory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseKestrel(options =>
+                {
+                    options.Listen(IPAddress.Parse("127.0.0.1"), 0);
+                });
+
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddLogging(loggingBuilder =>
+                    {
+                        loggingBuilder.AddFakeLogging();
+                    });
+                });
+            });
         WebAppFactory.UseKestrel(0);
         WebAppFactory.StartServer();
         TestHelper = WebAppFactory.Services.GetRequiredService<TestHelper>();
@@ -38,9 +58,11 @@ public abstract class CustomPageTest : PageTest
     [SetUp]
     public void Setup()
     {
+        var logger = WebAppFactory.Services.GetRequiredService<ILogger<CustomPageTest>>();
         Page.Console += (_, msg) =>
         {
-            TestContext.Out.WriteLine($"Browser Log: [{msg.Type}] {msg.Text}");
+            logger.LogInformation("JS: [{MsgType}] {MsgText} ({MsgLocation})",
+                msg.Type, msg.Text, msg.Location.Split("/").LastOrDefault("").Split(":").FirstOrDefault());
         };
     }
 
@@ -57,6 +79,10 @@ public abstract class CustomPageTest : PageTest
             await Page.ScreenshotAsync(new() { Path = path });
             // TestContext.AddTestAttachment(path);
         }
+
+        var fakeLogCollector = WebAppFactory.Services.GetFakeLogCollector();
+        var logs = fakeLogCollector.GetSnapshot(clear: true).Select(r => r.ToString());
+        TestContext.Out.WriteLine($"--- .NET Logs ---\n {string.Join("\n", logs)}");
     }
 
     public override BrowserNewContextOptions ContextOptions()
@@ -80,7 +106,7 @@ public abstract class CustomPageTest : PageTest
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "it's a 'try'-method")]
-    private async Task TryExportCoverage()
+    protected async Task TryExportCoverage()
     {
         try
         {
@@ -89,7 +115,8 @@ public abstract class CustomPageTest : PageTest
             {
                 var outDir = Path.Combine(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", ".."), ".nyc_output");
                 Directory.CreateDirectory(outDir);
-                File.WriteAllText(Path.Combine(outDir, $"{TestContext.CurrentContext.Test.MethodName}.json"), JsonSerializer.Serialize(coverageJson));
+                File.WriteAllText(Path.Combine(outDir, $"{TestContext.CurrentContext.Test.FullName}-{Guid.NewGuid()}.json"),
+                    JsonSerializer.Serialize(coverageJson));
             }
         }
         catch (Exception ex)

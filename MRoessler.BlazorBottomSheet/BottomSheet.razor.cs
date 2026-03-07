@@ -208,6 +208,9 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
     /// </summary>
     public Task WhenRenderedOnce()
     {
+        if (_jsModule != null)
+            return Task.CompletedTask;
+
         _whenRenderedOnce ??= new();
         return _whenRenderedOnce.Task;
     }

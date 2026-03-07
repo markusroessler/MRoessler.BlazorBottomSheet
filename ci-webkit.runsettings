@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <EnvironmentVariables>
+      <BROWSER>webkit</BROWSER>
+      <DEVICE_NAME>Pixel 7</DEVICE_NAME>
+    </EnvironmentVariables>
+  </RunConfiguration>
+
+  <Playwright>
+    <BrowserName>webkit</BrowserName>
+    <LaunchOptions>
+      <!-- <Headless>false</Headless> -->
+      <!-- <SlowMo>200</SlowMo> -->
+    </LaunchOptions>
+  </Playwright>
+
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <!-- Realms.GeneratedAttribute -->
+          <ExcludeByAttribute>GeneratedAttribute</ExcludeByAttribute>
+          <Exclude>[*Sample*]*</Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
