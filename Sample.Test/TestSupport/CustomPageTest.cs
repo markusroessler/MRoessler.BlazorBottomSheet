@@ -106,7 +106,7 @@ public abstract class CustomPageTest : PageTest
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "it's a 'try'-method")]
-    private async Task TryExportCoverage()
+    protected async Task TryExportCoverage()
     {
         try
         {
@@ -115,7 +115,8 @@ public abstract class CustomPageTest : PageTest
             {
                 var outDir = Path.Combine(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", ".."), ".nyc_output");
                 Directory.CreateDirectory(outDir);
-                File.WriteAllText(Path.Combine(outDir, $"{TestContext.CurrentContext.Test.MethodName}.json"), JsonSerializer.Serialize(coverageJson));
+                File.WriteAllText(Path.Combine(outDir, $"{TestContext.CurrentContext.Test.FullName}-{Guid.NewGuid()}.json"),
+                    JsonSerializer.Serialize(coverageJson));
             }
         }
         catch (Exception ex)

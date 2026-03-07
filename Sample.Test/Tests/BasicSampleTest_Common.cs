@@ -156,6 +156,7 @@ public class BasicSampleTest_Common : CustomPageTest
             }
 
             // reload and try gc the sheet instance
+            await TryExportCoverage(); // export coverage before page reload
             while (sheetWeakRef.TryGetTarget(out _) && !cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(100);
