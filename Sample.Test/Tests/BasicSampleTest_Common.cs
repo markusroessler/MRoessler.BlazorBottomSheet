@@ -142,7 +142,13 @@ public class BasicSampleTest_Common : CustomPageTest
             {
                 // manual dispose to test js dispose method
                 if (sheetWeakRef.TryGetTarget(out var sheetStrongRef))
-                    await syncContextDispatcher.InvokeAsync(() => sheetStrongRef.DisposeAsync().AsTask());
+                {
+                    await syncContextDispatcher.InvokeAsync(async () =>
+                    {
+                        await sheetStrongRef.WhenRenderedOnce();
+                        await sheetStrongRef.DisposeAsync();
+                    });
+                }
 
                 // release sheet references 
                 samplePage = null;
