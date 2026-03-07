@@ -6,7 +6,9 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
@@ -21,9 +23,20 @@ public abstract class CustomPageTest : PageTest
     protected TestHelper TestHelper { get; private set; }
 
     [OneTimeSetUp]
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
     public void OneTimeSetup()
     {
-        WebAppFactory = new WebApplicationFactory<Program>();
+        WebAppFactory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddLogging(loggingBuilder =>
+                    {
+                        loggingBuilder.AddFakeLogging();
+                    });
+                });
+            });
         WebAppFactory.UseKestrel(0);
         WebAppFactory.StartServer();
         TestHelper = WebAppFactory.Services.GetRequiredService<TestHelper>();
@@ -57,6 +70,10 @@ public abstract class CustomPageTest : PageTest
             await Page.ScreenshotAsync(new() { Path = path });
             // TestContext.AddTestAttachment(path);
         }
+
+        var fakeLogCollector = WebAppFactory.Services.GetFakeLogCollector();
+        var logs = fakeLogCollector.GetSnapshot(clear: true).Select(r => r.ToString());
+        TestContext.Out.WriteLine($"--- .NET Logs ---\n {string.Join("\n", logs)}");
     }
 
     public override BrowserNewContextOptions ContextOptions()
