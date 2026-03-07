@@ -117,7 +117,9 @@ public class BasicSampleTest_Common : CustomPageTest
     }
 
     [Test]
-    public Task Test_Dispose()
+    [Repeat(10)]
+    [CancelAfter(5000)]
+    public Task Test_Dispose(CancellationToken cancellationToken)
     {
         return TestAsync(async () =>
         {
@@ -149,9 +151,12 @@ public class BasicSampleTest_Common : CustomPageTest
             }
 
             // reload and try gc the sheet instance
-            await Page.ReloadAsync();
-            await Task.Delay(500);
-            GC.Collect();
+            while (sheetWeakRef.TryGetTarget(out _) && !cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(100);
+                await Page.ReloadAsync();
+                GC.Collect();
+            }
 
             // verify that all listeners have been removed
             Assert.That(sheetWeakRef.TryGetTarget(out _), Is.False);
