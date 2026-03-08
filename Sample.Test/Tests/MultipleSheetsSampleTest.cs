@@ -23,17 +23,17 @@ public class MultipleSheetsSampleTest : CustomPageTest
     [Test]
     public Task Test_Open()
     {
-        return TestAsync(async () =>
+        return TestAsync(mobileAssumption: null, test: async () =>
         {
             await GotoSamplePageAsync();
 
             var sheetLayout1 = GetSheetLayout1();
             var sheetLayout2 = GetSheetLayout2();
-            var sheet1 = sheetLayout1.BottomSheet();
-            var sheet2 = sheetLayout2.BottomSheet();
+            var sheet1 = BottomSheetLocators.BottomSheet(sheetLayout1);
+            var sheet2 = BottomSheetLocators.BottomSheet(sheetLayout2);
 
             await Expect(sheet1).Not.ToBeInViewportAsync();
-            await Expect(sheet1).ToContainClassAsync("closed");
+            await Expect(sheetLayout1).ToContainClassAsync("closed");
 
             await GetOpenCloseButton1().ClickAsync();
 
@@ -41,13 +41,13 @@ public class MultipleSheetsSampleTest : CustomPageTest
             await sheet1.WhenBoundsStable();
             await Expect(sheet1).ToBeInViewportAsync();
             await Expect(sheetLayout1).ToContainClassAsync("minimized");
-            await Expect(sheet1.MinimizedMarker()).ToBeInViewportAsync();
-            await Expect(sheet1.NormalMarker()).Not.ToBeInViewportAsync();
+            await Expect(BottomSheetLocators.MinimizedMarker(sheet1)).ToBeInViewportAsync();
+            await Expect(BottomSheetLocators.NormalMarker(sheet1)).Not.ToBeInViewportAsync();
 
-            await sheetLayout1.Background().ClickAsync();
+            await BottomSheetLocators.BackgroundOverlay(sheetLayout1).ClickAsync();
             await sheet1.WhenBoundsStable();
             await Expect(sheet1).Not.ToBeInViewportAsync();
-            await Expect(sheet1).ToContainClassAsync("closed");
+            await Expect(sheetLayout1).ToContainClassAsync("closed");
 
             await GetOpenCloseButton2().ClickAsync();
 
@@ -55,13 +55,13 @@ public class MultipleSheetsSampleTest : CustomPageTest
             await sheet2.WhenBoundsStable();
             await Expect(sheet2).ToBeInViewportAsync();
             await Expect(sheetLayout2).ToContainClassAsync("minimized");
-            await Expect(sheet2.MinimizedMarker()).ToBeInViewportAsync();
-            await Expect(sheet2.NormalMarker()).Not.ToBeInViewportAsync();
+            await Expect(BottomSheetLocators.MinimizedMarker(sheet2)).ToBeInViewportAsync();
+            await Expect(BottomSheetLocators.NormalMarker(sheet2)).Not.ToBeInViewportAsync();
 
-            await sheetLayout2.Background().ClickAsync();
+            await BottomSheetLocators.BackgroundOverlay(sheetLayout2).ClickAsync();
             await sheet2.WhenBoundsStable();
             await Expect(sheet2).Not.ToBeInViewportAsync();
-            await Expect(sheet2).ToContainClassAsync("closed");
+            await Expect(sheetLayout2).ToContainClassAsync("closed");
         });
     }
 }

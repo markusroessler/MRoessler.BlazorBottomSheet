@@ -160,8 +160,8 @@ export class BottomSheet extends EventTarget {
 
     /** @param msg {String} */
     #logDebug(msg) {
-        // if (msg.startsWith('handleDragMove'))
-        //     console.debug(msg)
+        // if (msg.startsWith('dispose'))
+        // console.debug(msg)
     }
 
     /** @returns {HTMLElement} the sheet element */
@@ -176,6 +176,8 @@ export class BottomSheet extends EventTarget {
 
     /** @param evt {MouseEvent} */
     #handleMouseDown(evt) {
+        this.#logDebug("handleMouseDown")
+
         if (!this.#hasSelectableText(evt.target)) /* let user select text */
             this.#handleDragStart(evt, evt.clientY)
     }
@@ -232,7 +234,7 @@ export class BottomSheet extends EventTarget {
 
         if (shouldDragSheet) {
             if (event.cancelable || this.#layoutElm.classList.contains(DraggingStyleClass)) {
-                if (event.cancelable)
+                if (event.cancelable && window.TouchEvent && event instanceof TouchEvent)
                     event.preventDefault()
                 this.#layoutElm.classList.add(DraggingStyleClass)
                 const clampedTranslateY = this.#clamp(translateY, this.#minTranslateYOnDragStart, this.#maxTranslateYOnDragStart)
@@ -572,6 +574,8 @@ export class BottomSheet extends EventTarget {
      * INTERNAL API
      */
     dispose() {
+        this.#logDebug("dispose")
+
         this.#abortController.abort()
 
         if (this.#layoutAttributesObserver) {

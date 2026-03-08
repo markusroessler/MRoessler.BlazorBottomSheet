@@ -22,10 +22,10 @@ public sealed class SynchronizationContextDispatcher
     }
 
     [SuppressMessage("Reliability", "CA2008:Do not create tasks without passing a TaskScheduler", Justification = "we initialized the TaskFactory with a default TaskScheduler")]
-    public Task InvokeAsync(Func<Task> task)
+    public async Task InvokeAsync(Func<Task> task)
     {
         var taskFactory = _taskFactory ?? throw new InvalidOperationException("not initialized yet");
-        return taskFactory.StartNew(task);
+        await await taskFactory.StartNew(task);
     }
 
     public void Invoke(Action action)

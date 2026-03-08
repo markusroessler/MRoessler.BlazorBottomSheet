@@ -31,7 +31,7 @@ internal static class ComponentUtils
         }
         catch (JSDisconnectedException ex)
         {
-            logger?.LogDebug(ex, "can't dispose IJSObjectReference");
+            logger?.LogDebug(ex, "js invocation failed");
         }
     }
 
