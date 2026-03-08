@@ -1,6 +1,6 @@
 ﻿<SectionContent SectionId="@((BottomSheetOutlet.ContentSectionName, _sectionContentId))">
     <!-- note: class attribute is handled by js code! -->
-    <div @ref="_layoutElm" class="bottom-sheet-layout"
+    <div @ref="_layoutElm" class="bottom-sheet-layout closed"
         data-allow-closed-expansion=@AllowClosedExpansion
         data-allow-minimized-expansion=@AllowMinimizedExpansion
         data-allow-normal-expansion=@AllowNormalExpansion
@@ -13,7 +13,7 @@
             <div class="bottom-sheet-background @GetColorSchemeStyleClass() @BackgroundClass" @onclick="OnBackgroundClickAsync" data-testid="bottom-sheet-background" />
         }
 
-        <div class="bottom-sheet closed @GetColorSchemeStyleClass() @Class" style="transform: translateY(100%);" draggable="false" data-testid="bottom-sheet"> <!-- note: style attributes are handled by javascript -->
+        <div class="bottom-sheet @GetColorSchemeStyleClass() @Class" style="transform: translateY(100%);" draggable="false" data-testid="bottom-sheet"> <!-- note: style attributes are handled by javascript -->
             <div class="bottom-sheet-handle" data-testid="bottom-sheet-handle">
                 @Handle
             </div>

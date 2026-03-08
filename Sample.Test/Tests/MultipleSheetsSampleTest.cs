@@ -33,7 +33,7 @@ public class MultipleSheetsSampleTest : CustomPageTest
             var sheet2 = BottomSheetLocators.BottomSheet(sheetLayout2);
 
             await Expect(sheet1).Not.ToBeInViewportAsync();
-            await Expect(sheet1).ToContainClassAsync("closed");
+            await Expect(sheetLayout1).ToContainClassAsync("closed");
 
             await GetOpenCloseButton1().ClickAsync();
 
@@ -47,7 +47,7 @@ public class MultipleSheetsSampleTest : CustomPageTest
             await BottomSheetLocators.BackgroundOverlay(sheetLayout1).ClickAsync();
             await sheet1.WhenBoundsStable();
             await Expect(sheet1).Not.ToBeInViewportAsync();
-            await Expect(sheet1).ToContainClassAsync("closed");
+            await Expect(sheetLayout1).ToContainClassAsync("closed");
 
             await GetOpenCloseButton2().ClickAsync();
 
@@ -61,7 +61,7 @@ public class MultipleSheetsSampleTest : CustomPageTest
             await BottomSheetLocators.BackgroundOverlay(sheetLayout2).ClickAsync();
             await sheet2.WhenBoundsStable();
             await Expect(sheet2).Not.ToBeInViewportAsync();
-            await Expect(sheet2).ToContainClassAsync("closed");
+            await Expect(sheetLayout2).ToContainClassAsync("closed");
         });
     }
 }

@@ -34,7 +34,7 @@ public class BasicSampleTest_Common : CustomPageTest
             await GotoBasicSamplePageAsync();
 
             await Expect(sheet).Not.ToBeInViewportAsync();
-            await Expect(sheet).ToContainClassAsync("closed");
+            await Expect(sheetLayout).ToContainClassAsync("closed");
 
             var samplePageInstanceIdElm = await Page.GetByTestId("sample-instance-id").ElementHandleAsync();
             var samplePageInstanceId = Guid.Parse(await samplePageInstanceIdElm.TextContentAsync());
@@ -53,7 +53,7 @@ public class BasicSampleTest_Common : CustomPageTest
             syncContextDispatcher.Invoke(() => basicSampleViewModel.SetIsOpen(false));
             await sheet.WhenBoundsStable();
             await Expect(sheet).Not.ToBeInViewportAsync();
-            await Expect(sheet).ToContainClassAsync("closed");
+            await Expect(sheetLayout).ToContainClassAsync("closed");
         });
     }
 
@@ -70,7 +70,7 @@ public class BasicSampleTest_Common : CustomPageTest
             await GotoBasicSamplePageAsync();
 
             await Expect(sheet).Not.ToBeInViewportAsync();
-            await Expect(sheet).ToContainClassAsync("closed");
+            await Expect(sheetLayout).ToContainClassAsync("closed");
 
             await BasicSampleInteractions.ToggleMudBlazorStylingChipSelectionAsync(Page, false);
             await MainLayoutInteractions.SelectLightModeAsync(Page);
@@ -100,7 +100,7 @@ public class BasicSampleTest_Common : CustomPageTest
             await GotoBasicSamplePageAsync();
 
             await Expect(sheet).Not.ToBeInViewportAsync();
-            await Expect(sheet).ToContainClassAsync("closed");
+            await Expect(sheetLayout).ToContainClassAsync("closed");
 
             await BasicSampleInteractions.ToggleMudBlazorStylingChipSelectionAsync(Page, false);
             await MainLayoutInteractions.SelectAutoModeAsync(Page);
@@ -128,7 +128,7 @@ public class BasicSampleTest_Common : CustomPageTest
             await GotoBasicSamplePageAsync();
 
             await Expect(sheet).Not.ToBeInViewportAsync();
-            await Expect(sheet).ToContainClassAsync("closed");
+            await Expect(sheetLayout).ToContainClassAsync("closed");
 
             var samplePageInstanceIdElm = await Page.GetByTestId("sample-instance-id").ElementHandleAsync();
             var samplePageInstanceId = Guid.Parse(await samplePageInstanceIdElm.TextContentAsync());
