@@ -118,9 +118,10 @@ public abstract class CustomPageTest : PageTest
     /// <summary>
     /// note: can't use Teardown method for coverage export because it runs too late (Page-Context is gone)
     /// </summary>
-    protected async Task TestAsync(Func<Task> test, bool mobileAssumption = true)
+    protected async Task TestAsync(Func<Task> test, bool? mobileAssumption = true)
     {
-        Assume.That(ContextOptions().IsMobile, Is.EqualTo(mobileAssumption));
+        if (mobileAssumption != null)
+            Assume.That(ContextOptions().IsMobile, Is.EqualTo(mobileAssumption));
 
         try
         {
