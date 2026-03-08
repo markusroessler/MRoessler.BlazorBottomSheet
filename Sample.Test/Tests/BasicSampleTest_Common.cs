@@ -157,10 +157,11 @@ public class BasicSampleTest_Common : CustomPageTest
 
             // reload and try gc the sheet instance
             await TryExportCoverage(); // export coverage before page reload
+            await Page.GotoAsync($"{WebAppFactory.ClientOptions.BaseAddress}multiple-sheets");
+
             while (sheetWeakRef.TryGetTarget(out _) && !cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(100);
-                await Page.ReloadAsync();
+                await Task.Delay(200);
                 GC.Collect();
             }
 
