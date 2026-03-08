@@ -70,19 +70,30 @@ public abstract class CustomPageTest : PageTest
     public async Task TeardownAsync()
     {
         if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
-        {
-            var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "Screenshots");
-            Directory.CreateDirectory(dir);
+            await TakeScreenshotAsync();
 
-            var fileName = $"failure_{TestContext.CurrentContext.Test.Name}.png";
-            var path = Path.Combine(dir, fileName);
-            await Page.ScreenshotAsync(new() { Path = path });
-            // TestContext.AddTestAttachment(path);
-        }
+        PrintDotnetLogs();
+    }
 
+    private void PrintDotnetLogs()
+    {
         var fakeLogCollector = WebAppFactory.Services.GetFakeLogCollector();
-        var logs = fakeLogCollector.GetSnapshot(clear: true).Select(r => r.ToString());
+        var records = fakeLogCollector.GetSnapshot(clear: true);
+        var logs = records.Select(r => r.ToString());
         TestContext.Out.WriteLine($"--- .NET Logs ---\n {string.Join("\n", logs)}");
+
+        Assert.That(records.Any(r => r.Level >= LogLevel.Error), Is.False, "There are error logs");
+    }
+
+    private async Task TakeScreenshotAsync()
+    {
+        var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "Screenshots");
+        Directory.CreateDirectory(dir);
+
+        var fileName = $"failure_{TestContext.CurrentContext.Test.Name}.png";
+        var path = Path.Combine(dir, fileName);
+        await Page.ScreenshotAsync(new() { Path = path });
+        // TestContext.AddTestAttachment(path);
     }
 
     public override BrowserNewContextOptions ContextOptions()
