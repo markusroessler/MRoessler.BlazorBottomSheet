@@ -64,6 +64,11 @@ public abstract class CustomPageTest : PageTest
             logger.Log(MapJsLogTypeToLogLevel(msg.Type), "JS: [{MsgType}] {MsgText} ({MsgLocation})",
                 msg.Type, msg.Text, msg.Location.Split("/").LastOrDefault("").Split(":").FirstOrDefault());
         };
+
+        Page.PageError += (_, msg) =>
+        {
+            logger.LogError("PageError: {Msg}", msg);
+        };
     }
 
     private static LogLevel MapJsLogTypeToLogLevel(string type)

@@ -234,7 +234,7 @@ export class BottomSheet extends EventTarget {
 
         if (shouldDragSheet) {
             if (event.cancelable || this.#layoutElm.classList.contains(DraggingStyleClass)) {
-                if (event.cancelable && typeof event === TouchEvent)
+                if (event.cancelable && window.TouchEvent && typeof event === TouchEvent)
                     event.preventDefault()
                 this.#layoutElm.classList.add(DraggingStyleClass)
                 const clampedTranslateY = this.#clamp(translateY, this.#minTranslateYOnDragStart, this.#maxTranslateYOnDragStart)
