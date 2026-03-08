@@ -14,12 +14,14 @@ public static class LocatorExtensions
         {
             var (clientX, clientY) = await locator.MouseDownAsync();
             await locator.MouseMoveAsync(clientX, clientY, deltaX, deltaY, steps, stepDelayMs);
+            await Task.Delay(stepDelayMs);
             await locator.MouseUpAsync();
         }
         else
         {
             var (touchStartX, touchStartY) = await locator.TouchStartAsync();
             await locator.TouchMoveAsync(touchStartX, touchStartY, deltaX, deltaY, steps, stepDelayMs);
+            await Task.Delay(stepDelayMs);
             await locator.TouchEndAsync();
         }
     }
@@ -66,8 +68,8 @@ public static class LocatorExtensions
                     { "clientY", startY + deltaY * i / steps }
                 }
             };
-            await locator.DispatchEventAsync("touchmove", new { touches, changedTouches = touches, targetTouches = touches });
             await Task.Delay(stepDelayMs);
+            await locator.DispatchEventAsync("touchmove", new { touches, changedTouches = touches, targetTouches = touches });
         }
         return (startX + deltaX, startY + deltaY);
     }
@@ -76,12 +78,12 @@ public static class LocatorExtensions
     {
         for (var i = 1; i <= steps; i++)
         {
+            await Task.Delay(stepDelayMs);
             await locator.DispatchEventAsync("mousemove", new
             {
                 clientX = startX + deltaX * i / steps,
                 clientY = startY + deltaY * i / steps
             });
-            await Task.Delay(stepDelayMs);
         }
         return (startX + deltaX, startY + deltaY);
     }
