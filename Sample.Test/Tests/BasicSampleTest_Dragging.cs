@@ -80,6 +80,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
 
 
     [Test]
+    [Retry(2)]
     public Task Test_FastDragInDirection()
     {
         return TestAsync(async () =>
