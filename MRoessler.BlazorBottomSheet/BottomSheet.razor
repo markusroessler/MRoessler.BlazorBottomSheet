@@ -13,7 +13,7 @@
             <div class="bottom-sheet-background @GetColorSchemeStyleClass() @BackgroundClass" @onclick="OnBackgroundClickAsync" data-testid="bottom-sheet-background" />
         }
 
-        <div class="bottom-sheet closed @GetColorSchemeStyleClass() @Class" style="transform: translateY(100%);" data-testid="bottom-sheet"> <!-- note: style attributes are handled by javascript -->
+        <div class="bottom-sheet closed @GetColorSchemeStyleClass() @Class" style="transform: translateY(100%);" draggable="false" data-testid="bottom-sheet"> <!-- note: style attributes are handled by javascript -->
             <div class="bottom-sheet-handle" data-testid="bottom-sheet-handle">
                 @Handle
             </div>
@@ -27,7 +27,7 @@
 
 @code {
     private RenderFragment CreateDefaultHandle() =>
-        @<svg xmlns="http://www.w3.org/2000/svg" draggable="false" width="100%" height="4" viewBox="0 0 80 4" fill="none">
+        @<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="4" viewBox="0 0 80 4" fill="none">
             <rect x="20" width="40" height="4" rx="2" fill="#C4C4C4" data-testid="bottom-sheet-handle-rect" />
         </svg>; 
 }
