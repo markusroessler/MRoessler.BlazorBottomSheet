@@ -176,6 +176,9 @@ export class BottomSheet extends EventTarget {
 
     /** @param evt {MouseEvent} */
     #handleMouseDown(evt) {
+        this.#logDebug("handleMouseDown")
+        throw new Error("handleMouseDown");
+
         if (!this.#hasSelectableText(evt.target)) /* let user select text */
             this.#handleDragStart(evt, evt.clientY)
     }
