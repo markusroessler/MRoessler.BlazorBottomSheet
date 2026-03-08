@@ -3,12 +3,19 @@
     <RunConfiguration>
         <EnvironmentVariables>
             <BROWSER>chromium</BROWSER>
+            <!-- <BROWSER>webkit</BROWSER> -->
+            <!-- <BROWSER>firefox</BROWSER> -->
+
             <DEVICE_NAME>Pixel 7</DEVICE_NAME>
+            <!-- <DEVICE_NAME>Desktop Firefox</DEVICE_NAME>  --> <!-- "options.isMobile is not supported in Firefox" -->
+            <!-- <DEVICE_NAME>Desktop Chrome</DEVICE_NAME> -->
         </EnvironmentVariables>
     </RunConfiguration>
 
     <Playwright>
         <BrowserName>chromium</BrowserName>
+        <!-- <BrowserName>webkit</BrowserName> -->
+        <!-- <BrowserName>firefox</BrowserName> -->
         <LaunchOptions>
             <!-- <Headless>false</Headless> -->
             <!-- <SlowMo>200</SlowMo> -->

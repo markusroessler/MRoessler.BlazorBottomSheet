@@ -61,8 +61,17 @@ public abstract class CustomPageTest : PageTest
         var logger = WebAppFactory.Services.GetRequiredService<ILogger<CustomPageTest>>();
         Page.Console += (_, msg) =>
         {
-            logger.LogInformation("JS: [{MsgType}] {MsgText} ({MsgLocation})",
+            logger.Log(MapJsLogTypeToLogLevel(msg.Type), "JS: [{MsgType}] {MsgText} ({MsgLocation})",
                 msg.Type, msg.Text, msg.Location.Split("/").LastOrDefault("").Split(":").FirstOrDefault());
+        };
+    }
+
+    private static LogLevel MapJsLogTypeToLogLevel(string type)
+    {
+        return type switch
+        {
+            "error" => LogLevel.Error, // note: this fails the test! (see PrintDotnetLogs)
+            _ => LogLevel.Information,
         };
     }
 
@@ -104,8 +113,10 @@ public abstract class CustomPageTest : PageTest
     /// <summary>
     /// note: can't use Teardown method for coverage export because it runs too late (Page-Context is gone)
     /// </summary>
-    protected async Task TestAsync(Func<Task> test)
+    protected async Task TestAsync(Func<Task> test, bool mobileAssumption = true)
     {
+        Assume.That(ContextOptions().IsMobile, Is.EqualTo(mobileAssumption));
+
         try
         {
             await test();

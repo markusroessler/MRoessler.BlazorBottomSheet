@@ -177,7 +177,6 @@ export class BottomSheet extends EventTarget {
     /** @param evt {MouseEvent} */
     #handleMouseDown(evt) {
         this.#logDebug("handleMouseDown")
-        throw new Error("handleMouseDown");
 
         if (!this.#hasSelectableText(evt.target)) /* let user select text */
             this.#handleDragStart(evt, evt.clientY)
@@ -235,7 +234,7 @@ export class BottomSheet extends EventTarget {
 
         if (shouldDragSheet) {
             if (event.cancelable || this.#layoutElm.classList.contains(DraggingStyleClass)) {
-                if (event.cancelable)
+                if (event.cancelable && typeof event === TouchEvent)
                     event.preventDefault()
                 this.#layoutElm.classList.add(DraggingStyleClass)
                 const clampedTranslateY = this.#clamp(translateY, this.#minTranslateYOnDragStart, this.#maxTranslateYOnDragStart)

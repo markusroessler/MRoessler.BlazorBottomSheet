@@ -8,11 +8,20 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
 public static class LocatorExtensions
 {
-    public static async Task PanAsync(this ILocator locator, int deltaX, int deltaY, int steps = 5, int stepDelayMs = 100)
+    public static async Task PanAsync(this ILocator locator, double deltaX, double deltaY, int steps = 5, int stepDelayMs = 100, bool useMouseEvents = false)
     {
-        var (touchStartX, touchStartY) = await locator.TouchStartAsync();
-        await locator.TouchMoveAsync(touchStartX, touchStartY, deltaX, deltaY, steps, stepDelayMs);
-        await locator.TouchEndAsync();
+        if (useMouseEvents)
+        {
+            var (clientX, clientY) = await locator.MouseDownAsync();
+            await locator.MouseMoveAsync(clientX, clientY, deltaX, deltaY, steps, stepDelayMs);
+            await locator.MouseUpAsync();
+        }
+        else
+        {
+            var (touchStartX, touchStartY) = await locator.TouchStartAsync();
+            await locator.TouchMoveAsync(touchStartX, touchStartY, deltaX, deltaY, steps, stepDelayMs);
+            await locator.TouchEndAsync();
+        }
     }
 
 
@@ -31,6 +40,16 @@ public static class LocatorExtensions
             }
         };
         await locator.DispatchEventAsync("touchstart", new { touches, changedTouches = touches, targetTouches = touches });
+        return (centerX, centerY);
+    }
+
+    public static async Task<(double clientX, double clientY)> MouseDownAsync(this ILocator locator)
+    {
+        var bounds = await locator.BoundingBoxAsync();
+        var centerX = (double)bounds.X + bounds.Width / 2;
+        var centerY = (double)bounds.Y + bounds.Height / 2;
+
+        await locator.DispatchEventAsync("mousedown", new { clientX = centerX, clientY = centerY });
         return (centerX, centerY);
     }
 
@@ -53,7 +72,23 @@ public static class LocatorExtensions
         return (startX + deltaX, startY + deltaY);
     }
 
+    public static async Task<(double lastTouchX, double lastTouchY)> MouseMoveAsync(this ILocator locator, double startX, double startY, double deltaX, double deltaY, int steps = 5, int stepDelayMs = 100)
+    {
+        for (var i = 1; i <= steps; i++)
+        {
+            await locator.DispatchEventAsync("mousemove", new
+            {
+                clientX = startX + deltaX * i / steps,
+                clientY = startY + deltaY * i / steps
+            });
+            await Task.Delay(stepDelayMs);
+        }
+        return (startX + deltaX, startY + deltaY);
+    }
+
     public static async Task TouchEndAsync(this ILocator locator) => await locator.DispatchEventAsync("touchend");
+
+    public static async Task MouseUpAsync(this ILocator locator) => await locator.DispatchEventAsync("mouseup");
 
 
     public static async Task WhenBoundsStable(this ILocator locator)
