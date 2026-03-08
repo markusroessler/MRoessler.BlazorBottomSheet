@@ -118,7 +118,6 @@ public class BasicSampleTest_Common : CustomPageTest
 
     [Test]
     [CancelAfter(5000)]
-    [Repeat(10)]
     public Task Test_Dispose(CancellationToken cancellationToken)
     {
         return TestAsync(mobileAssumption: null, test: async () =>

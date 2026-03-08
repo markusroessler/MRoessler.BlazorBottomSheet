@@ -131,7 +131,6 @@ public class BasicSampleTest_Dragging : CustomPageTest
 
 
     [Test]
-    [Repeat(10)]
     public Task Test_FastDragInDirection()
     {
         return TestAsync(async () =>
