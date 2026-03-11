@@ -6,6 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MRoessler.BlazorBottomSheet;
 
+/// <summary>
+/// Extensions for adding the required services to the DI-Container
+/// </summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
