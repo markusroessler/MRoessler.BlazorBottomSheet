@@ -161,7 +161,7 @@ export class BottomSheet extends EventTarget {
     /** @param msg {String} */
     #logDebug(msg) {
         // if (msg.startsWith('dispose'))
-        // console.debug(msg)
+        console.debug(msg)
     }
 
     /** @returns {HTMLElement} the sheet element */
@@ -567,6 +567,7 @@ export class BottomSheet extends EventTarget {
     }
 
     #handleLayoutResize() {
+        this.#logDebug("handleLayoutResize")
         this.#updateExpansion(this.#getCurrentExpansion())
     }
 
