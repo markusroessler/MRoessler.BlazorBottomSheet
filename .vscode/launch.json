@@ -23,6 +23,14 @@
             "cwd": "${workspaceFolder}/Sample.Wasm",
             "browser": "chrome",
         },
+        {
+            "name": "Sample.Maui (Android 31161JEGR01928)",
+            "type": "maui",
+            "request": "launch",
+            "preLaunchTask": "maui: Build",
+            "targetFramework": "net10.0-android",
+            "device": "31161JEGR01928"
+        },
         // {
         //     "name": "Sample.Wasm 2",
         //     "type": "dotnet",

@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="MRoessler.BlazorBottomSheet/MRoessler.BlazorBottomSheet.csproj" />
+  <Project Path="Sample.Maui/Sample.Maui.csproj" />
   <Project Path="Sample.RazorComponents/Sample.RazorComponents.csproj" />
   <Project Path="Sample.WebApp/Sample.WebApp.csproj" />
   <Project Path="Sample.Wasm/Sample.Wasm.csproj" />
