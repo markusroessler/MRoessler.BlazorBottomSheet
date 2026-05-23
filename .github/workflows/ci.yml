@@ -85,14 +85,14 @@ jobs:
       run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
 
     - name: Restore
-      run: dotnet restore -p:TargetFramework=net10.0
+      run: dotnet restore -p:TargetFramework=net10.0 Sample.Test
 
     - name: Restore tools
       run: dotnet tool restore
     
     - name: Build
       id: build
-      run: dotnet build -p:TargetFrameworks=net10.0 -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore
+      run: dotnet build -p:TargetFrameworks=net10.0 -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore Sample.Test
 
     - name: Setup Playwright
       if: always()
