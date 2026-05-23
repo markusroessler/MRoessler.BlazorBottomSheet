@@ -67,7 +67,6 @@ public class BasicSampleTest_Common : CustomPageTest
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
             var handleRect = BottomSheetLocators.HandleRect(sheet);
-            var backgroundOverlay = BottomSheetLocators.BackgroundOverlay(sheetLayout);
 
             await GotoBasicSamplePageAsync();
 
@@ -97,7 +96,6 @@ public class BasicSampleTest_Common : CustomPageTest
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
             var handleRect = BottomSheetLocators.HandleRect(sheet);
-            var backgroundOverlay = BottomSheetLocators.BackgroundOverlay(sheetLayout);
 
             await GotoBasicSamplePageAsync();
 
@@ -192,6 +190,8 @@ public class BasicSampleTest_Common : CustomPageTest
             await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
 
+            await Task.Delay(5000);
+
             var viewportSize = Page.ViewportSize;
             await Page.SetViewportSizeAsync(viewportSize.Width, viewportSize.Height / 2);
             await sheet.WhenBoundsStable();
@@ -199,6 +199,9 @@ public class BasicSampleTest_Common : CustomPageTest
 
             await Page.SetViewportSizeAsync(viewportSize.Width, viewportSize.Height);
             await sheet.WhenBoundsStable();
+            await Task.Delay(5000);
+
+            await BottomSheetLocators.BackgroundOverlay(sheetLayout).ClickAsync();
             await Task.Delay(5000);
         });
     }
