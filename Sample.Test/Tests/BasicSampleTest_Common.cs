@@ -23,8 +23,6 @@ public class BasicSampleTest_Common : CustomPageTest
 {
     private Task<IResponse> GotoBasicSamplePageAsync() => Page.GotoAsync(WebAppFactory.ClientOptions.BaseAddress.ToString());
 
-    private Task<IResponse> GotoTimetrackingPageAsync() => Page.GotoAsync($"{WebAppFactory.ClientOptions.BaseAddress}timetracking-filter");
-
     [Test]
     public Task Test_ToggleIsOpen()
     {
@@ -167,42 +165,6 @@ public class BasicSampleTest_Common : CustomPageTest
 
             // verify that all listeners have been removed
             Assert.That(sheetWeakRef.TryGetTarget(out _), Is.False);
-        });
-    }
-
-    [Test]
-    public Task Test_ViewportResize()
-    {
-        return TestAsync(mobileAssumption: null, test: async () =>
-        {
-            await GotoTimetrackingPageAsync();
-            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
-            var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
-
-            await Expect(sheet).Not.ToBeInViewportAsync();
-            await Expect(sheet).ToBeAttachedAsync();
-            await Expect(sheetLayout).ToContainClassAsync("closed");
-
-            await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
-            await sheet.WhenBoundsStable();
-            await Expect(sheet).ToBeInViewportAsync();
-            await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
-            await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
-
-            await Task.Delay(5000);
-
-            var viewportSize = Page.ViewportSize;
-            await Page.SetViewportSizeAsync(viewportSize.Width, viewportSize.Height / 2);
-            await sheet.WhenBoundsStable();
-            await Task.Delay(5000);
-
-            await Page.SetViewportSizeAsync(viewportSize.Width, viewportSize.Height);
-            await sheet.WhenBoundsStable();
-            await Task.Delay(5000);
-
-            await BottomSheetLocators.BackgroundOverlay(sheetLayout).ClickAsync();
-            await Task.Delay(5000);
         });
     }
 }

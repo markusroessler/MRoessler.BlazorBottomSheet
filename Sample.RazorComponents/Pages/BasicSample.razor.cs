@@ -38,8 +38,6 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
 
     public BottomSheet? BottomSheet { get; private set; }
 
-    private string _input = "";
-
 
     protected override void OnInitialized()
     {
