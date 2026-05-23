@@ -20,8 +20,8 @@ jobs:
         run: echo "Build" 
 
       - name: Build (Release only)
-        if: ${{ inputs.build-config == 'Release' }}
-        run: echo "Build"
+        if: inputs.build-config == 'Release'
+        run: echo "Build (Release only)"
 
   test:
     name: Test
