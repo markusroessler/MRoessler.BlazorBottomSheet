@@ -18,7 +18,7 @@ public partial class MainPage
         }
     }
 
-    class CustomOnApplyWindowInsetsListener : Java.Lang.Object, IOnApplyWindowInsetsListener
+    private sealed class CustomOnApplyWindowInsetsListener : Java.Lang.Object, IOnApplyWindowInsetsListener
     {
         public WindowInsetsCompat? OnApplyWindowInsets(Android.Views.View? v, WindowInsetsCompat? insets)
         {
