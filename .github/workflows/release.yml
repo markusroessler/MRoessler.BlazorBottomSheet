@@ -16,6 +16,7 @@ jobs:
   dotnet-linux:
     name: .NET (Linux)
     runs-on: ubuntu-latest
+    container: ghcr.io/markusroessler/github.actions.workflows-maui-linux:main
 
     env:
       DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
