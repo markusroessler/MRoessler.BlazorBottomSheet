@@ -79,7 +79,8 @@
     background-color: light-dark(var(--bosh-palette-sheet-background-light), var(--bosh-palette-sheet-background-dark));
 }
 
-.bottom-sheet-layout.dragging .bottom-sheet {
+.bottom-sheet-layout.dragging .bottom-sheet,
+.bottom-sheet-layout.skip-translate-transition .bottom-sheet {
     transition: var(--bosh-border-radius-transition); /* remove transform transition */
 }
 
