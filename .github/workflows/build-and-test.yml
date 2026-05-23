@@ -1,0 +1,44 @@
+name: Build and Test
+
+on:
+  workflow_call:
+    inputs:
+      build-config:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build
+        run: echo "Build" 
+
+      - name: Build (Release only)
+        if: ${{ inputs.build-config == 'Release' }}
+        run: echo "Build"
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test
+        run: echo "Test" 
+
+
+  generate-test-report:
+    name: Generate test report
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+
+    steps:
+      - name: generate-test-report
+        run: echo "generate-test-report" 
+
