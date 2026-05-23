@@ -113,6 +113,9 @@ export class BottomSheet extends EventTarget {
     /** @type {MutationObserver} */
     #layoutAttributesObserver = null
 
+    /** @type {ResizeObserver} */
+    #layoutResizeObserver = null
+
     #abortController = new AbortController()
 
 
@@ -147,6 +150,9 @@ export class BottomSheet extends EventTarget {
                 "data-expansion", "data-visible"
             ]
         })
+
+        this.#layoutResizeObserver = new ResizeObserver(() => this.#handleLayoutResize());
+        this.#layoutResizeObserver.observe(this.#layoutElm);
 
         this.#updateVisible(this.#layoutElm.hasAttribute("data-visible"))
         this.#updateExpansion(Number(this.#layoutElm.getAttribute("data-expansion")))
@@ -492,8 +498,7 @@ export class BottomSheet extends EventTarget {
                 this.#sheetElm.style.removeProperty('transform')
                 this.#layoutElm.classList.add(FullHeightStyleClass)
             } else {
-                const sheetTranslateYPercent = this.#sheetTranslateY / this.#layoutElm.clientHeight * 100
-                this.#sheetElm.style.transform = `translateY(${sheetTranslateYPercent}%)`
+                this.#sheetElm.style.transform = `translateY(${this.#sheetTranslateY}px)`
                 this.#layoutElm.classList.remove(FullHeightStyleClass)
             }
             this.#sheetTranslateYUpdatePending = false
@@ -561,6 +566,11 @@ export class BottomSheet extends EventTarget {
         }
     }
 
+    #handleLayoutResize() {
+        this.#logDebug("handleLayoutResize")
+        this.#updateExpansion(this.#getCurrentExpansion())
+    }
+
     /**
      * INTERNAL API
      */
@@ -572,6 +582,11 @@ export class BottomSheet extends EventTarget {
         if (this.#layoutAttributesObserver) {
             this.#layoutAttributesObserver.disconnect()
             this.#layoutAttributesObserver = null
+        }
+
+        if (this.#layoutResizeObserver) {
+            this.#layoutResizeObserver.disconnect()
+            this.#layoutResizeObserver = null
         }
     }
 }
