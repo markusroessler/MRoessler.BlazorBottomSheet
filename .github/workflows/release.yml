@@ -12,24 +12,28 @@ permissions:
   contents: write
   packages: read
 
-jobs:
-  dotnet-linux:
-    name: .NET (Linux)
-    runs-on: ubuntu-latest
+env:
+  DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
 
-    env:
-      DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
-      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-      NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
+jobs:
+  release-build:
+    uses: ./.github/workflows/build-and-test.yml
+    secrets: inherit
+    with:
+      build-config: Release
+
+  publish-release:
+    name: Publish release
+    runs-on: ubuntu-latest
+    needs: release-build
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Git Config
-        run: |
-          # see https://api.github.com/users/github-actions%5Bbot%5D
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      
+      - name: Configure Git
+        run: bash .github/scripts/configure-git.sh
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
@@ -39,7 +43,7 @@ jobs:
           cache-dependency-path: "*/*.csproj"
 
       - name: Remove setup-dotnet problem matcher
-        run: echo "::remove-matcher owner=csc::"
+        run: bash .github/scripts/remove-net-problem-matcher.sh
 
       - name: Restore
         run: dotnet restore
@@ -50,30 +54,10 @@ jobs:
       - name: Pack nuget package
         run: dotnet pack MRoessler.BlazorBottomSheet -p:Version=${{ inputs.release-version }} -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1"
       
-      - name: Setup Playwright
-        run: |
-          dotnet build Sample.Test 
-          pwsh Sample.Test/bin/Debug/net10.0/playwright.ps1 install
-
-      - name: Test
-        if: always()
-        run: | 
-          dotnet test -c:Release -f:net10.0 --no-restore --filter TestCategory!~sample \
-          --logger:html --logger:"trx;LogFileName=TestResults/TestResults.trx" --settings ci.runsettings
-
-      - name: Collect Build Results
+      - name: Collect build results
         id: collect-build-results
         if: always()
-        run: dotnet export-dotnet-results-for-github --export-step-summary true --github-server-url ${{ github.server_url }} --github-repo ${{ github.repository }} --github-ref-name ${{ github.ref_name }} --culture "de-DE"
-
-      - name: Upload Test Report
-        if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: blazor-bottomsheet-release-linux-test-report
-          path: |
-            **/TestResults/*.html
-            Sample.Test/**/Screenshots/*.png
+        run: bash .github/scripts/collect-build-results.sh ${{ github.server_url }} ${{ github.repository }} ${{ github.ref_name }}
 
       - name: Create Tag
         run: |
@@ -81,7 +65,7 @@ jobs:
           git push origin "refs/tags/${{ inputs.release-version }}"
 
       - name: Publish Github Release
-        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           name: ${{ inputs.release-version }}
           tag: "${{ inputs.release-version }}"
