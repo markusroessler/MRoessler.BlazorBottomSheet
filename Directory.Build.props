@@ -1,8 +1,4 @@
 <Project>
-    <PropertyGroup>
-      <TimetrackingTargetFramework>net10.0</TimetrackingTargetFramework>
-    </PropertyGroup>
-
     <ItemGroup Condition="$(ProjectName.EndsWith('Playground')) == false">
       <PackageReference Include="MRoessler.DotnetAnalyzerConfig" PrivateAssets="all" />
     </ItemGroup>

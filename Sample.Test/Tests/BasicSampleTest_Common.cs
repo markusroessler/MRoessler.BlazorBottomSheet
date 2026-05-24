@@ -65,7 +65,6 @@ public class BasicSampleTest_Common : CustomPageTest
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
             var handleRect = BottomSheetLocators.HandleRect(sheet);
-            var backgroundOverlay = BottomSheetLocators.BackgroundOverlay(sheetLayout);
 
             await GotoBasicSamplePageAsync();
 
@@ -95,7 +94,6 @@ public class BasicSampleTest_Common : CustomPageTest
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
             var handleRect = BottomSheetLocators.HandleRect(sheet);
-            var backgroundOverlay = BottomSheetLocators.BackgroundOverlay(sheetLayout);
 
             await GotoBasicSamplePageAsync();
 
