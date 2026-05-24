@@ -75,6 +75,6 @@ jobs:
           prerelease: ${{ github.ref_name != 'main' }}
           makeLatest: ${{ github.ref_name == 'main' }}
 
-      # - name: Push nuget package
-      #   run: dotnet nuget push MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.nupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
+      - name: Push nuget package
+        run: dotnet nuget push MRoessler.BlazorBottomSheet/bin/Release/MRoessler.BlazorBottomSheet.${{ inputs.release-version }}.nupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
 
