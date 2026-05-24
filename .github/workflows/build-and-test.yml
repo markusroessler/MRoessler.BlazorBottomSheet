@@ -20,6 +20,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    container: ghcr.io/markusroessler/github.actions.workflows-maui-linux:main
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -88,14 +89,14 @@ jobs:
       run: nyc instrument ./MRoessler.BlazorBottomSheet ./MRoessler.BlazorBottomSheet --in-place --compact false
 
     - name: Restore
-      run: dotnet restore
+      run: dotnet restore Sample.Test
 
     - name: Restore tools
       run: dotnet tool restore
     
     - name: Build
       id: build
-      run: bash .github/scripts/build.sh ${{ inputs.build-config }}
+      run: dotnet build -c:${{ inputs.build-config }} -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore Sample.Test
 
     - name: Setup Playwright
       if: always()

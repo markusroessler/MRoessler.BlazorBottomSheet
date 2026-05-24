@@ -46,7 +46,7 @@ jobs:
         run: bash .github/scripts/remove-net-problem-matcher.sh
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore MRoessler.BlazorBottomSheet
 
       - name: Restore tools
         run: dotnet tool restore
