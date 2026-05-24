@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
 
 env:
   DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
