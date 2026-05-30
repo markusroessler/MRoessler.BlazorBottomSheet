@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Utils;
@@ -21,9 +25,25 @@ public abstract class CustomPageTest : PageTest
     protected TestHelper TestHelper { get; private set; }
 
     [OneTimeSetUp]
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
     public void OneTimeSetup()
     {
-        WebAppFactory = new WebApplicationFactory<Program>();
+        WebAppFactory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseKestrel(options =>
+                {
+                    options.Listen(IPAddress.Parse("127.0.0.1"), 0);
+                });
+
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddLogging(loggingBuilder =>
+                    {
+                        loggingBuilder.AddFakeLogging();
+                    });
+                });
+            });
         WebAppFactory.UseKestrel(0);
         WebAppFactory.StartServer();
         TestHelper = WebAppFactory.Services.GetRequiredService<TestHelper>();
@@ -38,9 +58,25 @@ public abstract class CustomPageTest : PageTest
     [SetUp]
     public void Setup()
     {
+        var logger = WebAppFactory.Services.GetRequiredService<ILogger<CustomPageTest>>();
         Page.Console += (_, msg) =>
         {
-            TestContext.Out.WriteLine($"Browser Log: [{msg.Type}] {msg.Text}");
+            logger.Log(MapJsLogTypeToLogLevel(msg.Type), "JS: [{MsgType}] {MsgText} ({MsgLocation})",
+                msg.Type, msg.Text, msg.Location.Split("/").LastOrDefault("").Split(":").FirstOrDefault());
+        };
+
+        Page.PageError += (_, msg) =>
+        {
+            logger.LogError("PageError: {Msg}", msg);
+        };
+    }
+
+    private static LogLevel MapJsLogTypeToLogLevel(string type)
+    {
+        return type switch
+        {
+            "error" => LogLevel.Error, // note: this fails the test! (see PrintDotnetLogs)
+            _ => LogLevel.Information,
         };
     }
 
@@ -48,15 +84,30 @@ public abstract class CustomPageTest : PageTest
     public async Task TeardownAsync()
     {
         if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
-        {
-            var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "Screenshots");
-            Directory.CreateDirectory(dir);
+            await TakeScreenshotAsync();
 
-            var fileName = $"failure_{TestContext.CurrentContext.Test.Name}.png";
-            var path = Path.Combine(dir, fileName);
-            await Page.ScreenshotAsync(new() { Path = path });
-            // TestContext.AddTestAttachment(path);
-        }
+        PrintDotnetLogs();
+    }
+
+    private void PrintDotnetLogs()
+    {
+        var fakeLogCollector = WebAppFactory.Services.GetFakeLogCollector();
+        var records = fakeLogCollector.GetSnapshot(clear: true);
+        var logs = records.Select(r => r.ToString());
+        TestContext.Out.WriteLine($"--- .NET Logs ---\n {string.Join("\n", logs)}");
+
+        Assert.That(records.Any(r => r.Level >= LogLevel.Error), Is.False, "There are error logs");
+    }
+
+    private async Task TakeScreenshotAsync()
+    {
+        var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "Screenshots");
+        Directory.CreateDirectory(dir);
+
+        var fileName = $"failure_{TestContext.CurrentContext.Test.Name}.png";
+        var path = Path.Combine(dir, fileName);
+        await Page.ScreenshotAsync(new() { Path = path });
+        // TestContext.AddTestAttachment(path);
     }
 
     public override BrowserNewContextOptions ContextOptions()
@@ -67,8 +118,11 @@ public abstract class CustomPageTest : PageTest
     /// <summary>
     /// note: can't use Teardown method for coverage export because it runs too late (Page-Context is gone)
     /// </summary>
-    protected async Task TestAsync(Func<Task> test)
+    protected async Task TestAsync(Func<Task> test, bool? mobileAssumption = true)
     {
+        if (mobileAssumption != null)
+            Assume.That(ContextOptions().IsMobile, Is.EqualTo(mobileAssumption));
+
         try
         {
             await test();
@@ -80,7 +134,7 @@ public abstract class CustomPageTest : PageTest
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "it's a 'try'-method")]
-    private async Task TryExportCoverage()
+    protected async Task TryExportCoverage()
     {
         try
         {
@@ -89,7 +143,8 @@ public abstract class CustomPageTest : PageTest
             {
                 var outDir = Path.Combine(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", ".."), ".nyc_output");
                 Directory.CreateDirectory(outDir);
-                File.WriteAllText(Path.Combine(outDir, $"{TestContext.CurrentContext.Test.MethodName}.json"), JsonSerializer.Serialize(coverageJson));
+                File.WriteAllText(Path.Combine(outDir, $"{TestContext.CurrentContext.Test.FullName}-{Guid.NewGuid()}.json"),
+                    JsonSerializer.Serialize(coverageJson));
             }
         }
         catch (Exception ex)

@@ -17,10 +17,10 @@
 
             <MudSpacer />
             
-            <MudMenu Label="Theme" EndIcon="@_currentThemeIcon" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
-                <MudMenuItem Label="Auto" Icon="@AutoThemeIcon" OnClick="()=>SetCurrentThemeIcon(AutoThemeIcon)" />
-                <MudMenuItem Label="Light" Icon="@LightThemeIcon" OnClick="()=>SetCurrentThemeIcon(LightThemeIcon)" />
-                <MudMenuItem Label="Dark" Icon="@DarkThemeIcon" OnClick="()=>SetCurrentThemeIcon(DarkThemeIcon)" />
+            <MudMenu Label="Theme" EndIcon="@_currentThemeIcon" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" data-testid="theme-menu">
+                <MudMenuItem Label="Auto" Icon="@AutoThemeIcon" OnClick="()=>SetCurrentThemeIcon(AutoThemeIcon)" data-testid="auto-theme-menuitem" />
+                <MudMenuItem Label="Light" Icon="@LightThemeIcon" OnClick="()=>SetCurrentThemeIcon(LightThemeIcon)" data-testid="light-theme-menuitem" />
+                <MudMenuItem Label="Dark" Icon="@DarkThemeIcon" OnClick="()=>SetCurrentThemeIcon(DarkThemeIcon)" data-testid="dark-theme-menuitem" />
             </MudMenu>
         </MudAppBar>
 

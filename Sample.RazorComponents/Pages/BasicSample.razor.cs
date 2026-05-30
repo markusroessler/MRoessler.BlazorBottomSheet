@@ -34,7 +34,9 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
 
     IReadOnlyCollection<string> _selectedOptions = [AllowCloseOption, AllowMinimizeOption, AllowNormalOption, AllowMaximizeOption, IsModalOption, CloseOnBackgroundClickOption, ApplyMudBlazorStylingOption];
 
-    readonly Guid _instanceId = Guid.NewGuid();
+    private readonly Guid _instanceId = Guid.NewGuid();
+
+    public BottomSheet? BottomSheet { get; private set; }
 
 
     protected override void OnInitialized()

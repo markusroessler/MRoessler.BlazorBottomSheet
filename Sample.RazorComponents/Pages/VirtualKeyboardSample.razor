@@ -1,0 +1,25 @@
+﻿@page "/virtual-keyboard"
+@using MRoessler.BlazorBottomSheet.Sample.RazorComponents.Layout
+
+<PageTitle>BottomSheet: Virtual Keyboard</PageTitle>
+<SectionContent SectionName="@MainLayout.AppBarHeaderName">Virtual Keyboard</SectionContent>
+
+<MudPaper Class="pa-2" Style="height: 100%;">
+    <MudStack>
+        <MudButton OnClick="ToggleButtonSheetOpen" Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" data-testid="open-close-button">Open/Close BottomSheet</MudButton>
+    </MudStack>
+</MudPaper>
+
+<BottomSheet data-testid="bottom-sheet-layout" DefaultExpansion="BottomSheetExpansion.Normal" @bind-IsOpen="_isOpen" Class="mud-bottom-sheet" IsModal CloseOnBackgroundClick>
+    <div style="height: 100%;">
+        <div style="height: 100%; display: flex; flex-direction: column; margin-bottom: 1em;">
+            <MudText Typo="Typo.subtitle2">
+                Verify: The BottomSheet height should not increase when the virtual keyboard is shown 
+                and it should also be possible to completly hide the BottomSheet after the keyboard has been shown. 
+            </MudText>
+            <MudTextField @bind-Value="@_input" Label="Virtual Keyboard Test" Class="custom-text-field" />
+            <MinimizedExpansionMarker />
+            <NormalExpansionMarker />
+        </div>
+    </div>
+</BottomSheet>

@@ -12,11 +12,12 @@ namespace MRoessler.BlazorBottomSheet.Sample.RazorComponents;
 
 public static class ServiceCollectionExtensions
 {
+
     public static IServiceCollection AddSampleAppServices(this IServiceCollection services, IConfiguration config)
     {
         services
             .AddMudServices()
-            .AddBottomSheet(new() { UseMinifiedJavaScripts = config.GetValue("SampleApp:UseMinifiedJavaScripts", true) })
+            .AddBottomSheet(new() { UseMinifiedJavaScripts = config.GetValue(SampleAppConstants.UseMinifiedJavaScriptsConfigKey, true) })
             .AddScoped<SynchronizationContextDispatcher>()
             .AddScoped<BasicSampleViewModel>()
             .AddSingleton<TestHelper>();

@@ -19,11 +19,13 @@ const MinimizedStyleClass = "minimized"
 const NormalStyleClass = "normal"
 const MaximizedStyleClass = "maximized"
 const DraggingStyleClass = "dragging"
+const SkipTranslateTransitionStyleClass = 'skip-translate-transition'
 const FullHeightStyleClass = 'full-height'
 const DragInDirectionMinDistance = 50
 const NearestSnapPointLeeway = 100
 const FastDragMinSpeed = 1000
 const FastDragMinDistance = 100
+const TranslateAnimationDefault = true
 
 
 /**
@@ -160,8 +162,8 @@ export class BottomSheet extends EventTarget {
 
     /** @param msg {String} */
     #logDebug(msg) {
-        // if (msg.startsWith('handleDragMove'))
-        //     console.debug(msg)
+        // if (msg.startsWith('dispose'))
+        // console.debug(msg)
     }
 
     /** @returns {HTMLElement} the sheet element */
@@ -176,6 +178,8 @@ export class BottomSheet extends EventTarget {
 
     /** @param evt {MouseEvent} */
     #handleMouseDown(evt) {
+        this.#logDebug("handleMouseDown")
+
         if (!this.#hasSelectableText(evt.target)) /* let user select text */
             this.#handleDragStart(evt, evt.clientY)
     }
@@ -232,7 +236,7 @@ export class BottomSheet extends EventTarget {
 
         if (shouldDragSheet) {
             if (event.cancelable || this.#layoutElm.classList.contains(DraggingStyleClass)) {
-                if (event.cancelable)
+                if (event.cancelable && window.TouchEvent && event instanceof TouchEvent)
                     event.preventDefault()
                 this.#layoutElm.classList.add(DraggingStyleClass)
                 const clampedTranslateY = this.#clamp(translateY, this.#minTranslateYOnDragStart, this.#maxTranslateYOnDragStart)
@@ -437,7 +441,7 @@ export class BottomSheet extends EventTarget {
         return allowedExpansions
     }
 
-    async #updateExpansion(expansion) {
+    async #updateExpansion(expansion, animated = TranslateAnimationDefault) {
         const expansionChanged = this.#getCurrentExpansion() !== expansion
 
         if (expansion == ExpansionClosed)
@@ -460,27 +464,27 @@ export class BottomSheet extends EventTarget {
         else
             this.#layoutElm.classList.remove(MaximizedStyleClass)
 
-        this.#updateTransform(expansion)
+        this.#updateTransform(expansion, animated)
 
         if (expansionChanged)
             await this.#razorComp.invokeMethodAsync("SetExpansionAsync", expansion)
     }
 
-    #updateTransform(expansion) {
+    #updateTransform(expansion, animated = TranslateAnimationDefault) {
         if (expansion == ExpansionClosed)
-            this.#updateTranslateY(document.documentElement.clientHeight)
+            this.#updateTranslateY(document.documentElement.clientHeight, animated)
 
         else if (expansion == ExpansionMinimized)
-            this.#updateTranslateY(this.#computeSheetTranslateYByMarker(this.#minimizedExpansionMarker))
+            this.#updateTranslateY(this.#computeSheetTranslateYByMarker(this.#minimizedExpansionMarker), animated)
 
         else if (expansion == ExpansionNormal)
-            this.#updateTranslateY(this.#computeSheetTranslateYByMarker(this.#normalExpansionMarker))
+            this.#updateTranslateY(this.#computeSheetTranslateYByMarker(this.#normalExpansionMarker), animated)
 
         else if (expansion == ExpansionMaximized)
-            this.#updateTranslateY(0)
+            this.#updateTranslateY(0, animated)
     }
 
-    #updateTranslateY(translateY) {
+    #updateTranslateY(translateY, animated = TranslateAnimationDefault) {
         this.#logDebug(`updateTranslateY: ${translateY}`)
         this.#sheetTranslateY = translateY
         this.dispatchEvent(new BottomSheetMoveEvent(translateY))
@@ -492,6 +496,11 @@ export class BottomSheet extends EventTarget {
         this.#sheetTranslateYUpdatePending = true
 
         window.requestAnimationFrame(_ => {
+            if (animated)
+                this.#layoutElm.classList.remove(SkipTranslateTransitionStyleClass)
+            else
+                this.#layoutElm.classList.add(SkipTranslateTransitionStyleClass)
+
             if (this.#sheetTranslateY == 0) {
                 this.#sheetElm.style.removeProperty('transform')
                 this.#layoutElm.classList.add(FullHeightStyleClass)
@@ -565,13 +574,17 @@ export class BottomSheet extends EventTarget {
     }
 
     #handleLayoutResize() {
-        this.#updateExpansion(this.#getCurrentExpansion())
+        this.#logDebug("handleLayoutResize")
+        // skip translate animation to prevent layout issues when virtual keyboard is shown (Android) 
+        this.#updateExpansion(this.#getCurrentExpansion(), false)
     }
 
     /**
      * INTERNAL API
      */
     dispose() {
+        this.#logDebug("dispose")
+
         this.#abortController.abort()
 
         if (this.#layoutAttributesObserver) {
