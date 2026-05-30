@@ -13,7 +13,7 @@ body {
 
 .bottom-sheet-background ,
 .bottom-sheet {
-    /* note: see MainLayout theme */
+     /* display in front of AppBar but behind Popovers (see MainLayout.razor.cs) */
     z-index: 1400;
 }
 
