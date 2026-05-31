@@ -18,7 +18,7 @@ using NUnit.Framework.Interfaces;
 namespace MRoessler.BlazorBottomSheet.Sample.Test.Tests;
 
 [TestFixture]
-[Parallelizable(ParallelScope.Self)]
+// [Parallelizable(ParallelScope.Self)] // disabled to fix flaky Test_FastDragInDirection
 public class BasicSampleTest_Dragging : CustomPageTest
 {
     const int SlowDragStepDelayMs = 100;
@@ -27,6 +27,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     private Task<IResponse> GotoBasicSamplePageAsync() => Page.GotoAsync(WebAppFactory.ClientOptions.BaseAddress.ToString());
 
     [Test]
+    [Category(CustomTestCategories.NeedsMobileBrowser)]
     public Task Test_SlowDragInDirection()
     {
         return TestAsync(async () =>
@@ -79,9 +80,10 @@ public class BasicSampleTest_Dragging : CustomPageTest
     }
 
     [Test]
+    [Category(CustomTestCategories.NeedsDesktopBrowser)]
     public Task Test_SlowDragInDirection_UsingMouse()
     {
-        return TestAsync(mobileAssumption: false, test: async () =>
+        return TestAsync(test: async () =>
         {
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
@@ -131,6 +133,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
 
 
     [Test]
+    [Category(CustomTestCategories.NeedsMobileBrowser)]
     public Task Test_FastDragInDirection()
     {
         return TestAsync(async () =>
@@ -175,6 +178,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     }
 
     [Test]
+    [Category(CustomTestCategories.NeedsMobileBrowser)]
     public Task Test_SlowDragToPosition()
     {
         return TestAsync(async () =>
@@ -218,6 +222,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     }
 
     [Test]
+    [Category(CustomTestCategories.NeedsMobileBrowser)]
     public Task Test_ScrollableDrag()
     {
         return TestAsync(async () =>

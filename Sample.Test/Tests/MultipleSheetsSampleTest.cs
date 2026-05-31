@@ -23,7 +23,7 @@ public class MultipleSheetsSampleTest : CustomPageTest
     [Test]
     public Task Test_Open()
     {
-        return TestAsync(mobileAssumption: null, test: async () =>
+        return TestAsync(test: async () =>
         {
             await GotoSamplePageAsync();
 

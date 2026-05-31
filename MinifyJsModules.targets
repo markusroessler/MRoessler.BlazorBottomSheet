@@ -1,27 +1,40 @@
 <!-- implementation template: https://github.com/dotnet/sdk/blob/e90c4413024970eca97d05122243737aa207af11/src/StaticWebAssetsSdk/Targets/Microsoft.NET.Sdk.StaticWebAssets.JSModules.targets#L428 -->
 <Project>
   <PropertyGroup>
-    <GenerateComputedBuildStaticWebAssetsDependsOn>$(GenerateComputedBuildStaticWebAssetsDependsOn);MinifyJsModules</GenerateComputedBuildStaticWebAssetsDependsOn>
+    <GenerateComputedBuildStaticWebAssetsDependsOn>$(GenerateComputedBuildStaticWebAssetsDependsOn);ComputeMinifyJsModulesPaths;MinifyJsModules;DefineMinifiedJsModulesAssets</GenerateComputedBuildStaticWebAssetsDependsOn>
   </PropertyGroup>
 
-  <!-- TODO implement incremental build -->
-  <Target Name="MinifyJsModules">
-    <ItemGroup>
-      <_WebAssetMinifyInput Include="**/*.razor.js" Exclude="**/bin/**;**/obj/**" />
-      <_FingerprintPattern Include="ComponentsMinJsModule" Pattern="*.razor.min.js"/>
-    </ItemGroup>
+  <!-- note: IntermediateOutputPath is only defined within targets -->
+  <Target Name="ComputeMinifyJsModulesPaths">
     <PropertyGroup>
       <_MinifyOutputDir>$(IntermediateOutputPath)minified</_MinifyOutputDir>
     </PropertyGroup>
-    <!-- <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" /> -->
-
-    <Exec Command="pwsh $(MSBuildThisFileDirectory)/MinifyJsModules.ps1 &quot;@(_WebAssetMinifyInput, ' ')&quot; $(_MinifyOutputDir)" />
-
+    
     <ItemGroup>
-      <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)\**" />
+      <_WebAssetMinifyInput Include="**/*.razor.js" Exclude="**/bin/**;**/obj/**" />
     </ItemGroup>
-    <!-- <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" /> -->
 
+    <!-- <Message Importance="high" Text="_WebAssetMinifyInput: @(_WebAssetMinifyInput)" /> -->
+  </Target>
+
+  
+  <Target Name="MinifyJsModules" DependsOnTargets="ComputeMinifyJsModulesPaths" Inputs="@(_WebAssetMinifyInput)" Outputs="@(_WebAssetMinifyInput->'$(_MinifyOutputDir)/%(RelativeDir)/%(Filename).min.js')">
+    <!-- <Message Importance="high" Text="MinifyJsModules running" /> -->
+    <Exec Command="pwsh $(MSBuildThisFileDirectory)/MinifyJsModules.ps1 &quot;@(_WebAssetMinifyInput, ' ')&quot; $(_MinifyOutputDir)" />
+    <ItemGroup>
+      <FileWrites Include="$(_MinifyOutputDir)/**" /> <!-- delete files on "dotnet clean" -->
+    </ItemGroup>
+  </Target>
+
+
+  <Target Name="DefineMinifiedJsModulesAssets" DependsOnTargets="MinifyJsModules">
+    <ItemGroup>
+      <_FingerprintPattern Include="ComponentsMinJsModule" Pattern="*.razor.min.js"/>
+      <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)/**" />
+    </ItemGroup>
+
+    <!-- <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" /> -->
+    
     <DefineStaticWebAssets CandidateAssets="@(_WebAssetMinifyOutput)"
         SourceId="$(PackageId)"
         SourceType="Computed"

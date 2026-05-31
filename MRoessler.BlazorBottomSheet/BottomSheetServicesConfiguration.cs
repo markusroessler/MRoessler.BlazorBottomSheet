@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 
 namespace MRoessler.BlazorBottomSheet;
 
+/// <summary>
+/// Optional config options
+/// </summary>
 public sealed class BottomSheetServicesConfiguration
 {
     /// <summary>
-    /// whether to load minified versions of JavaScript files (Default: true)
+    /// Whether to load minified versions of JavaScript files (Default: true)
     /// </summary>
     public bool UseMinifiedJavaScripts { get; init; } = true;
 }

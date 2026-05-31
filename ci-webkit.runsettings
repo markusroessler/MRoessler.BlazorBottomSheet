@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
   <RunConfiguration>
+    <TestCaseFilter>TestCategory != NeedsDesktopBrowser</TestCaseFilter>
     <EnvironmentVariables>
       <BROWSER>webkit</BROWSER>
       <DEVICE_NAME>Pixel 7</DEVICE_NAME>
