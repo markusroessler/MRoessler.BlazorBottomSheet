@@ -105,7 +105,7 @@ jobs:
     - name: Test
       if: always()
       run: |
-        dotnet test -c:${{ inputs.build-config }} -f:net10.0 --no-build --filter TestCategory!~sample --logger:html \
+        dotnet test -c:${{ inputs.build-config }} -f:net10.0 --no-build --logger:html \
         --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci-${{ matrix.browser }}.runsettings
       
     - name: Convert js coverage results
