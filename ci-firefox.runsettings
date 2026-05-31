@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
   <RunConfiguration>
+    <TestCaseFilter>TestCategory != NeedsMobileBrowser</TestCaseFilter>
     <EnvironmentVariables>
       <BROWSER>firefox</BROWSER>
       <DEVICE_NAME>Desktop Firefox</DEVICE_NAME>

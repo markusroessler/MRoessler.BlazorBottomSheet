@@ -27,6 +27,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     private Task<IResponse> GotoBasicSamplePageAsync() => Page.GotoAsync(WebAppFactory.ClientOptions.BaseAddress.ToString());
 
     [Test]
+    [Category(CustomTestCategories.NeedsMobileBrowser)]
     public Task Test_SlowDragInDirection()
     {
         return TestAsync(async () =>
@@ -132,6 +133,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
 
 
     [Test]
+    [Category(CustomTestCategories.NeedsMobileBrowser)]
     public Task Test_FastDragInDirection()
     {
         return TestAsync(async () =>
@@ -176,6 +178,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     }
 
     [Test]
+    [Category(CustomTestCategories.NeedsMobileBrowser)]
     public Task Test_SlowDragToPosition()
     {
         return TestAsync(async () =>
@@ -219,6 +222,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     }
 
     [Test]
+    [Category(CustomTestCategories.NeedsMobileBrowser)]
     public Task Test_ScrollableDrag()
     {
         return TestAsync(async () =>

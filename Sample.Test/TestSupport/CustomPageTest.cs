@@ -67,10 +67,18 @@ public abstract class CustomPageTest : PageTest
     private bool SkipTestIfNeeded()
     {
         // C# DevKit does not recognize TestCaseFilter in runsettings - so we need to double check
-        var needsDesktopBrowser = TestContext.CurrentContext.Test.AllCategories().Contains(CustomTestCategories.NeedsDesktopBrowser);
-        if (needsDesktopBrowser && ContextOptions().IsMobile.GetValueOrDefault())
+        var allCategories = TestContext.CurrentContext.Test.AllCategories().ToList();
+        var needsDesktopBrowser = allCategories.Contains(CustomTestCategories.NeedsDesktopBrowser);
+        var needsMobileBrowser = allCategories.Contains(CustomTestCategories.NeedsMobileBrowser);
+        var isMobile = ContextOptions().IsMobile.GetValueOrDefault();
+        if (needsDesktopBrowser && isMobile)
         {
             Assert.Ignore("This test needs a desktop browser");
+            return true;
+        }
+        else if (needsMobileBrowser && !isMobile)
+        {
+            Assert.Ignore("This test needs a mobile browser");
             return true;
         }
 
