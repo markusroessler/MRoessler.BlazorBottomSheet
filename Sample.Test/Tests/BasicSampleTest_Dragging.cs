@@ -18,7 +18,7 @@ using NUnit.Framework.Interfaces;
 namespace MRoessler.BlazorBottomSheet.Sample.Test.Tests;
 
 [TestFixture]
-[Parallelizable(ParallelScope.Self)]
+// [Parallelizable(ParallelScope.Self)] // disabled to fix flaky tests
 public class BasicSampleTest_Dragging : CustomPageTest
 {
     const int SlowDragStepDelayMs = 100;
