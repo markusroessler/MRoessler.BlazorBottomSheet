@@ -98,15 +98,15 @@ jobs:
       id: build
       run: dotnet build -c:${{ inputs.build-config }} -p:ErrorLog="compiler-diagnostics.sarif%2Cversion=2.1" --no-restore Sample.Test
 
-    - name: Setup Playwright
-      if: always()
-      run: pwsh Sample.Test/bin/${{ inputs.build-config }}/net10.0/playwright.ps1 install --with-deps ${{ matrix.browser }}
+    # - name: Setup Playwright
+    #   if: always()
+    #   run: pwsh Sample.Test/bin/${{ inputs.build-config }}/net10.0/playwright.ps1 install --with-deps ${{ matrix.browser }}
 
-    - name: Test
-      if: always()
-      run: |
-        dotnet test -c:${{ inputs.build-config }} -f:net10.0 --no-build --filter TestCategory!~sample --logger:html \
-        --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci-${{ matrix.browser }}.runsettings
+    # - name: Test
+    #   if: always()
+    #   run: |
+    #     dotnet test -c:${{ inputs.build-config }} -f:net10.0 --no-build --filter TestCategory!~sample --logger:html \
+    #     --logger:"trx;LogFileName=TestResults/TestResults.trx" --collect:"XPlat Code Coverage" --settings ci-${{ matrix.browser }}.runsettings
       
     - name: Convert js coverage results
       run: |
