@@ -17,8 +17,8 @@ jobs:
     with:
       build-config: Debug
 
-  # release-build:
-  #   uses: ./.github/workflows/build-and-test.yml
-  #   secrets: inherit
-  #   with:
-  #     build-config: Release
+  release-build:
+    uses: ./.github/workflows/build-and-test.yml
+    secrets: inherit
+    with:
+      build-config: Release
