@@ -15,8 +15,8 @@
       <_WebAssetMinifyLastJsOutput Include="$(_MinifyOutputDir)/**/*.razor.min.js" />
     </ItemGroup>
 
-    <!-- <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" />
-    <Message Importance="high" Text="_WebAssetMinifyLastJsOutput: %(_WebAssetMinifyLastJsOutput.Identity)" /> -->
+    <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" />
+    <Message Importance="high" Text="_WebAssetMinifyLastJsOutput: %(_WebAssetMinifyLastJsOutput.Identity)" />
   </Target>
 
   
@@ -31,7 +31,7 @@
       <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)/**" />
     </ItemGroup>
 
-    <!-- <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" /> -->
+    <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" />
     
     <DefineStaticWebAssets CandidateAssets="@(_WebAssetMinifyOutput)"
         SourceId="$(PackageId)"
