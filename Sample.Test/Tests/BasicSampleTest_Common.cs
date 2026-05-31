@@ -26,7 +26,7 @@ public class BasicSampleTest_Common : CustomPageTest
     [Test]
     public Task Test_ToggleIsOpen()
     {
-        return TestAsync(mobileAssumption: null, test: async () =>
+        return TestAsync(test: async () =>
         {
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
@@ -60,7 +60,7 @@ public class BasicSampleTest_Common : CustomPageTest
     [Test]
     public Task Test_ColorScheme_Manual()
     {
-        return TestAsync(mobileAssumption: null, test: async () =>
+        return TestAsync(test: async () =>
         {
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
@@ -89,7 +89,7 @@ public class BasicSampleTest_Common : CustomPageTest
     [Test]
     public Task Test_ColorScheme_SystemTheme()
     {
-        return TestAsync(mobileAssumption: null, test: async () =>
+        return TestAsync(test: async () =>
         {
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
@@ -118,7 +118,7 @@ public class BasicSampleTest_Common : CustomPageTest
     [CancelAfter(5000)]
     public Task Test_Dispose(CancellationToken cancellationToken)
     {
-        return TestAsync(mobileAssumption: null, test: async () =>
+        return TestAsync(test: async () =>
         {
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);

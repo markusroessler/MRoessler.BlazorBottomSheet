@@ -58,6 +58,27 @@ public abstract class CustomPageTest : PageTest
     [SetUp]
     public void Setup()
     {
+        if (SkipTestIfNeeded())
+            return;
+
+        InitPageLoggers();
+    }
+
+    private bool SkipTestIfNeeded()
+    {
+        // C# DevKit does not recognize TestCaseFilter in runsettings - so we need to double check
+        var needsDesktopBrowser = TestContext.CurrentContext.Test.AllCategories().Contains(CustomTestCategories.NeedsDesktopBrowser);
+        if (needsDesktopBrowser && ContextOptions().IsMobile.GetValueOrDefault())
+        {
+            Assert.Ignore("This test needs a desktop browser");
+            return true;
+        }
+
+        return false;
+    }
+
+    private void InitPageLoggers()
+    {
         var logger = WebAppFactory.Services.GetRequiredService<ILogger<CustomPageTest>>();
         Page.Console += (_, msg) =>
         {
@@ -118,11 +139,8 @@ public abstract class CustomPageTest : PageTest
     /// <summary>
     /// note: can't use Teardown method for coverage export because it runs too late (Page-Context is gone)
     /// </summary>
-    protected async Task TestAsync(Func<Task> test, bool? mobileAssumption = true)
+    protected async Task TestAsync(Func<Task> test)
     {
-        if (mobileAssumption != null)
-            Assume.That(ContextOptions().IsMobile, Is.EqualTo(mobileAssumption));
-
         try
         {
             await test();

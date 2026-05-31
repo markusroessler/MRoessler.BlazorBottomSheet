@@ -79,9 +79,10 @@ public class BasicSampleTest_Dragging : CustomPageTest
     }
 
     [Test]
+    [Category(CustomTestCategories.NeedsDesktopBrowser)]
     public Task Test_SlowDragInDirection_UsingMouse()
     {
-        return TestAsync(mobileAssumption: false, test: async () =>
+        return TestAsync(test: async () =>
         {
             var sheetLayout = BottomSheetLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
