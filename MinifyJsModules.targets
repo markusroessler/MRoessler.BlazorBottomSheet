@@ -12,16 +12,18 @@
     
     <ItemGroup>
       <_WebAssetMinifyInput Include="**/*.razor.js" Exclude="**/bin/**;**/obj/**" />
-      <_WebAssetMinifyLastJsOutput Include="$(_MinifyOutputDir)/**/*.razor.min.js" />
     </ItemGroup>
 
-    <Message Importance="high" Text="_WebAssetMinifyInput: %(_WebAssetMinifyInput.Identity)" />
-    <Message Importance="high" Text="_WebAssetMinifyLastJsOutput: %(_WebAssetMinifyLastJsOutput.Identity)" />
+    <Message Importance="high" Text="_WebAssetMinifyInput: @(_WebAssetMinifyInput)" />
   </Target>
 
   
-  <Target Name="MinifyJsModules" DependsOnTargets="ComputeMinifyJsModulesPaths" Inputs="@(_WebAssetMinifyInput)" Outputs="@(_WebAssetMinifyLastJsOutput)">
+  <Target Name="MinifyJsModules" DependsOnTargets="ComputeMinifyJsModulesPaths" Inputs="@(_WebAssetMinifyInput)" Outputs="@(_WebAssetMinifyInput->'$(_MinifyOutputDir)/%(RelativeDir)/%(Filename).min.js')">
+    <Message Importance="high" Text="MinifyJsModules running" />
     <Exec Command="pwsh $(MSBuildThisFileDirectory)/MinifyJsModules.ps1 &quot;@(_WebAssetMinifyInput, ' ')&quot; $(_MinifyOutputDir)" />
+    <ItemGroup>
+      <FileWrites Include="$(_MinifyOutputDir)/**" /> <!-- delete files on "dotnet clean" -->
+    </ItemGroup>
   </Target>
 
 
