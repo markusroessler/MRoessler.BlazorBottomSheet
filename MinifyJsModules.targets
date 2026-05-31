@@ -14,12 +14,12 @@
       <_WebAssetMinifyInput Include="**/*.razor.js" Exclude="**/bin/**;**/obj/**" />
     </ItemGroup>
 
-    <Message Importance="high" Text="_WebAssetMinifyInput: @(_WebAssetMinifyInput)" />
+    <!-- <Message Importance="high" Text="_WebAssetMinifyInput: @(_WebAssetMinifyInput)" /> -->
   </Target>
 
   
   <Target Name="MinifyJsModules" DependsOnTargets="ComputeMinifyJsModulesPaths" Inputs="@(_WebAssetMinifyInput)" Outputs="@(_WebAssetMinifyInput->'$(_MinifyOutputDir)/%(RelativeDir)/%(Filename).min.js')">
-    <Message Importance="high" Text="MinifyJsModules running" />
+    <!-- <Message Importance="high" Text="MinifyJsModules running" /> -->
     <Exec Command="pwsh $(MSBuildThisFileDirectory)/MinifyJsModules.ps1 &quot;@(_WebAssetMinifyInput, ' ')&quot; $(_MinifyOutputDir)" />
     <ItemGroup>
       <FileWrites Include="$(_MinifyOutputDir)/**" /> <!-- delete files on "dotnet clean" -->
@@ -33,7 +33,7 @@
       <_WebAssetMinifyOutput Include="$(_MinifyOutputDir)/**" />
     </ItemGroup>
 
-    <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" />
+    <!-- <Message Importance="high" Text="_WebAssetMinifyOutput: %(_WebAssetMinifyOutput.Identity)" /> -->
     
     <DefineStaticWebAssets CandidateAssets="@(_WebAssetMinifyOutput)"
         SourceId="$(PackageId)"
