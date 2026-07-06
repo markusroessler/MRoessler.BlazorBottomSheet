@@ -257,6 +257,16 @@ public partial class BottomSheet : ComponentBase, IAsyncDisposable
             await IsOpenChanged.InvokeAsync(_expansionToRender != BottomSheetExpansion.Closed);
     }
 
+    /// <summary>
+    /// Recomputes the height for the current expansion. 
+    /// Can be invoked when the content height changed dynamically.
+    /// </summary>
+    public async Task RefreshHeightAsync()
+    {
+        if (JavaScriptObjRef != null)
+            await JavaScriptObjRef.InvokeVoidAsync("refreshHeight");
+    }
+
     public async ValueTask DisposeAsync()
     {
         await DisposeAsyncCore().ConfigureAwait(false);

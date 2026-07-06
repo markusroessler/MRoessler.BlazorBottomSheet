@@ -576,7 +576,16 @@ export class BottomSheet extends EventTarget {
     #handleLayoutResize() {
         this.#logDebug("handleLayoutResize")
         // skip translate animation to prevent layout issues when virtual keyboard is shown (Android) 
-        this.#updateExpansion(this.#getCurrentExpansion(), false)
+        this.#updateTransform(this.#getCurrentExpansion(), false)
+    }
+
+    /**
+     * Recomputes the height for the current expansion. 
+     * Can be invoked when the content height changed dynamically.
+     */
+    refreshHeight() {
+        if (!this.#isDragging)
+            this.#updateTransform(this.#getCurrentExpansion(), true)
     }
 
     /**

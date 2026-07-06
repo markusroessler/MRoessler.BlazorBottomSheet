@@ -37,6 +37,14 @@
             <MudText Typo="Typo.h6">Body <MudText Typo="Typo.subtitle2" Inline>(visible when expansion >= Normal)</MudText></MudText>
 
             <MudButton OnClick="()=>_expansion=BottomSheetExpansion.Closed" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Large" Class="py-4 mb-5" data-testid="close-sheet-button">Close Bottomsheet</MudButton>
+            <MudButton OnClick="ToggleDynamicContentVisible" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Large" Class="py-4 mb-5" data-testid="close-sheet-button">Toggle dynamic content</MudButton>
+
+            @if (_isDynamicContentVisible) {
+                <MudAlert Severity="Severity.Info">
+                    I'm so dynamic!
+                </MudAlert>
+            }
+
             <MudSelect @bind-Value="_expansion" Label="Expansion" OuterClass="custom-select">
                 @foreach (var expansion in Enum.GetValues<BottomSheetExpansion>()) {
                     @*this comment prevents intellisense from failing (no idea why)*@
