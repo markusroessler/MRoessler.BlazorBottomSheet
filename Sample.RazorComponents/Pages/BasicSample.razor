@@ -36,8 +36,10 @@
 
             <MudText Typo="Typo.h6">Body <MudText Typo="Typo.subtitle2" Inline>(visible when expansion >= Normal)</MudText></MudText>
 
-            <MudButton OnClick="()=>_expansion=BottomSheetExpansion.Closed" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Large" Class="py-4 mb-5" data-testid="close-sheet-button">Close Bottomsheet</MudButton>
-            <MudButton OnClick="ToggleDynamicContentVisible" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Large" Class="py-4 mb-5" data-testid="close-sheet-button">Toggle dynamic content</MudButton>
+            <MudStack Row Class="mb-5">
+                <MudButton OnClick="()=>_expansion=BottomSheetExpansion.Closed" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Small" data-testid="close-sheet-button">Close Bottomsheet</MudButton>
+                <MudButton OnClick="ToggleDynamicContentVisible" Variant="Variant.Filled" Color="Color.Primary" FullWidth Size="Size.Small" data-testid="toggle-dyn-content-button">Toggle dynamic content</MudButton>
+            </MudStack>
 
             @if (_isDynamicContentVisible) {
                 <MudAlert Severity="Severity.Info">

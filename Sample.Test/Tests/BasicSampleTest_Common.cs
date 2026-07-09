@@ -167,4 +167,35 @@ public class BasicSampleTest_Common : CustomPageTest
             Assert.That(sheetWeakRef.TryGetTarget(out _), Is.False);
         });
     }
+
+    [Test]
+    public Task Test_ToggleDynamicContent()
+    {
+        return TestAsync(test: async () =>
+        {
+            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
+            var handleRect = BottomSheetLocators.HandleRect(sheet);
+
+            await GotoBasicSamplePageAsync();
+
+            await Expect(sheet).Not.ToBeInViewportAsync();
+            await Expect(sheetLayout).ToContainClassAsync("closed");
+
+            await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
+            await sheet.WhenBoundsStable();
+            await Expect(sheetLayout).ToContainClassAsync("normal");
+            await Expect(sheet).ToHaveCSSAsync("transform", "matrix(1, 0, 0, 1, 0, 337.484)");
+
+            // show dynamic content
+            await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
+            await sheet.WhenBoundsStable();
+            await Expect(sheet).ToHaveCSSAsync("transform", "matrix(1, 0, 0, 1, 0, 287.469)");
+
+            // hide dynamic content
+            await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
+            await sheet.WhenBoundsStable();
+            await Expect(sheet).ToHaveCSSAsync("transform", "matrix(1, 0, 0, 1, 0, 337.484)");
+        });
+    }
 }
