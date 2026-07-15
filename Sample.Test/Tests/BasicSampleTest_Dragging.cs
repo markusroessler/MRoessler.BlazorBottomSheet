@@ -28,7 +28,6 @@ public class BasicSampleTest_Dragging : CustomPageTest
 
     [Test]
     [Category(CustomTestCategories.NeedsMobileBrowser)]
-    [Repeat(5)]
     public Task Test_SlowDragInDirection()
     {
         return TestAsync(async () =>
@@ -135,7 +134,6 @@ public class BasicSampleTest_Dragging : CustomPageTest
 
     [Test]
     [Category(CustomTestCategories.NeedsMobileBrowser)]
-    [Repeat(5)]
     public Task Test_FastDragInDirection()
     {
         return TestAsync(async () =>
@@ -181,7 +179,6 @@ public class BasicSampleTest_Dragging : CustomPageTest
 
     [Test]
     [Category(CustomTestCategories.NeedsMobileBrowser)]
-    [Repeat(5)]
     public Task Test_SlowDragToPosition()
     {
         return TestAsync(async () =>
@@ -226,7 +223,6 @@ public class BasicSampleTest_Dragging : CustomPageTest
 
     [Test]
     [Category(CustomTestCategories.NeedsMobileBrowser)]
-    [Repeat(5)]
     public Task Test_ScrollableDrag()
     {
         return TestAsync(async () =>
