@@ -7,7 +7,7 @@
 ```shell
 sudo systemctl enable --now docker    
 sudo systemctl enable --now docker.socket
-sudo docker run -it -v $(pwd):/MRoessler.BlazorBottomSheet:Z ghcr.io/markusroessler/github.actions.workflows-maui-linux:main
+sudo docker run -it --user "$(id -u):$(id -g)" -v $(pwd):/MRoessler.BlazorBottomSheet:Z ghcr.io/markusroessler/github.actions.workflows-maui-linux:main
 ```
 
 **Start existing container**
