@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Sections
 @inherits LayoutComponentBase
 
-<MudThemeProvider @ref="_themeProvider" Theme="@_theme" IsDarkMode="_isDarkMode" ObserveSystemThemeChange=@(_currentThemeIcon == AutoThemeIcon) />
+<MudThemeProvider @ref="_themeProvider" Theme="@_theme" IsDarkMode="_isDarkMode" ObserveSystemDarkModeChange=@(_currentThemeIcon == AutoThemeIcon) />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
