@@ -12,7 +12,6 @@ permissions:
   packages: read
 
 env:
-  DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
   NUGET_MROESSLER_GITHUB_PWD: ${{ secrets.NUGET_READ }}
 
@@ -23,15 +22,15 @@ jobs:
     container: ghcr.io/markusroessler/github.actions.workflows-maui-linux:main
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Configure Git
         run: bash .github/scripts/configure-git.sh
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: ${{ vars.DOTNET_VERSION }}
           cache: true
           cache-dependency-path: "*/*.csproj"
 
@@ -68,12 +67,12 @@ jobs:
         browser: [chromium, webkit, firefox]
 
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+      uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+        dotnet-version: ${{ vars.DOTNET_VERSION }}
         cache: true
         cache-dependency-path: "*/*.csproj"
 
@@ -138,15 +137,15 @@ jobs:
     if: always()
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
      
       - name: Configure Git
         run: bash .github/scripts/configure-git.sh
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: ${{ vars.DOTNET_VERSION }}
           cache: true
           cache-dependency-path: "*/*.csproj"
 
