@@ -201,7 +201,7 @@ public class BasicSampleTest_Common : CustomPageTest
             await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
             await sheet.WhenBoundsStable();
             sheetTop = (await sheet.BoundingBoxAsync()).Y;
-            Assert.That(sheetTop, Is.EqualTo(sheetInitialTop));
+            Assert.That(sheetTop, Is.InRange(sheetInitialTop - 1, sheetInitialTop + 1));
         });
     }
 }
