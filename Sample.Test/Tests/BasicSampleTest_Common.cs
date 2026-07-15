@@ -167,4 +167,41 @@ public class BasicSampleTest_Common : CustomPageTest
             Assert.That(sheetWeakRef.TryGetTarget(out _), Is.False);
         });
     }
+
+    [Test]
+    public Task Test_ToggleDynamicContent()
+    {
+        return TestAsync(test: async () =>
+        {
+            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
+            var handleRect = BottomSheetLocators.HandleRect(sheet);
+
+            await GotoBasicSamplePageAsync();
+
+            await Expect(sheet).Not.ToBeInViewportAsync();
+            await Expect(sheetLayout).ToContainClassAsync("closed");
+
+            await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
+            await sheet.WhenBoundsStable();
+            await Expect(sheetLayout).ToContainClassAsync("normal");
+
+            // var sheetInitialTop = await sheet.EvaluateAsync<double>("elm => elm.getBoundingClientRect().top");
+            // await Task.Delay(200);
+            var sheetInitialTop = (await sheet.BoundingBoxAsync()).Y;
+
+            // show dynamic content
+            await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
+            await sheet.WhenBoundsStable();
+            var sheetTop = (await sheet.BoundingBoxAsync()).Y;
+            Assert.That(sheetTop, Is.LessThan(sheetInitialTop));
+            Assert.That(sheetTop, Is.InRange(100, sheetInitialTop));
+
+            // hide dynamic content
+            await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
+            await sheet.WhenBoundsStable();
+            sheetTop = (await sheet.BoundingBoxAsync()).Y;
+            Assert.That(sheetTop, Is.InRange(sheetInitialTop - 1, sheetInitialTop + 1));
+        });
+    }
 }

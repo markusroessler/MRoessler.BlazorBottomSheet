@@ -38,6 +38,8 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
 
     public BottomSheet? BottomSheet { get; private set; }
 
+    private bool _isDynamicContentVisible;
+
 
     protected override void OnInitialized()
     {
@@ -48,10 +50,18 @@ public sealed partial class BasicSample : ComponentBase, IDisposable
         TestHelper.ActiveBasicSamplePages[_instanceId] = this;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (BottomSheet != null)
+            await BottomSheet.RefreshHeightAsync();
+    }
+
     private void ViewModel_StateChanged() => StateHasChanged();
 
 
     private void ToggleButtonSheetVisible() => _isBottomSheetVisible = !_isBottomSheetVisible;
+    private void ToggleDynamicContentVisible() => _isDynamicContentVisible = !_isDynamicContentVisible;
 
     private void ToggleButtonSheetOpen() => _expansion = _expansion == BottomSheetExpansion.Closed ? BottomSheetExpansion.Normal : BottomSheetExpansion.Closed;
 

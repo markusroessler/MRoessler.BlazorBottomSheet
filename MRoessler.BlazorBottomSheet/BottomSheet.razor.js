@@ -22,10 +22,14 @@ const DraggingStyleClass = "dragging"
 const SkipTranslateTransitionStyleClass = 'skip-translate-transition'
 const FullHeightStyleClass = 'full-height'
 const DragInDirectionMinDistance = 50
+const DragStartMinDistance = 10
 const NearestSnapPointLeeway = 100
 const FastDragMinSpeed = 1000
 const FastDragMinDistance = 100
 const TranslateAnimationDefault = true
+const DragStateNone = 0
+const DragStateInitiated = 1
+const DragStateRunning = 2
 
 
 /**
@@ -79,8 +83,8 @@ export class BottomSheet extends EventTarget {
     /** @type {DotNetObject} */
     #razorComp
 
-    /** @type {boolean} */
-    #isDragging
+    /** @type {number} */
+    #dragState = DragStateNone
 
     /** @type {number} */
     #minTranslateYOnDragStart
@@ -162,8 +166,8 @@ export class BottomSheet extends EventTarget {
 
     /** @param msg {String} */
     #logDebug(msg) {
-        // if (msg.startsWith('dispose'))
-        // console.debug(msg)
+        // if (msg.startsWith('refreshHeight'))
+        //     console.debug(msg)
     }
 
     /** @returns {HTMLElement} the sheet element */
@@ -173,7 +177,7 @@ export class BottomSheet extends EventTarget {
     /** @param evt {TouchEvent} */
     #handleTouchStart(evt) {
         let firstTouch = evt.touches[0]
-        this.#handleDragStart(evt, firstTouch.clientY)
+        this.#handlePointerDown(evt, firstTouch.clientY)
     }
 
     /** @param evt {MouseEvent} */
@@ -181,19 +185,20 @@ export class BottomSheet extends EventTarget {
         this.#logDebug("handleMouseDown")
 
         if (!this.#hasSelectableText(evt.target)) /* let user select text */
-            this.#handleDragStart(evt, evt.clientY)
+            this.#handlePointerDown(evt, evt.clientY)
     }
 
     /** @param clientY {number} */
-    #handleDragStart(evt, clientY) {
-        this.#logDebug(`handleDragStart - _isDragging: ${this.#isDragging}`)
-        if (this.#isDragging)
-            return
+    #handlePointerDown(evt, clientY) {
+        this.#logDebug(`handlePointerDown - dragState: ${this.#dragState}`)
+
+        if (this.#dragState > DragStateNone)
+            return;
 
         this.#isTouchDeviceOnDragStart = window.matchMedia("(pointer: coarse)").matches;
         this.#scrollableTouchTarget = this.#findScrollable(evt)
 
-        this.#isDragging = true
+        this.#dragState = DragStateInitiated
         this.#sheetYOnDragStart = this.#sheetElm.getBoundingClientRect().y
         this.#dragLastTouchY = clientY
 
@@ -206,29 +211,35 @@ export class BottomSheet extends EventTarget {
     #handleTouchMove(evt) {
         if (this.#isTouchDeviceOnDragStart) {
             const firstTouch = evt.touches[0]
-            this.#handleDragMove(evt, firstTouch.clientY)
+            this.#handlePointerMove(evt, firstTouch.clientY)
         }
     }
 
     /** @param evt {MouseEvent} */
     #handleMouseMove(evt) {
         if (!this.#isTouchDeviceOnDragStart)
-            this.#handleDragMove(evt, evt.clientY)
+            this.#handlePointerMove(evt, evt.clientY)
     }
 
     /** 
      * @param event {UIEvent}
      * @param clientY {number} 
      **/
-    #handleDragMove(event, clientY) {
-        this.#logDebug(`handleDragMove - _isDragging: ${this.#isDragging}`)
-        if (!this.#isDragging)
+    #handlePointerMove(event, clientY) {
+        this.#logDebug(`handlePointerMove - dragState: ${this.#dragState}`)
+        if (this.#dragState < DragStateInitiated)
             return
 
         const dragDeltaY = clientY - this.#dragLastTouchY
-        this.#dragSpeed = dragDeltaY / (Date.now() - this.#dragLastTime) * 1000
-        this.#dragLastTouchY = clientY
+        this.#dragSpeed = this.#dragState != DragStateRunning ? 0 : dragDeltaY / (Date.now() - this.#dragLastTime) * 1000
         this.#dragLastTime = Date.now()
+
+        this.#logDebug(`dragDeltaY: ${dragDeltaY}`)
+        if (this.#dragState == DragStateInitiated && Math.abs(dragDeltaY) > DragStartMinDistance)
+            this.#dragState = DragStateRunning
+
+        if (this.#dragState == DragStateRunning)
+            this.#dragLastTouchY = clientY
 
         const oldSheetTranslateY = this.#sheetTranslateY
         const translateY = this.#sheetTranslateY + dragDeltaY
@@ -238,12 +249,15 @@ export class BottomSheet extends EventTarget {
             if (event.cancelable || this.#layoutElm.classList.contains(DraggingStyleClass)) {
                 if (event.cancelable && window.TouchEvent && event instanceof TouchEvent)
                     event.preventDefault()
-                this.#layoutElm.classList.add(DraggingStyleClass)
-                const clampedTranslateY = this.#clamp(translateY, this.#minTranslateYOnDragStart, this.#maxTranslateYOnDragStart)
-                this.#updateTranslateY(clampedTranslateY)
+                if (this.#dragState == DragStateRunning) {
+                    this.#layoutElm.classList.add(DraggingStyleClass)
+                    const clampedTranslateY = this.#clamp(translateY, this.#minTranslateYOnDragStart, this.#maxTranslateYOnDragStart)
+                    this.#updateTranslateY(clampedTranslateY)
+                }
             } else {
                 // Chrome Android: cancel the drag when the TouchEvent can't be canceled - the browser is already scrolling and this leads to laggy drag animation otherwise
-                this.#handleDragStop(event)
+                this.#logDebug('handlePointerMove - canceling drag')
+                this.#handlePointerStop(event)
             }
         }
 
@@ -253,7 +267,7 @@ export class BottomSheet extends EventTarget {
             this.#scrollableTouchTarget.scrollTop -= unhandledDragDelta
         }
 
-        this.#logDebug(`handleDragMove - _dragSpeed: ${this.#dragSpeed}, shouldDragSheet: ${shouldDragSheet}`)
+        this.#logDebug(`handlePointerMove - _dragSpeed: ${this.#dragSpeed}, shouldDragSheet: ${shouldDragSheet}`)
     }
 
     #clamp(val, min, max) {
@@ -263,35 +277,36 @@ export class BottomSheet extends EventTarget {
     /** @param evt {TouchEvent} */
     #handleTouchEnd(evt) {
         if (this.#isTouchDeviceOnDragStart)
-            this.#handleDragStop(evt)
+            this.#handlePointerStop(evt)
     }
 
     /** @param evt {MouseEvent} */
     #handleMouseUp(evt) {
         if (!this.#isTouchDeviceOnDragStart)
-            this.#handleDragStop(evt)
+            this.#handlePointerStop(evt)
     }
 
-    async #handleDragStop(evt) {
-        this.#logDebug(`handleDragStop - evt: ${evt}, _isDragging: ${this.#isDragging}`)
-        if (!this.#isDragging)
-            return
+    async #handlePointerStop(evt) {
+        this.#logDebug(`handlePointerStop - evt: ${evt}, dragState: ${this.#dragState}`)
 
-        this.#isDragging = false
-        this.#layoutElm.classList.remove(DraggingStyleClass)
+        if (this.#dragState == DragStateRunning) {
+            this.#layoutElm.classList.remove(DraggingStyleClass)
 
-        const currentExpansion = this.#getCurrentExpansion()
-        const direction = this.#computeDragMoveDirection()
-        const nearestSnapPointInDirection = this.#computeNearestSnapPointInDirection(direction)
-        const nearestSnapPointAtDragPos = this.#computeNearestSnapPointAtPos()
-        const fastDragDirection = this.#computeFastDragDirection()
+            const currentExpansion = this.#getCurrentExpansion()
+            const direction = this.#computeDragMoveDirection()
+            const nearestSnapPointInDirection = this.#computeNearestSnapPointInDirection(direction)
+            const nearestSnapPointAtDragPos = this.#computeNearestSnapPointAtPos()
+            const fastDragDirection = this.#computeFastDragDirection()
 
-        let newExpansion = this.#computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos, fastDragDirection)
-        newExpansion = this.#coerceExpansion(newExpansion)
-        await this.#updateExpansion(newExpansion)
+            let newExpansion = this.#computeExpansion(nearestSnapPointInDirection, nearestSnapPointAtDragPos, fastDragDirection)
+            newExpansion = this.#coerceExpansion(newExpansion)
+            await this.#updateExpansion(newExpansion)
 
-        this.#logDebug(
-            `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, fastDragDirection: ${fastDragDirection})`)
+            this.#logDebug(
+                `Updated expansion after drag-end: ${newExpansion} (currentExpansion: ${currentExpansion}, nearestSnapPointInDirection: ${nearestSnapPointInDirection}, nearestSnapPointAtDragPos: ${nearestSnapPointAtDragPos}, fastDragDirection: ${fastDragDirection})`)
+        }
+
+        this.#dragState = DragStateNone
     }
 
     /**
@@ -576,7 +591,18 @@ export class BottomSheet extends EventTarget {
     #handleLayoutResize() {
         this.#logDebug("handleLayoutResize")
         // skip translate animation to prevent layout issues when virtual keyboard is shown (Android) 
-        this.#updateExpansion(this.#getCurrentExpansion(), false)
+        this.#updateTransform(this.#getCurrentExpansion(), false)
+    }
+
+    /**
+     * Recomputes the height for the current expansion. 
+     * Can be invoked when the content height changed dynamically.
+     */
+    refreshHeight() {
+        this.#logDebug(`refreshHeight - dragState: ${this.#dragState}`);
+        if (this.#dragState <= DragStateInitiated) {
+            this.#updateTransform(this.#getCurrentExpansion(), true)
+        }
     }
 
     /**
