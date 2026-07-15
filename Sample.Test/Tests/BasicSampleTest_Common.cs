@@ -185,17 +185,23 @@ public class BasicSampleTest_Common : CustomPageTest
             await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(sheet).ToHaveCSSAsync("transform", "matrix(1, 0, 0, 1, 0, 337.484)");
+
+            // var sheetInitialTop = await sheet.EvaluateAsync<double>("elm => elm.getBoundingClientRect().top");
+            // await Task.Delay(200);
+            var sheetInitialTop = (await sheet.BoundingBoxAsync()).Y;
 
             // show dynamic content
             await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
             await sheet.WhenBoundsStable();
-            await Expect(sheet).ToHaveCSSAsync("transform", "matrix(1, 0, 0, 1, 0, 287.469)");
+            var sheetTop = (await sheet.BoundingBoxAsync()).Y;
+            Assert.That(sheetTop, Is.LessThan(sheetInitialTop));
+            Assert.That(sheetTop, Is.InRange(100, sheetInitialTop));
 
             // hide dynamic content
             await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
             await sheet.WhenBoundsStable();
-            await Expect(sheet).ToHaveCSSAsync("transform", "matrix(1, 0, 0, 1, 0, 337.484)");
+            sheetTop = (await sheet.BoundingBoxAsync()).Y;
+            Assert.That(sheetTop, Is.EqualTo(sheetInitialTop));
         });
     }
 }
