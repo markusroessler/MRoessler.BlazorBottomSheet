@@ -31,7 +31,7 @@ public class DynamicContentSampleTest : CustomPageTest
             await Expect(sheetLayout).ToContainClassAsync("closed");
 
             await DynamicContentSampleLocators.OpenCloseButton(Page).ClickAsync();
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             await Expect(sheetLayout).ToContainClassAsync("minimized");
             await Expect(revealedContent).ToHaveCSSAsync("opacity", "0");
             {
@@ -41,7 +41,7 @@ public class DynamicContentSampleTest : CustomPageTest
 
             // drag up to normal expansion
             await bsHandle.PanAsync(0, -Page.ViewportSize.Height / 12, stepDelayMs: 0, steps: 100, useMouseEvents: !ContextOptions().IsMobile.GetValueOrDefault());
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             await Expect(sheetLayout).ToContainClassAsync("normal");
             await Expect(revealedContent).ToHaveCSSAsync("opacity", "1");
             {

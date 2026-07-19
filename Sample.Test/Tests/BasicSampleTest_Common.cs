@@ -44,14 +44,14 @@ public class BasicSampleTest_Common : CustomPageTest
             var syncContextDispatcher = samplePage.SyncContextDispatcher;
 
             syncContextDispatcher.Invoke(() => basicSampleViewModel.SetIsOpen(true));
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
             await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).ToBeInViewportAsync();
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
 
             syncContextDispatcher.Invoke(() => basicSampleViewModel.SetIsOpen(false));
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             await Expect(sheet).Not.ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("closed");
         });
@@ -75,17 +75,17 @@ public class BasicSampleTest_Common : CustomPageTest
             await MainLayoutInteractions.SelectLightModeAsync(Page);
 
             await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
 
             await Expect(sheetLayout).ToContainClassAsync("normal");
             await BasicSampleAssertions.ExpectLightColorSchemeAsync(sheetLayout);
 
             await BasicSampleLocators.CloseSheetButton(sheet).ClickAsync();
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             await MainLayoutInteractions.SelectDarkModeAsync(Page);
 
             await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             await BasicSampleAssertions.ExpectDarkColorSchemeAsync(sheetLayout);
         });
     }
@@ -187,7 +187,7 @@ public class BasicSampleTest_Common : CustomPageTest
             await Expect(sheetLayout).ToContainClassAsync("closed");
 
             await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             await Expect(sheetLayout).ToContainClassAsync("normal");
 
             // var sheetInitialTop = await sheet.EvaluateAsync<double>("elm => elm.getBoundingClientRect().top");
@@ -196,14 +196,14 @@ public class BasicSampleTest_Common : CustomPageTest
 
             // show dynamic content
             await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             var sheetTop = (await sheet.BoundingBoxAsync()).Y;
             Assert.That(sheetTop, Is.LessThan(sheetInitialTop));
             Assert.That(sheetTop, Is.InRange(100, sheetInitialTop));
 
             // hide dynamic content
             await BasicSampleLocators.ToggleDynamicContentButton(Page).ClickAsync();
-            await sheet.WhenBoundsStable();
+            await sheet.ExpectBoundsToBeStable();
             sheetTop = (await sheet.BoundingBoxAsync()).Y;
             Assert.That(sheetTop, Is.InRange(sheetInitialTop - 1, sheetInitialTop + 1));
         });

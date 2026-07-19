@@ -38,28 +38,28 @@ public class MultipleSheetsSampleTest : CustomPageTest
             await GetOpenCloseButton1().ClickAsync();
 
             // open and close first sheet
-            await sheet1.WhenBoundsStable();
+            await sheet1.ExpectBoundsToBeStable();
             await Expect(sheet1).ToBeInViewportAsync();
             await Expect(sheetLayout1).ToContainClassAsync("minimized");
             await Expect(MultipleSheetsSampeLocators.Sheet1HeaderText(sheet1)).ToBeInViewportAsync();
             await Expect(MultipleSheetsSampeLocators.Sheet1BodyText(sheet1)).Not.ToBeInViewportAsync();
 
             await BottomSheetLocators.BackgroundOverlay(sheetLayout1).ClickAsync();
-            await sheet1.WhenBoundsStable();
+            await sheet1.ExpectBoundsToBeStable();
             await Expect(sheet1).Not.ToBeInViewportAsync();
             await Expect(sheetLayout1).ToContainClassAsync("closed");
 
             await GetOpenCloseButton2().ClickAsync();
 
             // open and close second sheet
-            await sheet2.WhenBoundsStable();
+            await sheet2.ExpectBoundsToBeStable();
             await Expect(sheet2).ToBeInViewportAsync();
             await Expect(sheetLayout2).ToContainClassAsync("minimized");
             await Expect(MultipleSheetsSampeLocators.Sheet2HeaderText(sheet2)).ToBeInViewportAsync();
             await Expect(MultipleSheetsSampeLocators.Sheet2BodyText(sheet2)).Not.ToBeInViewportAsync();
 
             await BottomSheetLocators.BackgroundOverlay(sheetLayout2).ClickAsync();
-            await sheet2.WhenBoundsStable();
+            await sheet2.ExpectBoundsToBeStable();
             await Expect(sheet2).Not.ToBeInViewportAsync();
             await Expect(sheetLayout2).ToContainClassAsync("closed");
         });
