@@ -530,7 +530,7 @@ export class BottomSheet extends EventTarget {
     /** @param expansionMarker {HTMLElement} */
     #computeSheetTranslateYByMarker(expansionMarker) {
         const sheetBounds = this.#sheetElm.getBoundingClientRect()
-        return Math.max(0, sheetBounds.bottom - expansionMarker.getBoundingClientRect().bottom)
+        return Math.max(0, sheetBounds.bottom - expansionMarker.getBoundingClientRect().top)
     }
 
     /**
