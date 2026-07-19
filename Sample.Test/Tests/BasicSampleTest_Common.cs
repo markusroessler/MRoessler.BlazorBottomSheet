@@ -47,7 +47,7 @@ public class BasicSampleTest_Common : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).ToBeInViewportAsync();
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
 
             syncContextDispatcher.Invoke(() => basicSampleViewModel.SetIsOpen(false));

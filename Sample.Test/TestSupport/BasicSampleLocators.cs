@@ -19,4 +19,8 @@ public static class BasicSampleLocators
     public static ILocator OpenCloseButton(IPage page) => page.GetByTestId("open-close-button");
 
     public static ILocator ToggleDynamicContentButton(IPage page) => page.GetByTestId("toggle-dyn-content-button");
+
+    public static ILocator HeaderText(ILocator parent) => parent.GetByTestId("sample-bs-header-text");
+
+    public static ILocator ScrollableAreaHeaderText(ILocator parent) => parent.GetByTestId("scrollable-area-header-text");
 }

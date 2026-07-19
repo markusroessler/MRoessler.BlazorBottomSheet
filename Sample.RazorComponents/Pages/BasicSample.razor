@@ -31,7 +31,7 @@
 >
     <div style="height: 100%;">
         <div style="height: 100%; display: flex; flex-direction: column;">
-            <MudText Typo="Typo.h6" Class="my-5">Header <MudText Typo="Typo.subtitle2" Inline>(visible in all states)</MudText></MudText>
+            <MudText Typo="Typo.h6" Class="my-5" data-testid="sample-bs-header-text">Header <MudText Typo="Typo.subtitle2" Inline>(visible in all states)</MudText></MudText>
             <MinimizedExpansionMarker />
 
             <MudText Typo="Typo.h6">Body <MudText Typo="Typo.subtitle2" Inline>(visible when expansion >= Normal)</MudText></MudText>
@@ -56,7 +56,7 @@
 
             <MudCheckBox Label="IsOpen" @bind-Value:get=ViewModel.State.IsOpen @bind-Value:set=ViewModel.SetIsOpen  />
             
-            <MudText Typo="Typo.h6" Class="mt-5">Scrollable area</MudText>
+            <MudText Typo="Typo.h6" Class="mt-5" data-testid="scrollable-area-header-text">Scrollable area</MudText>
             <NormalExpansionMarker style="transform: translateY(10em);" />
 
             <div style="overflow-y: scroll; min-height: 20em;" data-testid="scrollable">

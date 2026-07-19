@@ -47,7 +47,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).ToBeInViewportAsync();
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
 
             // drag up to maximized expansion
@@ -61,20 +61,20 @@ public class BasicSampleTest_Dragging : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("normal");
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).ToBeInViewportAsync();
 
             // drag down to minimized expansion
             await BottomSheetLocators.Handle(sheet).PanAsync(0, Page.ViewportSize.Height / 4, stepDelayMs: SlowDragStepDelayMs);
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("minimized");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).Not.ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).Not.ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.HeaderText(sheet)).ToBeInViewportAsync();
 
             // drag down to closed expansion
             await BottomSheetLocators.Handle(sheet).PanAsync(0, Page.ViewportSize.Height / 6, stepDelayMs: SlowDragStepDelayMs);
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("closed");
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet)).Not.ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.HeaderText(sheet)).Not.ToBeInViewportAsync();
             await Expect(sheet).Not.ToBeInViewportAsync();
 
         });
@@ -100,7 +100,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).ToBeInViewportAsync();
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
 
             // drag up to maximized expansion
@@ -114,20 +114,20 @@ public class BasicSampleTest_Dragging : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("normal");
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).ToBeInViewportAsync();
 
             // drag down to minimized expansion
             await BottomSheetLocators.Handle(sheet).PanAsync(0, Page.ViewportSize.Height / 3, stepDelayMs: SlowDragStepDelayMs, useMouseEvents: true);
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("minimized");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).Not.ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).Not.ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.HeaderText(sheet)).ToBeInViewportAsync();
 
             // drag down to closed expansion
             await BottomSheetLocators.Handle(sheet).PanAsync(0, Page.ViewportSize.Height / 3, stepDelayMs: SlowDragStepDelayMs, useMouseEvents: true);
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("closed");
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet)).Not.ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.HeaderText(sheet)).Not.ToBeInViewportAsync();
             await Expect(sheet).Not.ToBeInViewportAsync();
         });
     }
@@ -154,15 +154,15 @@ public class BasicSampleTest_Dragging : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).ToBeInViewportAsync();
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
 
             // slow drag to minimized expansion
             await BottomSheetLocators.Handle(sheet).PanAsync(0, Page.ViewportSize.Height / 4, stepDelayMs: SlowDragStepDelayMs);
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("minimized");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).Not.ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).Not.ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.HeaderText(sheet)).ToBeInViewportAsync();
 
             // fast drag to maximized expansion
             await BottomSheetLocators.Handle(sheet).PanAsync(0, -Page.ViewportSize.Height / 2, stepDelayMs: FastDragStepDelayMs);
@@ -174,8 +174,8 @@ public class BasicSampleTest_Dragging : CustomPageTest
             await BottomSheetLocators.Handle(sheet).PanAsync(0, Page.ViewportSize.Height / 2, stepDelayMs: FastDragStepDelayMs);
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("minimized");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).Not.ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).Not.ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.HeaderText(sheet)).ToBeInViewportAsync();
         });
     }
 
@@ -200,7 +200,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
             await sheet.WhenBoundsStable();
             await Expect(sheet).ToBeInViewportAsync();
             await Expect(sheetLayout).ToContainClassAsync("normal");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).ToBeInViewportAsync();
             await Expect(BasicSampleLocators.Footer(sheet)).Not.ToBeInViewportAsync();
 
             // drag up to maximized expansion
@@ -213,8 +213,8 @@ public class BasicSampleTest_Dragging : CustomPageTest
             await BottomSheetLocators.Handle(sheet).PanAsync(0, Page.ViewportSize.Height - 100, steps: 2, stepDelayMs: SlowDragStepDelayMs);
             await sheet.WhenBoundsStable();
             await Expect(sheetLayout).ToContainClassAsync("minimized");
-            await Expect(BottomSheetLocators.NormalMarker(sheet)).Not.ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet)).ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.ScrollableAreaHeaderText(sheet)).Not.ToBeInViewportAsync();
+            await Expect(BasicSampleLocators.HeaderText(sheet)).ToBeInViewportAsync();
 
             // drag up to maximized expansion
             await BottomSheetLocators.Handle(sheet).PanAsync(0, -Page.ViewportSize.Height, steps: 2, stepDelayMs: SlowDragStepDelayMs);
