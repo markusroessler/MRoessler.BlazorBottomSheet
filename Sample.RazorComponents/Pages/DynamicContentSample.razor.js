@@ -75,7 +75,7 @@ export class DynamicContentSample {
     /** @param msg {String} */
     #logDebug(msg) {
         // if (msg.startsWith('refreshHeight'))
-        console.debug(msg)
+        // console.debug(msg)
     }
 
     dispose() {
