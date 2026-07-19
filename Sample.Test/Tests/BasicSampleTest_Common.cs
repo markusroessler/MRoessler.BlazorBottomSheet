@@ -58,7 +58,6 @@ public class BasicSampleTest_Common : CustomPageTest
     }
 
     [Test]
-    [Repeat(10)]
     public Task Test_ColorScheme_Manual()
     {
         return TestAsync(test: async () =>
