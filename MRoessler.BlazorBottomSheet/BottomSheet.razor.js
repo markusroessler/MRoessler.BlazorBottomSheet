@@ -173,6 +173,11 @@ export class BottomSheet extends EventTarget {
     /** @returns {HTMLElement} the sheet element */
     get sheetElement() { return this.#sheetElm }
 
+    /**
+    * @returns {Number} the translateY transformation in pixels that was applied on the sheet
+    */
+    get sheetTranslateY() { return this.#sheetTranslateY }
+
 
     /** @param evt {TouchEvent} */
     #handleTouchStart(evt) {

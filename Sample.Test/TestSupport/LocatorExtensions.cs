@@ -94,7 +94,7 @@ public static class LocatorExtensions
     public static async Task MouseUpAsync(this ILocator locator) => await locator.DispatchEventAsync("mouseup");
 
 
-    public static async Task WhenBoundsStable(this ILocator locator)
+    public static async Task ExpectBoundsToBeStable(this ILocator locator)
     {
         var bounds = await locator.BoundingBoxAsync();
         await Task.Delay(200);
