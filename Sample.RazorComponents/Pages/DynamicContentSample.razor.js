@@ -11,6 +11,9 @@ export class DynamicContentSample {
     /** @type {BottomSheet} */
     #sheet
 
+    /** @type {number} */
+    #sheetTranslateY
+
     /** @type {HTMLElement} */
     #revealedElm
 
@@ -28,13 +31,17 @@ export class DynamicContentSample {
         this.#sheet = sheet
         this.#revealedElm = rootElm.querySelector(".revealed-content");
 
-        sheet.addEventListener(SheetMoveEventName, (evt) => this.#layoutRevealedContent(evt), { passive: true, signal: this.#abortController.signal })
+        sheet.addEventListener(SheetMoveEventName, (evt) => this.#layoutRevealedContent(evt.sheetTranslateY), { passive: true, signal: this.#abortController.signal })
+        this.#layoutRevealedContent(sheet.sheetTranslateY)
     }
 
     /**
-     * @param evt {BottomSheetMoveEvent}
+     * @param sheetTranslateY {number}
      */
-    #layoutRevealedContent(evt) {
+    #layoutRevealedContent(sheetTranslateY) {
+        this.#logDebug(`layoutRevealedContent - sheetTranslateY: ${sheetTranslateY}, #animationFramePending: ${this.#animationFramePending}`)
+        this.#sheetTranslateY = sheetTranslateY
+
         if (this.#animationFramePending)
             return;
         this.#animationFramePending = true
@@ -47,9 +54,11 @@ export class DynamicContentSample {
 
             // first reveal by increasing height and then by opacity
             // mainContent is the element below the revealed element
-            const mainContentTranslateYUnbounded = viewportHeight - evt.sheetTranslateY - revealedElmRelativeBottom
+            const mainContentTranslateYUnbounded = viewportHeight - this.#sheetTranslateY - revealedElmRelativeBottom
             const mainContentTranslateY = this.#clamp(mainContentTranslateYUnbounded, 0, revealedElmBounds.height)
             const revealedElmOpacity = this.#clamp((mainContentTranslateYUnbounded - revealedElmBounds.height) / (viewportHeight / 10), 0.0, 1.0)
+
+            this.#logDebug(`layoutRevealedContent animation frame - #sheetTranslateY: ${this.#sheetTranslateY}, mainContentTranslateYUnbounded: ${mainContentTranslateYUnbounded}, revealedElmBounds.height: ${revealedElmBounds.height}, viewportHeight: ${viewportHeight}`)
 
             this.#rootElm.style.setProperty("--main-content-transform", `translateY(${mainContentTranslateY}px)`)
             this.#rootElm.style.setProperty("--expansion-marker-transform", `translateY(${-mainContentTranslateY}px)`)
@@ -61,6 +70,12 @@ export class DynamicContentSample {
 
     #clamp(val, min, max) {
         return Math.max(Math.min(val, max), min)
+    }
+
+    /** @param msg {String} */
+    #logDebug(msg) {
+        // if (msg.startsWith('refreshHeight'))
+        console.debug(msg)
     }
 
     dispose() {

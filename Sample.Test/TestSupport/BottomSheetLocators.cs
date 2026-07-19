@@ -10,8 +10,10 @@ public static class BottomSheetLocators
 {
     private const string SheetLayoutTestId = "bottom-sheet-layout";
 
+    // TODO move to page locator classes
     public static ILocator SheetLayout(ILocator parent) => parent.GetByTestId(SheetLayoutTestId);
 
+    // TODO move to page locator classes
     public static ILocator SheetLayout(IPage parent) => parent.GetByTestId(SheetLayoutTestId);
 
     public static ILocator BottomSheet(ILocator parent) => parent.GetByTestId("bottom-sheet");

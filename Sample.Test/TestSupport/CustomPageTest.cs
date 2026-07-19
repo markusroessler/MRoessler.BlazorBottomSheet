@@ -133,7 +133,7 @@ public abstract class CustomPageTest : PageTest
         var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "Screenshots");
         Directory.CreateDirectory(dir);
 
-        var fileName = $"failure_{TestContext.CurrentContext.Test.Name}.png";
+        var fileName = $"failure_{TestContext.CurrentContext.Test.FullName}.png";
         var path = Path.Combine(dir, fileName);
         await Page.ScreenshotAsync(new() { Path = path });
         // TestContext.AddTestAttachment(path);
