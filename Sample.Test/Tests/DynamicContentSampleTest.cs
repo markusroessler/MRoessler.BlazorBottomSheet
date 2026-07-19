@@ -19,7 +19,7 @@ public class DynamicContentSampleTest : CustomPageTest
     {
         return TestAsync(async () =>
         {
-            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheetLayout = DynamicContentSampleLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
             var revealedContent = DynamicContentSampleLocators.RevealedContent(sheet);
             var mainContent = DynamicContentSampleLocators.MainContent(sheet);

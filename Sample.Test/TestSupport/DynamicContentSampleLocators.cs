@@ -8,6 +8,12 @@ namespace MRoessler.BlazorBottomSheet.Sample.Test.TestSupport;
 
 public static class DynamicContentSampleLocators
 {
+    private const string SheetLayoutTestId = "bottom-sheet-layout";
+
+    public static ILocator SheetLayout(ILocator parent) => parent.GetByTestId(SheetLayoutTestId);
+
+    public static ILocator SheetLayout(IPage parent) => parent.GetByTestId(SheetLayoutTestId);
+
     public static ILocator OpenCloseButton(IPage page) => page.GetByTestId("open-close-button");
 
     public static ILocator RevealedContent(ILocator locator) => locator.GetByTestId("revealed-content");

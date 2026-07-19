@@ -32,7 +32,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     {
         return TestAsync(async () =>
         {
-            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheetLayout = BasicSampleLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
 
             await GotoBasicSamplePageAsync();
@@ -85,7 +85,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     {
         return TestAsync(test: async () =>
         {
-            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheetLayout = BasicSampleLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
 
             await GotoBasicSamplePageAsync();
@@ -138,7 +138,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     {
         return TestAsync(async () =>
         {
-            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheetLayout = BasicSampleLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
 
             await GotoBasicSamplePageAsync();
@@ -183,7 +183,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     {
         return TestAsync(async () =>
         {
-            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheetLayout = BasicSampleLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
 
             await GotoBasicSamplePageAsync();
@@ -227,7 +227,7 @@ public class BasicSampleTest_Dragging : CustomPageTest
     {
         return TestAsync(async () =>
         {
-            var sheetLayout = BottomSheetLocators.SheetLayout(Page);
+            var sheetLayout = BasicSampleLocators.SheetLayout(Page);
             var sheet = BottomSheetLocators.BottomSheet(sheetLayout);
 
             await GotoBasicSamplePageAsync();
