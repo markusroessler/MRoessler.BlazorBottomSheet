@@ -58,6 +58,7 @@ public class BasicSampleTest_Common : CustomPageTest
     }
 
     [Test]
+    [Repeat(10)]
     public Task Test_ColorScheme_Manual()
     {
         return TestAsync(test: async () =>
@@ -75,13 +76,17 @@ public class BasicSampleTest_Common : CustomPageTest
             await MainLayoutInteractions.SelectLightModeAsync(Page);
 
             await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
+            await sheet.WhenBoundsStable();
 
             await Expect(sheetLayout).ToContainClassAsync("normal");
             await BasicSampleAssertions.ExpectLightColorSchemeAsync(sheetLayout);
 
             await BasicSampleLocators.CloseSheetButton(sheet).ClickAsync();
+            await sheet.WhenBoundsStable();
             await MainLayoutInteractions.SelectDarkModeAsync(Page);
+
             await BasicSampleLocators.OpenCloseButton(Page).ClickAsync();
+            await sheet.WhenBoundsStable();
             await BasicSampleAssertions.ExpectDarkColorSchemeAsync(sheetLayout);
         });
     }
