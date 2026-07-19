@@ -41,8 +41,8 @@ public class MultipleSheetsSampleTest : CustomPageTest
             await sheet1.WhenBoundsStable();
             await Expect(sheet1).ToBeInViewportAsync();
             await Expect(sheetLayout1).ToContainClassAsync("minimized");
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet1)).ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.NormalMarker(sheet1)).Not.ToBeInViewportAsync();
+            await Expect(MultipleSheetsSampeLocators.Sheet1HeaderText(sheet1)).ToBeInViewportAsync();
+            await Expect(MultipleSheetsSampeLocators.Sheet1BodyText(sheet1)).Not.ToBeInViewportAsync();
 
             await BottomSheetLocators.BackgroundOverlay(sheetLayout1).ClickAsync();
             await sheet1.WhenBoundsStable();
@@ -55,8 +55,8 @@ public class MultipleSheetsSampleTest : CustomPageTest
             await sheet2.WhenBoundsStable();
             await Expect(sheet2).ToBeInViewportAsync();
             await Expect(sheetLayout2).ToContainClassAsync("minimized");
-            await Expect(BottomSheetLocators.MinimizedMarker(sheet2)).ToBeInViewportAsync();
-            await Expect(BottomSheetLocators.NormalMarker(sheet2)).Not.ToBeInViewportAsync();
+            await Expect(MultipleSheetsSampeLocators.Sheet2HeaderText(sheet2)).ToBeInViewportAsync();
+            await Expect(MultipleSheetsSampeLocators.Sheet2BodyText(sheet2)).Not.ToBeInViewportAsync();
 
             await BottomSheetLocators.BackgroundOverlay(sheetLayout2).ClickAsync();
             await sheet2.WhenBoundsStable();
