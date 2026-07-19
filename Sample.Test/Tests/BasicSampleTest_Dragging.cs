@@ -251,21 +251,21 @@ public class BasicSampleTest_Dragging : CustomPageTest
             var (lastTouchX, lastTouchY) = await scrollable.TouchStartAsync();
             (lastTouchX, lastTouchY) = await scrollable.TouchMoveAsync(lastTouchX, lastTouchY, 0, (double)-sheetBounds.Y - Overscroll, stepDelayMs: SlowDragStepDelayMs);
             await sheet.WhenBoundsStable();
-            await sheet.AssertClientYAsync(0);
-            var scrollTop = await scrollable.AssertScrollTopInRangeAsync(Overscroll - 1, Overscroll);
+            await sheet.ExpectClientYToBeAsync(0);
+            var scrollTop = await scrollable.ExpectScrollTopToBeInRangeAsync(Overscroll - 1, Overscroll);
 
             // scroll down
             (lastTouchX, lastTouchY) = await scrollable.TouchMoveAsync(lastTouchX, lastTouchY, 0, scrollTop, stepDelayMs: SlowDragStepDelayMs);
             await sheet.WhenBoundsStable();
-            await sheet.AssertClientYAsync(0);
-            await scrollable.AssertScrollTopInRangeAsync(0, 1);
+            await sheet.ExpectClientYToBeAsync(0);
+            await scrollable.ExpectScrollTopToBeInRangeAsync(0, 1);
 
             // drag down a bit (but stay near maximized)
             const int DragDownDistance = 100;
             (lastTouchX, lastTouchY) = await scrollable.TouchMoveAsync(lastTouchX, lastTouchY, DragDownDistance, scrollTop, stepDelayMs: SlowDragStepDelayMs);
             await sheet.WhenBoundsStable();
-            await sheet.AssertClientYInRangeAsync(DragDownDistance - 1, DragDownDistance);
-            await scrollable.AssertScrollTopAsync(0);
+            await sheet.ExpectClientYToBeInRangeAsync(DragDownDistance - 1, DragDownDistance);
+            await Expect(scrollable).ToHaveJSPropertyAsync("scrollTop", 0);
 
             // end the drag and check expansion state
             await scrollable.TouchEndAsync();

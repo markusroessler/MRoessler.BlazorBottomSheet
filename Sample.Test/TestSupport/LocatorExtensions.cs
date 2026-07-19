@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
@@ -96,19 +97,16 @@ public static class LocatorExtensions
     public static async Task WhenBoundsStable(this ILocator locator)
     {
         var bounds = await locator.BoundingBoxAsync();
-
-        for (int i = 0; i < 10; i++)
+        await Task.Delay(200);
+        await ExpectAsync(async () =>
         {
-            await Task.Delay(200);
-
             var newBounds = await locator.BoundingBoxAsync();
             if (Equals(bounds, newBounds))
-                return;
+                return (true, "stable");
 
             bounds = newBounds;
-        }
-
-        throw new TimeoutException("Element is still unstable");
+            return (false, "unstable");
+        });
     }
 
 
@@ -121,21 +119,47 @@ public static class LocatorExtensions
                 && bounds1.Height == bounds2.Height);
     }
 
-    public static Task<double> AssertScrollTopAsync(this ILocator locator, double expected) => locator.AssertScrollTopInRangeAsync(expected, expected);
-
-    public static async Task<double> AssertScrollTopInRangeAsync(this ILocator locator, double from, double to)
+    public static Task<double> ExpectScrollTopToBeInRangeAsync(this ILocator locator, double from, double to)
     {
-        var scrollTop = await locator.EvaluateAsync<double>("el => el.scrollTop");
-        Assert.That(scrollTop, Is.InRange(from, to));
-        return scrollTop;
+        return ExpectAsync(async () =>
+        {
+            var scrollTop = await locator.EvaluateAsync<double>("el => el.scrollTop");
+            if (scrollTop >= from && scrollTop <= to)
+                return (true, scrollTop);
+            else
+                return (false, scrollTop);
+        });
     }
 
-    public static Task<double> AssertClientYAsync(this ILocator locator, double expected) => locator.AssertClientYInRangeAsync(expected, expected);
+    public static Task<double> ExpectClientYToBeAsync(this ILocator locator, double expected) => locator.ExpectClientYToBeInRangeAsync(expected, expected);
 
-    public static async Task<double> AssertClientYInRangeAsync(this ILocator locator, double from, double to)
+    public static Task<double> ExpectClientYToBeInRangeAsync(this ILocator locator, double from, double to)
     {
-        var bounds = await locator.BoundingBoxAsync();
-        Assert.That(bounds.Y, Is.InRange(from, to));
-        return bounds.Y;
+        return ExpectAsync(async () =>
+        {
+            var bounds = await locator.BoundingBoxAsync();
+            if (bounds.Y >= from && bounds.Y <= to)
+                return (true, (double)bounds.Y);
+            else
+                return (false, (double)bounds.Y);
+        });
+    }
+
+    private static async Task<TResult> ExpectAsync<TResult>(Func<Task<(bool, TResult)>> func)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        TResult lastResult = default;
+
+        while (stopwatch.Elapsed.TotalSeconds < 5)
+        {
+            var (succeeded, result) = await func();
+            lastResult = result;
+            if (succeeded)
+                return result;
+            else
+                await Task.Delay(200);
+        }
+
+        throw new PlaywrightException($"Retry timeout (last value: {lastResult})");
     }
 }
